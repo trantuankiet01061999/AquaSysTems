@@ -1,0 +1,81 @@
+﻿
+@using System.Security.Claims
+@using AquaService.Shared.Menus
+@using AquaService.Shared.Permissions
+@using Microsoft.AspNetCore.Components.Authorization
+@* @inherits LayoutComponentBase
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+ *@
+@inject AuthenticationStateProvider Auth
+@inherits LayoutComponentBase
+
+<CascadingAuthenticationState>
+    <div>
+        <ul>
+            @if (user?.Identity?.IsAuthenticated == true)
+            {
+                @foreach (var item in menu)
+                {
+                    if (item.Permission == null || user.HasClaim("permission", item.Permission))
+                    {
+                        <li><NavLink href="@item.Url">@item.Title</NavLink></li>
+                    }
+                }
+            }
+        </ul>
+        @Body
+    </div>
+</CascadingAuthenticationState>
+
+@code {
+    private ClaimsPrincipal user;
+    [CascadingParameter] private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    List<MenuItemModel> menu = new()
+{
+    new() { Title = "Home", Url = "/", Permission = null },
+    new() { Title = "Users", Url = "/users", Permission = Permissions.UserView },
+    new() { Title = "Create User", Url = "/users/create", Permission = Permissions.UserCreate },
+    new() { Title = "User Management", Url = "/user-management", Permission = null }
+};
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAuthenticationState();
+        Auth.AuthenticationStateChanged += OnAuthenticationStateChanged;
+    }
+
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        await LoadAuthenticationState();
+        StateHasChanged();
+    }
+
+    private async Task LoadAuthenticationState()
+    {
+        var authState = await authenticationStateTask;
+        user = authState.User;
+    }
+
+    public void Dispose()
+    {
+        Auth.AuthenticationStateChanged -= OnAuthenticationStateChanged;
+    }
+}
+
+

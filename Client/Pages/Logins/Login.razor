@@ -1,0 +1,32 @@
+﻿@page "/login"
+@using AquaService.Shared.AuthModels
+@using System.IdentityModel.Tokens.Jwt
+@inject HttpClient Http
+@inject CustomAuthenticationStateProvider AuthProvider
+@inject NavigationManager Nav
+
+<h3>Login</h3>
+<input @bind="username" placeholder="Username" />
+<input @bind="password" placeholder="Password" type="password" />
+<button @onclick="DoLogin">Login</button>
+
+@code {
+    string username = "";
+    string password = "";
+    private async Task DoLogin()
+    {
+        var response = await Http.PostAsJsonAsync("api/auth/login", new LoginRequest { UserName = username, Password = password });
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(content["token"]);
+            var claims = token.Claims.ToList();
+
+            AuthProvider.MarkUserAsAuthenticated(username, claims);
+
+            Nav.NavigateTo("/");
+        }
+    }
+}
