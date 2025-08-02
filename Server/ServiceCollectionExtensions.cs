@@ -1,14 +1,17 @@
 ﻿using AquaSolution.Data.Repositories;
-using AquaSolution.Server.Services.ApprovalFlowService;
-using AquaSolution.Server.Services.DepartmentService;
-using AquaSolution.Server.Services.FactoryService;
-using AquaSolution.Server.Services.MenusService;
-using AquaSolution.Server.Services.PageManagement;
-using AquaSolution.Server.Services.PermissionService;
-using AquaSolution.Server.Services.PositionService;
-using AquaSolution.Server.Services.RolePermissionService;
-using AquaSolution.Server.Services.RoleService;
-using AquaSolution.Server.Services.UserService;
+using AquaSolution.Server.Services.Administration.ApprovalFlowService;
+using AquaSolution.Server.Services.Administration.DepartmentService;
+using AquaSolution.Server.Services.Administration.FactoryService;
+using AquaSolution.Server.Services.Administration.InventoriesService;
+using AquaSolution.Server.Services.Administration.MenusService;
+using AquaSolution.Server.Services.Administration.PageManagement;
+using AquaSolution.Server.Services.Administration.PermissionService;
+using AquaSolution.Server.Services.Administration.PositionService;
+using AquaSolution.Server.Services.Administration.RolePermissionService;
+using AquaSolution.Server.Services.Administration.RoleService;
+using AquaSolution.Server.Services.Administration.UserService;
+using AquaSolution.Server.Services.ManageMedicalRooms.Products;
+using AquaSolution.Server.Services.ManageMedicalRooms.WarehouseImportService;
 
 
 namespace AquaSolution.Server
@@ -31,6 +34,10 @@ namespace AquaSolution.Server
             services.AddScoped<IFactoryService, FactoryService>();
             services.AddScoped<IPositionService, PositionService>();
             services.AddScoped<IApprovalFlowService, ApprovalFlowService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IInventoryService, InventoryService>();
+            services.AddScoped<IWarehouseImportService, WarehouseImportService>();
+
 
             return services;
         }

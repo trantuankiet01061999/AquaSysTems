@@ -1,6 +1,7 @@
 ﻿@using AntDesign
 @using AquaSolution.Shared.UserManagements
 @inject IMessageService Message
+@inject NavigationManager Navigation
 @inject IJSRuntime JS
 <style>
     .user-modal-content {
@@ -74,7 +75,7 @@
             @if (IsUpLoadAvata)
             {
                 <Upload @ref="uploadRef"
-                        Action="/api/upload/avatar"
+                        Action="@($"{Navigation.BaseUri}api/upload/avatar")"
                         ShowUploadList="false"
                         OnChange="OnUploadChanged"
                         Name="file">
@@ -82,10 +83,12 @@
                         <Avatar Src="@UserAvatarUrl" Style="width: 60px; height: 60px;margin-bottom:10px" />
                         <div class="avatar-buttons">
                             <Button Type="ButtonType.Primary" Size="ButtonSize.Small" Block="true">Upload Avatar</Button>
-                            <Button OnClick="Zoom" Size="ButtonSize.Small" Block="true">View Avatar</Button>
                         </div>
                     </div>
                 </Upload>
+                <Button OnClick="Zoom" Style="margin-top:5px" Size="ButtonSize.Small">
+                    View Avatar
+                </Button>
             }
             else
             {

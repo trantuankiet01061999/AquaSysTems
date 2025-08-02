@@ -24,21 +24,6 @@
                 <Panel Header=@($"{group.MenuName} ({group.Permissions?.Count ?? 0} Permission)") Key="@group.MenuId.ToString()">
                     @if (group.Permissions?.Any() == true)
                     {
-                        @*  @foreach (var actionGroup in group.Permissions.GroupBy(p => p.Action))
-                        {
-                            <h4 style="margin-top: 1rem;">@actionGroup.Key</h4>
-                            <ul style="list-style-type: none; padding-left: 0;">
-                                @foreach (var child in actionGroup)
-                                {
-                                    <li class="mb-2">
-                                        <Checkbox Checked="@child.IsChecked"
-                                                  CheckedChanged="(e => TogglePermission(e, child.PermissionId))">
-                                            @child.PermissionName
-                                        </Checkbox>
-                                    </li>
-                                }
-                            </ul>
-                        } *@
                         var listMenu = group.Permissions.Where(x => x.PageId == null).ToList();
                         if (listMenu.Any())
                         {
@@ -53,8 +38,6 @@
 
                         @foreach (var pageGroup in listGroup.GroupBy(p => p.PageName))
                         {
-                            @*   <h6 style="margin-top: 1rem;">@pageGroup.Key</h6>
-                            <ul style="list-style-type: none; padding-left: 0;"> *@
                             <Collapse Accordion="false">
                                 <Panel Header="@pageGroup.Key" Key="@pageGroup.Key">
                                     @foreach (var child in pageGroup)
@@ -68,7 +51,6 @@
                                     }
                                 </Panel>
                             </Collapse>
-                            @*    </ul> *@
                         }
 
                     }
