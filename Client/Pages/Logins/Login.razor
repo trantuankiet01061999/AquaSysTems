@@ -1,7 +1,9 @@
 ﻿@page "/login"
 @layout LoginLayout
+@using AntDesign
 @using AquaService.Shared.AuthModels
 @using System.IdentityModel.Tokens.Jwt
+@inject IMessageService Message
 <style>
     .login-page {
         display: flex;

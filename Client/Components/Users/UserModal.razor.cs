@@ -192,7 +192,7 @@ namespace AquaSolution.Client.Components.Users
             {
                 Listmanager = Listmanager
                     .Where(d =>
-                        (ValueFactory != null && ValueDepartment != null && d.FactoryId == ValueFactory.Id && d.Id == ValueDepartment.Id) ||
+                        (ValueFactory != null && ValueDepartment != null && d.FactoryId == ValueFactory.Id && d.DepartmentId == ValueDepartment.Id) ||
                         (ValueFactory != null && ValueDepartment == null && d.FactoryId == ValueFactory.Id) ||
                         (ValueFactory == null && ValueDepartment != null && d.DepartmentId == ValueDepartment.Id) ||
                         (ValueFactory == null && ValueDepartment == null)

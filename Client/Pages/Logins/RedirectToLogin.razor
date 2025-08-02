@@ -3,6 +3,7 @@
 @code {
     protected override void OnInitialized()
     {
-        Nav.NavigateTo("/login", true);
+        var baseUri = Nav.BaseUri.TrimEnd('/');
+        Nav.NavigateTo($"{baseUri}/login", true);
     }
 }

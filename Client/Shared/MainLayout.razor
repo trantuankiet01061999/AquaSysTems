@@ -16,9 +16,18 @@
 @inject ILocalStorageService localStorage
 
 <CascadingAuthenticationState>
+    <style>
+        .ant-menu-submenu-title{
+            padding-left:10px !important;
+        }
+
+        .ant-menu-item{
+            padding-left: 30px !important;
+        }
+    </style>
     <div class="d-flex">
         <!-- Sidebar -->
-        <div class="sidebar-container bg-dark text-white" style="width: 250px; min-height: 100vh;">
+        <div class="sidebar-container bg-dark text-white" style="width: 260px; min-height: 100vh;">
             @if (user?.Identity?.IsAuthenticated == true)
             {
                 <Menu Mode="MenuMode.Inline"
@@ -67,7 +76,7 @@
             <header style="height:45px" class="bg-white shadow-sm px-4 py-2 d-flex justify-content-between align-items-center">
                 <HeaderComponent CurrentUser="CurrentUser" userDto="userDto" />
             </header>
-            <main class="p-4 bg-light flex-fill">
+            <main class="p-1 bg-light flex-fill"style="width:174vh;"> 
                 @Body
             </main>
         </div>

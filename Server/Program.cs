@@ -48,6 +48,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 //--------------------------------------------------------------------
 var app = builder.Build();
+app.UsePathBase("/AquaSolution");
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AquaDbContext>();

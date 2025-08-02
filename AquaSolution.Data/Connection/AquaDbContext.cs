@@ -14,7 +14,8 @@ namespace AquaSolution.Data.Connection
         public AquaDbContext(DbContextOptions<AquaDbContext> options) : base(options)
         {
         }
-       // public DbSet<Button> Buttons { get; set; }
+        // public DbSet<Button> Buttons { get; set; }
+        #region Admin (Role, Permission)
         public DbSet<Menu> tbl_Menus { get; set; }
         public DbSet<Page> tbl_Pages { get; set; }
         public DbSet<Permission> tbl_Permissions { get; set; }
@@ -27,6 +28,20 @@ namespace AquaSolution.Data.Connection
         public DbSet<Factory> tbl_Factorys { get; set; }
         public DbSet<Position> tbl_Positions { get; set; }
         public DbSet<ApprovalFlow> tbl_ApprovalFlow { get; set; }
+        #endregion
+        #region Clinic
+        public DbSet<Product> tbl_Product { get; set; }
+        public DbSet<Inventories> tbl_Inventory { get; set; }
+        public DbSet<MedicalSuplies> tbl_MedicalSuply { get; set; }
+        public DbSet<Medicine> tbl_Medicine { get; set; }
+        public DbSet<RequestClinic> tbl_RequestClinic { get; set; }
+        public DbSet<WarehouseImport> tbl_WarehouseImport { get; set; }
+        public DbSet<WarehouseImportDetail> tbl_WarehouseImportDetail { get; set; }
+
+        public DbSet<SysTemHistory> tbl_SysTemHistory { get; set; }
+
+
+        #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,6 +57,18 @@ namespace AquaSolution.Data.Connection
             modelBuilder.ApplyConfiguration(new FactoryConfiguration());
             modelBuilder.ApplyConfiguration(new PositionConfiguration());
             modelBuilder.ApplyConfiguration(new ApprovalFlowConfiguration());
+
+            #region Clinic
+            modelBuilder.ApplyConfiguration(new RequestClinicConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            modelBuilder.ApplyConfiguration(new InventoryConfiguration());
+            modelBuilder.ApplyConfiguration(new MedicalSupliesConfiguration());
+            modelBuilder.ApplyConfiguration(new MedicineConfiguration());
+            modelBuilder.ApplyConfiguration(new WarehouseImportDetailConfiguration());
+            modelBuilder.ApplyConfiguration(new WarehouseImportConfiguration());
+            modelBuilder.ApplyConfiguration(new SysTemHistoryConfiguration());
+
+            #endregion
 
 
         }

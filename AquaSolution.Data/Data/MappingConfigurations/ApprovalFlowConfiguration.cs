@@ -18,8 +18,11 @@ namespace AquaSolution.Data.Data.MappingConfigurations
                     .HasMaxLength(100);
             builder.Property(e => e.ApprovalSettingType)
                     .HasConversion<string>()
-                    .IsRequired()
-                    .HasMaxLength(100);
+                    .IsRequired();
+              builder.HasOne<Position>()
+                   .WithMany()
+                   .HasForeignKey(u => u.PositionId)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

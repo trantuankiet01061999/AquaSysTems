@@ -30,8 +30,7 @@ namespace AquaSolution.Data.Migrations
 
                     b.Property<string>("ApprovalSettingType")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -58,10 +57,12 @@ namespace AquaSolution.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<Guid>("UserApproveId")
+                    b.Property<Guid?>("UserApproveId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PositionId");
 
                     b.ToTable("tbl_ApprovalFlows", (string)null);
                 });
@@ -176,6 +177,64 @@ namespace AquaSolution.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("tbl_Groups", (string)null);
+                });
+
+            modelBuilder.Entity("AquaSolution.Data.Data.Entities.Inventories", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ManufacturingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18, 4)");
+
+                    b.Property<bool>("expired")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("tbl_Inventory", (string)null);
+                });
+
+            modelBuilder.Entity("AquaSolution.Data.Data.Entities.MedicalSuplies", b =>
+                {
+                    b.Property<Guid>("ProducId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ProductType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("ProducId");
+
+                    b.ToTable("tbl_MedicalSuply", (string)null);
+                });
+
+            modelBuilder.Entity("AquaSolution.Data.Data.Entities.Medicine", b =>
+                {
+                    b.Property<Guid>("ProducId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ProductType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("ProducId");
+
+                    b.ToTable("tbl_Medicines", (string)null);
                 });
 
             modelBuilder.Entity("AquaSolution.Data.Data.Entities.Menu", b =>
@@ -299,6 +358,136 @@ namespace AquaSolution.Data.Migrations
                     b.ToTable("tbl_Positions", (string)null);
                 });
 
+            modelBuilder.Entity("AquaSolution.Data.Data.Entities.Product", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<bool>("IsHide")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(2400)
+                        .HasColumnType("nvarchar(2400)");
+
+                    b.Property<string>("ProductType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UpdateBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tbl_Products", (string)null);
+                });
+
+            modelBuilder.Entity("AquaSolution.Data.Data.Entities.RequestClinic", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ApprovalBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ApprovalDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("HistoryReuqest")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<Guid>("ManagerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(2400)
+                        .HasColumnType("nvarchar(2400)");
+
+                    b.Property<Guid?>("PharmacyManagerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PurposeType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("RejectBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("RejectDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RequestTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("SuccesDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserRequestName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WorkDayUserRequestId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovalBy");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("PharmacyManagerId");
+
+                    b.HasIndex("UserRequestId");
+
+                    b.ToTable("tbl_RequestClinics", (string)null);
+                });
+
             modelBuilder.Entity("AquaSolution.Data.Data.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
@@ -334,6 +523,20 @@ namespace AquaSolution.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("tbl_RolePermissions", (string)null);
+                });
+
+            modelBuilder.Entity("AquaSolution.Data.Data.Entities.SysTemHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("HistoryFlow")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tbl_SysTemHistorys", (string)null);
                 });
 
             modelBuilder.Entity("AquaSolution.Data.Data.Entities.User", b =>
@@ -443,12 +646,150 @@ namespace AquaSolution.Data.Migrations
                     b.ToTable("tbl_UserRoles", (string)null);
                 });
 
+            modelBuilder.Entity("AquaSolution.Data.Data.Entities.WarehouseImport", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("WarehouseImportType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tbl_WarehouseImports", (string)null);
+                });
+
+            modelBuilder.Entity("AquaSolution.Data.Data.Entities.WarehouseImportDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DateManufacture")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ProductType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18, 4)");
+
+                    b.Property<Guid>("WarehouseImportId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("WarehouseImportId");
+
+                    b.ToTable("tbl_WarehouseImportDetails", (string)null);
+                });
+
+            modelBuilder.Entity("AquaSolution.Data.Data.Entities.ApprovalFlow", b =>
+                {
+                    b.HasOne("AquaSolution.Data.Data.Entities.Position", null)
+                        .WithMany()
+                        .HasForeignKey("PositionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AquaSolution.Data.Data.Entities.Inventories", b =>
+                {
+                    b.HasOne("AquaSolution.Data.Data.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AquaSolution.Data.Data.Entities.MedicalSuplies", b =>
+                {
+                    b.HasOne("AquaSolution.Data.Data.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProducId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AquaSolution.Data.Data.Entities.Medicine", b =>
+                {
+                    b.HasOne("AquaSolution.Data.Data.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProducId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("AquaSolution.Data.Data.Entities.Page", b =>
                 {
                     b.HasOne("AquaSolution.Data.Data.Entities.Menu", null)
                         .WithMany()
                         .HasForeignKey("MenuId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AquaSolution.Data.Data.Entities.RequestClinic", b =>
+                {
+                    b.HasOne("AquaSolution.Data.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("ApprovalBy")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("AquaSolution.Data.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AquaSolution.Data.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("PharmacyManagerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("AquaSolution.Data.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserRequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -496,6 +837,21 @@ namespace AquaSolution.Data.Migrations
                     b.HasOne("AquaSolution.Data.Data.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AquaSolution.Data.Data.Entities.WarehouseImportDetail", b =>
+                {
+                    b.HasOne("AquaSolution.Data.Data.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AquaSolution.Data.Data.Entities.WarehouseImport", null)
+                        .WithMany()
+                        .HasForeignKey("WarehouseImportId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

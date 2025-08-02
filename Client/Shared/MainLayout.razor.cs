@@ -51,12 +51,16 @@ namespace AquaSolution.Client.Shared
             {
                 await localStorage.RemoveItemAsync("authToken");
                 await Http.PostAsync("api/auth/logout", null);
-                NavigationManager.NavigateTo("/login", true);
+                var baseUri = NavigationManager.BaseUri.TrimEnd('/');
+                NavigationManager.NavigateTo($"{baseUri}/login", true);
+                //NavigationManager.NavigateTo("/login", true);
             }
         }
         private void Home()
         {
-            NavigationManager.NavigateTo("/");
+            var baseUri = NavigationManager.BaseUri.TrimEnd('/');
+            NavigationManager.NavigateTo($"{baseUri}/");
+            //NavigationManager.NavigateTo("/");
         }
         private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
         {
