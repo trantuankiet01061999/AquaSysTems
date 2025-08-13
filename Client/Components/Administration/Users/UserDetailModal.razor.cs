@@ -58,9 +58,9 @@ namespace AquaSolution.Client.Components.Administration.Users
                 var avata = new AvataDto
                 {
                     UserId = User.Id,
-                    URLAvatarNew = UserAvatarUrl
-                    .Replace("https://localhost:7195", "") 
+                    URLAvatarNew = new Uri(UserAvatarUrl).AbsolutePath
                 };
+
 
                 var response2 = await Http.PutAsJsonAsync("api/user/update-avatar", avata);
                 if (response2.IsSuccessStatusCode)
