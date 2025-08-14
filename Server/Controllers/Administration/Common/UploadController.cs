@@ -38,8 +38,20 @@ namespace AquaSolution.Server.Controllers.Administration.Common
             if (string.IsNullOrWhiteSpace(avatarUrl))
                 return BadRequest("Avatar URL is required.");
 
-            var relativePath = avatarUrl.Replace("/uploads/", "uploads/");
-            var physicalPath = Path.Combine(_env.WebRootPath, relativePath);
+            avatarUrl = Uri.UnescapeDataString(avatarUrl);
+            var appPath = HttpContext.Request.PathBase.HasValue
+                ? HttpContext.Request.PathBase.Value
+                : string.Empty;
+
+            if (!string.IsNullOrEmpty(appPath) && avatarUrl.StartsWith(appPath, StringComparison.OrdinalIgnoreCase))
+            {
+                avatarUrl = avatarUrl.Substring(appPath.Length);
+            }
+            if (avatarUrl.StartsWith("/"))
+                avatarUrl = avatarUrl.Substring(1);
+
+            var physicalPath = Path.Combine(_env.WebRootPath, avatarUrl);
+
             if (System.IO.File.Exists(physicalPath))
             {
                 System.IO.File.Delete(physicalPath);
@@ -48,6 +60,7 @@ namespace AquaSolution.Server.Controllers.Administration.Common
 
             return NotFound("Avatar file not found.");
         }
+
     }
 
 }
