@@ -1,7 +1,7 @@
 ﻿using AquaService.Client.Services;
 using AquaSolution.Client;
 using AquaSolution.Client.Common;
-using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -13,7 +13,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 //-------------------------CustomConfig-------------------------------
 builder.Services.AddTransient<AuthMessageHandler>();
-builder.Services.AddBlazoredLocalStorage();
+//builder.Services.AddBlazored_sessionStorage();
+builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthStateProvider>();
 

@@ -40,7 +40,7 @@ namespace AquaSolution.Client.Shared
         }
         private async Task CheckTokenExpired()
         {
-            var token = await localStorage.GetItemAsync<string>("authToken");
+            var token = await _sessionStorage.GetItemAsync<string>("authToken");
             if (string.IsNullOrEmpty(token)) return;
 
             var handler = new JwtSecurityTokenHandler();
@@ -49,18 +49,16 @@ namespace AquaSolution.Client.Shared
 
             if (DateTime.UtcNow >= exp)
             {
-                await localStorage.RemoveItemAsync("authToken");
+                await _sessionStorage.RemoveItemAsync("authToken");
                 await Http.PostAsync("api/auth/logout", null);
                 var baseUri = NavigationManager.BaseUri.TrimEnd('/');
                 NavigationManager.NavigateTo($"{baseUri}/login", true);
-                //NavigationManager.NavigateTo("/login", true);
             }
         }
         private void Home()
         {
             var baseUri = NavigationManager.BaseUri.TrimEnd('/');
             NavigationManager.NavigateTo($"{baseUri}/");
-            //NavigationManager.NavigateTo("/");
         }
         private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
         {

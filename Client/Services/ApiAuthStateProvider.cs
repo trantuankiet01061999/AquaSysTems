@@ -1,25 +1,26 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿
+using Blazored.SessionStorage;
+using Microsoft.AspNetCore.Components.Authorization;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Security.Claims;
-using Blazored.LocalStorage;
-using Microsoft.AspNetCore.Components.Authorization;
 
 namespace AquaService.Client.Services;
 
 public class ApiAuthStateProvider : AuthenticationStateProvider
 {
-    private readonly ILocalStorageService _localStorage;
+    private readonly ISessionStorageService _sessionStorage;
     private readonly HttpClient _http;
 
-    public ApiAuthStateProvider(ILocalStorageService ls, HttpClient http)
+    public ApiAuthStateProvider(ISessionStorageService ls, HttpClient http)
     {
-        _localStorage = ls;
+        _sessionStorage = ls;
         _http = http;
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var token = await _localStorage.GetItemAsync<string>("authToken");
+        var token = await _sessionStorage.GetItemAsync<string>("authToken");
         if (string.IsNullOrWhiteSpace(token))
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 
@@ -32,13 +33,13 @@ public class ApiAuthStateProvider : AuthenticationStateProvider
 
     public async Task MarkUserAsAuthenticated(string token)
     {
-        await _localStorage.SetItemAsync("authToken", token);
+        await _sessionStorage.SetItemAsync("authToken", token);
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
 
     public async Task Logout()
     {
-        await _localStorage.RemoveItemAsync("authToken");
+        await _sessionStorage.RemoveItemAsync("authToken");
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
 }

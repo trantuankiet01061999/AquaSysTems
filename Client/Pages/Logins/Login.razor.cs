@@ -1,5 +1,5 @@
 ﻿using AquaService.Shared.AuthModels;
-using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,7 +13,7 @@ public partial class Login
     [Inject] private HttpClient Http { get; set; }
     [Inject] private CustomAuthenticationStateProvider AuthProvider { get; set; }
     [Inject] private NavigationManager Nav { get; set; }
-    [Inject] private ILocalStorageService localStorage { get; set; }
+    [Inject] private ISessionStorageService _sessionStorage { get; set; }
     private string username { get; set; }
     private string password { get; set; }
 
@@ -55,24 +55,11 @@ public partial class Login
         var token = handler.ReadJwtToken(content["token"]);
         var claims = token.Claims.ToList();
 
-        await localStorage.SetItemAsync("authToken", content["token"]);
+        await _sessionStorage.SetItemAsync("authToken", content["token"]);
         AuthProvider.MarkUserAsAuthenticated(username, claims);
 
         var baseUri = Nav.BaseUri.TrimEnd('/');
         Nav.NavigateTo($"{baseUri}/");
-
-
-        //if (response.IsSuccessStatusCode)
-        //{
-        //    var content = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
-        //    var handler = new JwtSecurityTokenHandler();
-        //    var token = handler.ReadJwtToken(content["token"]);
-        //    var claims = token.Claims.ToList();
-        //    await localStorage.SetItemAsync("authToken", content["token"]);
-        //    AuthProvider.MarkUserAsAuthenticated(username, claims);
-        //    var baseUri = Nav.BaseUri.TrimEnd('/');
-        //    Nav.NavigateTo($"{baseUri}/");
-        //}
 
     }
     private async Task HandleKeyUp(KeyboardEventArgs e)
