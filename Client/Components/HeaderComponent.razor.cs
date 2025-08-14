@@ -23,7 +23,7 @@ namespace AquaSolution.Client.Components
             try
             {
                 await Http.PostAsync("api/auth/logout", null);
-                await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "authToken");
+                await JSRuntime.InvokeVoidAsync("sessionStorage.removeItem", "authToken");
                 var baseUri = Navigation.BaseUri.TrimEnd('/');
                 Navigation.NavigateTo($"{baseUri}/login", true);
                 await Message.Success("Đăng xuất thành công!", 2);
