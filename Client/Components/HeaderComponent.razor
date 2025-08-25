@@ -3,7 +3,7 @@
 <div class="user-dropdown-container">
     <div class="user-dropdown" id="userDropdown">
         <div class="user-dropdown-toggle d-flex align-items-center gap-2">
-            <img src="@(!string.IsNullOrWhiteSpace(userDto?.Avatar) ? userDto.Avatar : "/uploads/avatars/default.jpg")"
+            <img src="@(!string.IsNullOrWhiteSpace(userDto?.Avatar) ? userDto.Avatar : $"{Navigation.BaseUri.TrimEnd('/')}/uploads/avatars/default.jpg")"
                  alt="Avatar"
                  class="avatar-img" />
             <span class="text-dark">@userDto?.FullName</span>
