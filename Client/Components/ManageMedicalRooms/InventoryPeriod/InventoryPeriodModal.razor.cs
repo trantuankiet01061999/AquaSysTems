@@ -58,6 +58,8 @@ namespace AquaSolution.Client.Components.ManageMedicalRooms.InventoryPeriod
             if (response.IsSuccessStatusCode)
             {
                 await Message.Success("Created successfully.");
+                IsModalVisible =false;
+                await OnSaved.InvokeAsync();
             }
             else
             {

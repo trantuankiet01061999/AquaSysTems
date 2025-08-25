@@ -118,13 +118,11 @@ namespace AquaSolution.Client.Pages.ManageMedicalRooms.MyRequestClinics
 
             };
             await myRequestClinicModal.ShowModalAsync(paramShowModal);
- 
         }
         private async Task DeletedAsync(MyRequestClinicDto myRequestClinicDto)
         {
 
             var message = $"Do you want to delete the request \"{myRequestClinicDto.RequestTitle}\"?";
-
             var confirm = await MessageBox.Confirm(modal, message.ToString());
             if (confirm)
             {
