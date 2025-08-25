@@ -16,7 +16,7 @@ namespace AquaSolution.Shared.ManageMedicalRooms.RequestClinics
         public string UserRequestName { get; set; }
         public string RequestTitle { get; set; }
         public PurposeType PurposeType { get; set; }
-        public Guid ManagerId { get; set; }
+        public Guid? ManagerId { get; set; }
         public string? ManagerName { get; set; }
         public string? EmailRequestter { get; set; }
         public string? WorkDayManager { get; set; }

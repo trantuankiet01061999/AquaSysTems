@@ -5,7 +5,6 @@
 @using AquaSolution.Shared.Pages
 @using AntDesign
 <PageTitle>Menus - Pages</PageTitle>
-<div class="user-management-container">
     <div class="mb-3">
         <style>
             .custom-button-type {
@@ -19,13 +18,7 @@
 
 
     </div>
-    <style>
-        .custom-button-type {
-            height: 30px;
-            font-size: 12px;
-        }
-    </style>
-    <div style="width:100%;overflow-x:scroll ;max-height:70vh; ">
+    <div style="width:100%;overflow-x:scroll ;max-height:70vh;">
         <Collapse>
             @foreach (var menu in Menus)
             {
@@ -43,6 +36,5 @@
             }
         </Collapse>
     </div>
-</div>
 <CreatedMenuModal OnSave="LoadMenu" @ref="createdMenuModal"></CreatedMenuModal>
 <CreatedPagesModal OnSave="LoadMenu" @ref="createdPagesModal"></CreatedPagesModal>

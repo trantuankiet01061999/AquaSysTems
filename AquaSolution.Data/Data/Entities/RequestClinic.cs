@@ -10,7 +10,7 @@ namespace AquaSolution.Data.Data.Entities
         public string UserRequestName { get; set; }
         public string RequestTitle { get; set; }
         public PurposeType PurposeType { get; set; }
-        public Guid ManagerId { get; set; }
+        public Guid? ManagerId { get; set; }
         public StatusClinicType Status { get; set; }
         public  DateTime? ApprovalDate { get; set; }
         public Guid? ApprovalBy {  get; set; }
