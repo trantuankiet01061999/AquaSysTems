@@ -105,6 +105,30 @@
                             </Select>
                         </FormItem>
                     </div>
+                    <div style="flex: 0 0 calc(3.85 / 12 * 100%);">
+                        <FormItem label="RequestBy">
+                            <Select TItem="UserContributerDto" TItemValue="Guid"
+                                    DataSource="@ListUser"
+                                    EnableSearch
+                                    AutoClearSearchValue="false"
+                                    @bind-Value="@RequestSuport.RequestById"
+                                    ItemValue="c => c.Id??Guid.Empty"
+                                    ItemLabel="c => c.Name?? string.Empty">
+                            </Select>
+                        </FormItem>
+                    </div>
+                    <div style="flex: 0 0 calc(4 / 12 * 100%);">
+                        <FormItem label="Technician">
+                            <Select TItem="UserContributerDto" TItemValue="Guid?"
+                                    DataSource="@ListTechnician"
+                                    EnableSearch
+                                    AutoClearSearchValue="false"
+                                    @bind-Value="@RequestSuport.TechnicianId"
+                                    ItemValue="c => c.Id??Guid.Empty"
+                                    ItemLabel="c => c.Name?? string.Empty">
+                            </Select>
+                        </FormItem>
+                    </div>
                 }
                 else
                 {
@@ -121,23 +145,19 @@
                             </Select>
                         </FormItem>
                     </div>
+                    <div style="flex: 0 0 calc(7.85 / 12 * 100%);">
+                        <FormItem label="RequestBy">
+                            <Select TItem="UserContributerDto" TItemValue="Guid"
+                                    DataSource="@ListUser"
+                                    EnableSearch
+                                    AutoClearSearchValue="false"
+                                    @bind-Value="@RequestSuport.RequestById"
+                                    ItemValue="c => c.Id??Guid.Empty"
+                                    ItemLabel="c => c.Name?? string.Empty">
+                            </Select>
+                        </FormItem>
+                    </div>
                 }
-
-
-
-                <div style="flex: 0 0 calc(7.85 / 12 * 100%);">
-                    <FormItem label="RequestBy">
-                        <Select TItem="UserContributerDto" TItemValue="Guid"
-                                DataSource="@ListUser"
-                                EnableSearch
-                                AutoClearSearchValue="false"
-                                @bind-Value="@RequestSuport.RequestById"
-                                ItemValue="c => c.Id??Guid.Empty"
-                                ItemLabel="c => c.Name?? string.Empty">
-                        </Select>
-                    </FormItem>
-                </div>
-              
             </div>
             <FormItem Required="true" Label="RequestDescription">
                 <TextArea ShowCount MinRows="2" @bind-Value="@RequestSuport.RequestDescription" MaxLength="2000" AllowClear="true" />
@@ -163,17 +183,17 @@
                     </Upload>
                 </div>
 
-                    <Table Class="style-attach" DataSource="Attachment" HidePagination Size="TableSize.Small">
-                        <ChildContent Context="file">
-                            <Column Fixed="ColumnFixPlacement.Left" Title="FileName" TData="string">@file.FileName</Column>
-                            <Column Title="FileSize" Width="100" TData="string">@FormatSize(file.FileSize)</Column>
-                            <Column Title="CreatedTime" Width="200" TData="string">@file.CreatedTime.ToString("dd/MM/yyyy HH:mm:ss")</Column>
-                            <ActionColumn>
-                                <Button Icon="delete" Type="ButtonType.Link" Danger="true" OnClick="() => Deleted(file)"></Button>
-                            </ActionColumn>
-                        </ChildContent>
-                    </Table>
- 
+                <Table Class="style-attach" DataSource="Attachment" HidePagination Size="TableSize.Small">
+                    <ChildContent Context="file">
+                        <Column Fixed="ColumnFixPlacement.Left" Title="FileName" TData="string">@file.FileName</Column>
+                        <Column Title="FileSize" Width="100" TData="string">@FormatSize(file.FileSize)</Column>
+                        <Column Title="CreatedTime" Width="200" TData="string">@file.CreatedTime.ToString("dd/MM/yyyy HH:mm:ss")</Column>
+                        <ActionColumn>
+                            <Button Icon="delete" Type="ButtonType.Link" Danger="true" OnClick="() => Deleted(file)"></Button>
+                        </ActionColumn>
+                    </ChildContent>
+                </Table>
+
             </div>
         </div>
     </Form>
