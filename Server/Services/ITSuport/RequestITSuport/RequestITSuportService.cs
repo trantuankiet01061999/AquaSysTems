@@ -90,9 +90,11 @@ namespace AquaSolution.Server.Services.ITSuport.RequestSuportCategories
                         join requestBy in user on requestSuport.RequestBy equals requestBy.Id
 
                         join technicial in user on requestSuport.TechnicianId equals technicial.Id
+                        into t from technicial in t.DefaultIfEmpty()
 
                         join department in await _departmentRepo.GetQueryableAsync()
                         on requestBy.DepartmentId equals department.Id
+
                         join factory in await _factoryRepo.GetQueryableAsync()
                         on requestBy.FactoryId equals factory.Id
                         select new RequestSuportDto
