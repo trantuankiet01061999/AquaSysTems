@@ -21,6 +21,7 @@ namespace AquaSolution.Server.Services.Administration.DepartmentService
                 Note = departmentDto.Note,
                 DepartmentType = departmentDto.DepartmentType,
                 DesCription = departmentDto.Description,
+                CreatedDate = DateTime.Now,
             };
             await _departmentRepo.InsertAsync(department);
             var boolReturn = await _departmentRepo.SaveChangesAsync();
@@ -49,6 +50,7 @@ namespace AquaSolution.Server.Services.Administration.DepartmentService
                                       Note = department.Note,
                                       Description = department.DesCription,
                                       DepartmentType = department.DepartmentType,
+                                      CreatedDate = department.CreatedDate
                                   };
                 var listDepartment = departments.ToList();
                 if (listDepartment.Count == 0)
