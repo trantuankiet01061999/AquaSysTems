@@ -95,7 +95,7 @@
             <PropertyColumn Sortable Title="Position" Property="c => c.PositionName"></PropertyColumn>
             <PropertyColumn Title="Email" Property="c => c.Email"></PropertyColumn>
             <PropertyColumn Sortable  Title="IsActive" Property="c => c.IsActive"></PropertyColumn>
-            <Column Fixed="ColumnFixPlacement.Right" TData="UserDto" Width="50px" Title="Action" Context="row">
+            <Column Fixed="ColumnFixPlacement.Right" TData="UserDto" Width="50px"  Context="row">
                 <Template>
                     <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">
                         <ChildContent>

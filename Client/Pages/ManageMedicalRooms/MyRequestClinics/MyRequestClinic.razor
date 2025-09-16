@@ -54,7 +54,7 @@
         </button>
     }
 </div>
-<div style="width:100%;overflow-x:scroll ;max-height:70vh; ">
+<div style="width:99%;overflow-x:scroll ;max-height:70vh; ">
     <Table TItem="MyRequestClinicDto"
            Size="TableSize.Small"
            Class="customTable fix-table-header"
@@ -72,7 +72,7 @@
             <PropertyColumn Width="130" Title="CreatedDate" Property="c => c.CreatedDate" Format="dd/MM/yyyy HH:mm"></PropertyColumn>
             <PropertyColumn Width="250" Title="Status" Style="@($"color: {GetTagColor.GetTagColorCss(row.Status.ToString())}")" Property="c => c.Status"></PropertyColumn>
             <PropertyColumn Width="180" Title="Note" Property="c => c.Note"></PropertyColumn>
-            <Column Fixed="ColumnFixPlacement.Right" TData="ProductDto" Width="50px" Title="Action" Context="row">
+            <Column Fixed="ColumnFixPlacement.Right" TData="ProductDto" Width="50px"  Context="row">
                 <Template>
                     <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">
                         <ChildContent>

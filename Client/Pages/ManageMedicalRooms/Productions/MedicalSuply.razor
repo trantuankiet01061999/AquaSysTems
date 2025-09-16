@@ -62,7 +62,7 @@
             <PropertyColumn Width="400" Title="Note" Property="c => c.Note"></PropertyColumn>
             <PropertyColumn Width="80" Title="IsHide" Property="c => c.IsHide"></PropertyColumn>
 
-                <Column Fixed="ColumnFixPlacement.Right" TData="ProductDto" Width="50px" Title="Action" Context="row">
+                <Column Fixed="ColumnFixPlacement.Right" TData="ProductDto" Width="50px"  Context="row">
                     <Template>
                         <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">
                             <ChildContent>

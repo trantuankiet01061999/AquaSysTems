@@ -52,7 +52,7 @@
        DataSource="Roles">
     <ColumnDefinitions Context="row">
         <PropertyColumn Title="RoleName" Property="c => c.Name"></PropertyColumn>
-        <Column Fixed="ColumnFixPlacement.Right" TData="UserDto" Title="Action" Context="row">
+        <Column Fixed="ColumnFixPlacement.Right" TData="UserDto"  Context="row">
             <Template>
                 <div style="display:flex; justify-content:flex-end; gap: 6px;">
                     <button class="btn btn-secondary btn-sm custom-button-type"

@@ -48,7 +48,7 @@
         <Icon Type="plus" />Created
     </button>
 </div>
-<div style="width:100%;overflow-x:scroll ;max-height:70vh; ">
+<div style="width:99%;overflow-x:scroll ;max-height:70vh; ">
     <Table TItem="DepartmentDto"
            Size="TableSize.Small"
            Class="customTable fix-table-header"
@@ -62,7 +62,7 @@
             <PropertyColumn Title="DepartmentType" Property="c => c.DepartmentType"></PropertyColumn>
 
             <PropertyColumn Title="Note" Property="c => c.Note"></PropertyColumn>
-            <Column Fixed="ColumnFixPlacement.Right" TData="DepartmentDto" Width="50px" Title="Action" Context="row">
+            <Column Fixed="ColumnFixPlacement.Right" TData="DepartmentDto" Width="50px"  Context="row">
                 <Template>
                     <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">
                         <ChildContent>

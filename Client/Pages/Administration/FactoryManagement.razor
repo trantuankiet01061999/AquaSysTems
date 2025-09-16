@@ -48,7 +48,7 @@
         <Icon Type="plus" />Created Factory
     </button>
 </div>
-<div style="width:100%;overflow-x:scroll ;max-height:70vh; ">
+<div style="width:99%;overflow-x:scroll ;max-height:70vh; ">
     <Table TItem="FactoryDto"
            Size="TableSize.Small"
            Class="customTable fix-table-header"
@@ -61,7 +61,7 @@
             <PropertyColumn Title="FactoryType" Property="c => c.FactoryType"></PropertyColumn>
 
             <PropertyColumn Title="Note" Property="c => c.Note"></PropertyColumn>
-            <Column Fixed="ColumnFixPlacement.Right" TData="FactoryDto" Width="50px" Title="Action" Context="row">
+            <Column Fixed="ColumnFixPlacement.Right" TData="FactoryDto" Width="50px"  Context="row">
                 <Template>
                     <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">
                         <ChildContent>
