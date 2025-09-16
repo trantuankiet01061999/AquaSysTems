@@ -67,6 +67,7 @@ namespace AquaSolution.Server.Services.ITSuport.RequestSuportCategories
                 }    
             }
             await _requestSuportRepo.InsertAsync(requestSuport);
+
             return await _requestSuportRepo.SaveChangesAsync() > 0;
 
         }

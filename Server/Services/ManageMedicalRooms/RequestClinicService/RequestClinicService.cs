@@ -64,7 +64,7 @@ namespace AquaSolution.Server.Services.ManageMedicalRooms.RequestClinicservice
             };
             await _requestClinicRepo.InsertAsync(requestClinic);
             var result = await _requestClinicRepo.SaveChangesAsync();
-            await _hubContext.Clients.All.SendAsync("ChangeStatusRequestClinic");
+            await _hubContext.Clients.All.SendAsync("LoadRequestClinic");
             return result > 0;
         }
         public async Task<List<MyRequestClinicDto>> GetRequestByUser()
@@ -133,7 +133,7 @@ namespace AquaSolution.Server.Services.ManageMedicalRooms.RequestClinicservice
             request.ApprovalDate = DateTime.Now;
             request.ApprovalBy = approvalBy;
             var update = await _requestClinicRepo.UpdateAsync(request);
-            await _hubContext.Clients.All.SendAsync("ChangeStatusRequestClinic");
+            await _hubContext.Clients.All.SendAsync("LoadRequestClinic");
             return update;
         }
         public async Task<bool> RejectedAsync(Guid requestClinicId, Guid rejectBy)
@@ -145,7 +145,7 @@ namespace AquaSolution.Server.Services.ManageMedicalRooms.RequestClinicservice
             request.ApprovalDate = DateTime.Now;
             request.ApprovalBy = rejectBy;
             var update = await _requestClinicRepo.UpdateAsync(request);
-            await _hubContext.Clients.All.SendAsync("ChangeStatusRequestClinic");
+            await _hubContext.Clients.All.SendAsync("LoadRequestClinic");
             return update;
         }
         public async Task<bool> DoneAsync(Guid requestClinicId, Guid pharmacyManagerId)
@@ -157,7 +157,7 @@ namespace AquaSolution.Server.Services.ManageMedicalRooms.RequestClinicservice
             request.SuccesDate = DateTime.Now;
             request.PharmacyManagerId = pharmacyManagerId;
             var update = await _requestClinicRepo.UpdateAsync(request);
-            await _hubContext.Clients.All.SendAsync("ChangeStatusRequestClinic");
+            await _hubContext.Clients.All.SendAsync("LoadRequestClinic");
             return update;
         }
         public async Task<bool> CreatedTreatment(CreatedTreatmentDto createdTreatment)
@@ -329,7 +329,7 @@ namespace AquaSolution.Server.Services.ManageMedicalRooms.RequestClinicservice
              var isDelete =  await _requestClinicRepo.DeleteAsync(requestClinic);
                 if (isDelete)
                 {
-                    await _hubContext.Clients.All.SendAsync("ChangeStatusRequestClinic");
+                    await _hubContext.Clients.All.SendAsync("LoadRequestClinic");
                     return isDelete;
                 }
             }
