@@ -38,7 +38,7 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
             _hubConnection = new HubConnectionBuilder()
            .WithUrl(Navigation.ToAbsoluteUri(Navigation.BaseUri + "signalrhub"))
            .Build();
-            _hubConnection.On("ChangeStatusRequestSuport", async () =>
+            _hubConnection.On("LoadRequestSuport", async () =>
             {
                 await LoadData();
                 await Search();

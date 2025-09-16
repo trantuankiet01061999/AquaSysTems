@@ -35,7 +35,7 @@ namespace AquaSolution.Client.Pages.ManageMedicalRooms.MyRequestClinics
             _hubConnection = new HubConnectionBuilder()
              .WithUrl(NavigationManager.ToAbsoluteUri(NavigationManager.BaseUri + "signalrhub"))
             .Build();
-            _hubConnection.On("ChangeStatusRequestClinic", async () =>
+            _hubConnection.On("LoadRequestClinic", async () =>
             {
                 await LoadData();
                 StateHasChanged();

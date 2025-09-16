@@ -1,17 +1,14 @@
 ﻿
 using AntDesign;
 using AquaSolution.Client.Common;
+using AquaSolution.Client.Common.SendEmailHelper;
 using AquaSolution.Shared.Enum;
 using AquaSolution.Shared.ITSuport.Attachments;
 using AquaSolution.Shared.ITSuport.RequestSuport;
 using AquaSolution.Shared.ITSuport.RequestSuportCategory;
-using AquaSolution.Shared.ManageMedicalRooms.Products;
-using AquaSolution.Shared.ManageMedicalRooms.WarehouseImports;
 using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
-using System.Net;
 using System.Net.Http.Json;
-using System.Text;
 
 namespace AquaSolution.Client.Components.ITSuport.RequestITSuport
 {
@@ -181,7 +178,7 @@ namespace AquaSolution.Client.Components.ITSuport.RequestITSuport
                     dataSendEmail.CreatedDate = DateTime.Now;
                     break;
             }
-            await SendEmail.SendEmailStatusRequestAsync(dataSendEmail);
+            await SendEmailRequestSuport.SendEmailStatusRequestAsync(dataSendEmail);
         }
         private void Close()
         {

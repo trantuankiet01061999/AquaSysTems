@@ -4,10 +4,10 @@ using AquaSolution.Shared.ITSuport.RequestSuport;
 using System.Net.Http.Json;
 using System.Text;
 
-namespace AquaSolution.Client.Common
+namespace AquaSolution.Client.Common.SendEmailHelper
 {
 
-    public static class SendEmail
+    public static class SendEmailRequestSuport
     {
         private static async Task HandleEmail(SendEmailDto sendEmailDto)
         {
@@ -17,7 +17,7 @@ namespace AquaSolution.Client.Common
                 Id = sendEmailDto.RequestId,
                 Status = "No Status",
                 To = sendEmailDto.ToAdress,
-                Subject = sendEmailDto.Subject,
+                sendEmailDto.Subject,
                 Body = sendEmailDto.Body.ToString()
             };
 
@@ -88,7 +88,7 @@ namespace AquaSolution.Client.Common
                     bodyEmail.AppendLine("</ul>");
                     break;
             }
-            bodyEmail.AppendLine("<p><a href='http://server14/ITSM/SysRequest/Index'>Xem chi tiết tại đây</a></p>");
+            bodyEmail.AppendLine("<p><a href='http://server14/AquaSolution/request-it-suport'>Xem chi tiết tại đây</a></p>");
             sendEmailDto.Body = bodyEmail;
             return Task.FromResult(sendEmailDto);
         }

@@ -49,7 +49,7 @@ namespace AquaSolution.Server.Controllers.ITSuport.RequestSuportCategories
             var success = await _service.CreatedAsync(dto);
             if (success)
             {
-                await _hubContext.Clients.All.SendAsync("ChangeStatusRequestSuport");
+                await _hubContext.Clients.All.SendAsync("LoadRequestSuport");
                 return Ok(new { message = "Created successfully" });
             }    
 
@@ -63,7 +63,7 @@ namespace AquaSolution.Server.Controllers.ITSuport.RequestSuportCategories
             var success = await _service.UpdateAsync(dto);
             if (success)
             {
-                await _hubContext.Clients.All.SendAsync("ChangeStatusRequestSuport");
+                await _hubContext.Clients.All.SendAsync("LoadRequestSuport");
                 return Ok(new { message = "Updated successfully" });
 
             }
@@ -76,7 +76,10 @@ namespace AquaSolution.Server.Controllers.ITSuport.RequestSuportCategories
         {
             var success = await _service.DeleteAssync(id);
             if (success)
+            {
+                await _hubContext.Clients.All.SendAsync("LoadRequestSuport");
                 return Ok(new { message = "Deleted successfully" });
+            }    
 
             return NotFound("Category not found");
         }
