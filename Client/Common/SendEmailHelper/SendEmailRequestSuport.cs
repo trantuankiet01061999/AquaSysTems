@@ -88,7 +88,7 @@ namespace AquaSolution.Client.Common.SendEmailHelper
                     bodyEmail.AppendLine("</ul>");
                     break;
             }
-            bodyEmail.AppendLine("<p><a href='http://server14/AquaSolution/request-it-suport'>Xem chi tiết tại đây</a></p>");
+            bodyEmail.AppendLine("<p><a href='http://server14/AquaSolution/'>Xem chi tiết tại đây</a></p>");
             sendEmailDto.Body = bodyEmail;
             return Task.FromResult(sendEmailDto);
         }
