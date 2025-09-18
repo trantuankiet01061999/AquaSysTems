@@ -42,6 +42,9 @@ namespace AquaSolution.Data.Connection
         public DbSet<InventoryPeriodDetail> tbl_InventoryPeriodDetail { get; set; }
         public DbSet<MedicineSupplyRequest> tbl_MedicineSupplyRequest { get; set; }
         public DbSet<MedicineSupplyRequestDetail> tbl_MedicineSupplyRequestDetail { get; set; }
+        public DbSet<ReportInventoryDetail> tbl_ReportInventoryDetail { get; set; }
+        public DbSet<ReportInventory> tbl_ReportInventory { get; set; }
+
 
         #endregion
         #region IT Suport
@@ -83,6 +86,8 @@ namespace AquaSolution.Data.Connection
             modelBuilder.ApplyConfiguration(new InventoryPeriodConfiguration());
             modelBuilder.ApplyConfiguration(new MedicineSupplyRequestConfiguration());
             modelBuilder.ApplyConfiguration(new MedicineSupplyRequestDetailConfiguration());
+            modelBuilder.ApplyConfiguration(new ReportInventoryConfiguration());
+            modelBuilder.ApplyConfiguration(new ReportInventoryDetailConfiguration());
 
             #endregion
             #region IT Suport

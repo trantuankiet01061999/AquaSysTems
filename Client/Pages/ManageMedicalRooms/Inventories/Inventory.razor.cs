@@ -1,4 +1,5 @@
-﻿using AquaSolution.Client.Components.ManageMedicalRooms.WarehouseExports;
+﻿using AquaSolution.Client.Components.ManageMedicalRooms.ReportInventory;
+using AquaSolution.Client.Components.ManageMedicalRooms.WarehouseExports;
 using AquaSolution.Client.Components.ManageMedicalRooms.WarehouseImports;
 using AquaSolution.Shared.Departments;
 using AquaSolution.Shared.ManageMedicalRooms.Inventories;
@@ -14,9 +15,8 @@ namespace AquaSolution.Client.Pages.ManageMedicalRooms.Inventories
         #region Declaration
         [Inject] private HttpClient Http { get; set; }
         private List<InventoryDto> _listInventory = new List<InventoryDto>();
-        private WarehouseImportModal _warehouseImportModal { get; set; } = new();
-        private WarehouseExportModal _warehouseExportModal { get; set; } = new();
 
+        private ReportInventoryModal reportInventoryModal;
         #endregion
         #region Innit
         protected override async Task OnInitializedAsync()
@@ -31,13 +31,9 @@ namespace AquaSolution.Client.Pages.ManageMedicalRooms.Inventories
         }
         #endregion
         #region Action
-        private async Task ImportWarehouse()
+        private async Task ExportReportMonth()
         {
-            await _warehouseImportModal.ShowModalAsync(new LoadWarehouseImportDto(), false);
-        }
-        private async Task ExportWarehouse()
-        {
-            await _warehouseExportModal.ShowModalAsync(new LoadWarehouseExportDto(), false);
+            await reportInventoryModal.ShowModal();
         }
         #endregion
     }

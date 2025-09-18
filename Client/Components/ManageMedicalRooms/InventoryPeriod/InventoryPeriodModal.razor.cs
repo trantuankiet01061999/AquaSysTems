@@ -1,8 +1,10 @@
 ﻿using AntDesign;
 using AquaSolution.Client.Common;
+using AquaSolution.Shared.CommonDto;
 using AquaSolution.Shared.ManageMedicalRooms.Inventories;
 using AquaSolution.Shared.ManageMedicalRooms.InventoryPeriod;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Json;
 
 namespace AquaSolution.Client.Components.ManageMedicalRooms.InventoryPeriod
@@ -115,8 +117,24 @@ namespace AquaSolution.Client.Components.ManageMedicalRooms.InventoryPeriod
             }
             else
             {
-                var errorMessage = await respone.Content.ReadAsStringAsync();
-                await Message.Error(errorMessage);
+                var problemDetails = await respone.Content.ReadFromJsonAsync<ApiErrorDetails>();
+                if (problemDetails?.Errors != null)
+                {
+                    // Gộp tất cả message lỗi thành một chuỗi
+                    var errors = problemDetails.Errors
+                        .SelectMany(kvp => kvp.Value) // lấy tất cả các mảng string
+                        .ToList();
+
+                    var errorMessage = string.Join("\n", errors);
+
+                    await Message.Error(errorMessage);
+                }
+                else
+                {
+                    await Message.Error("An unexpected error occurred.");
+                }
+                //var errorMessage = await respone.Content.ReadAsStringAsync();
+                //await Message.Error(errorMessage);
             }
             IsStart = true;
             await InvokeAsync(StateHasChanged);
