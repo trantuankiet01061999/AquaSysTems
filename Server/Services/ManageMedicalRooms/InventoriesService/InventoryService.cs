@@ -1,84 +1,22 @@
-﻿using AntDesign;
-using AquaSolution.Data.Data.Entities;
+﻿using AquaSolution.Data.Data.Entities;
 using AquaSolution.Data.Repositories;
 using AquaSolution.Server.Services.ManageMedicalRooms.InventoriesService;
 using AquaSolution.Shared.Enum;
 using AquaSolution.Shared.ManageMedicalRooms.Inventories;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Drawing.Printing;
 
 public class InventoryService : IInventoryService
 {
     private readonly IRepository<Product> _productRepo;
+ 
     private readonly IRepository<Inventories> _inventoryRepo;
-    private readonly IRepository<WarehouseExport> _warehouseExportRepo;
-    private readonly IRepository<WarehouseExportDetail> _warehouseExporDetailRepo;
-    private readonly IRepository<WarehouseImport> _warehouseImportRepo;
-    private readonly IRepository<WarehouseImportDetail> _warehouseImportDetailRepo;
-    private readonly IRepository<Prescription> _prescriptionRepo;
-    private readonly IRepository<PrescriptionDetail> _prescriptionDetailRepo;
-
-    private readonly IRepository<ReportInventoryDetail> _reportInventoryDetailRepo;
-    private readonly IRepository<ReportInventory> _reportInventoryRepo;
-
-    public InventoryService(IRepository<Product> productRepo,
-        IRepository<Inventories> inventoryRepo,
-        IRepository<WarehouseExport> warehouseExportRepo,
-        IRepository<WarehouseExportDetail> warehouseExporDetailRepo,
-        IRepository<WarehouseImport> warehouseImportRepo,
-        IRepository<WarehouseImportDetail> warehouseImportDetailRepo,
-        IRepository<Prescription> prescriptionRepo,
-        IRepository<PrescriptionDetail> prescriptionDetailRepo,
-        IRepository<ReportInventoryDetail> reportInventoryDetailRepo,
-        IRepository<ReportInventory> reportInventoryRepo
-
-        )
+ 
+    public InventoryService(IRepository<Product> productRepo , 
+        IRepository<Inventories> inventoryRepo)
     {
         _inventoryRepo = inventoryRepo;
         _productRepo = productRepo;
-        _warehouseImportRepo = warehouseImportRepo;
-        _warehouseImportDetailRepo = warehouseImportDetailRepo;
-        _warehouseExportRepo = warehouseExportRepo;
-        _warehouseExporDetailRepo = warehouseExporDetailRepo;
-        _prescriptionRepo = prescriptionRepo;
-        _prescriptionDetailRepo = prescriptionDetailRepo;
-        _reportInventoryRepo = reportInventoryRepo;
-        _reportInventoryDetailRepo = reportInventoryDetailRepo;
-    }
-
-    public async Task<bool> InsertReportInventoryAsync(CreatedReportInventoryDto createdReportInventoryDto)
-    {
-        int sumContextChange = 0;
-        var reportinventory = new ReportInventory
-        {
-            Id = Guid.NewGuid(),
-            CreatedBy = createdReportInventoryDto.CreatedBy,
-            CreatedDate = DateTime.Now,
-            Month = createdReportInventoryDto.Month,
-            Year =createdReportInventoryDto.Year,
-        };
-        await _reportInventoryRepo.InsertAsync(reportinventory);
-        sumContextChange += await _reportInventoryRepo.SaveChangesAsync();
-        foreach(var detail in createdReportInventoryDto.LoadReportInventoryDetail)
-        {
-            var reportInventoryDetail = new ReportInventoryDetail
-            {
-                Id = Guid.NewGuid(),
-                ProductId = detail.ProductId,
-                ProductName = detail.ProductName,
-                ReportInventoryId = reportinventory.Id,
-                ExpirationDate = detail.ExpirationDate,
-                BeginningInventory = detail.BeginningInventory,
-                NewInbound = detail.NewInbound,
-                ConsumPosition = detail.ConsumPosition,
-                TotalStock = detail.TotalStock,
-                Unit = detail.Unit,
-            };
-            await _reportInventoryDetailRepo.InsertAsync(reportInventoryDetail);
-            sumContextChange+= await _reportInventoryDetailRepo.SaveChangesAsync();
-        }
-        return sumContextChange > 0;
     }
 
     public async Task<List<InventoryDto>> LoadListAsync()
@@ -86,7 +24,7 @@ public class InventoryService : IInventoryService
         try
         {
             var productQuery = await _productRepo.GetQueryableAsync();
-            var inventoryQuery = await _inventoryRepo.GetQueryableAsync();
+            var inventoryQuery =await _inventoryRepo.GetQueryableAsync() ;
             var inventoryList = await (from inventory in inventoryQuery
                                        join product in productQuery
                                            on inventory.ProductId equals product.Id
@@ -95,7 +33,7 @@ public class InventoryService : IInventoryService
             var result = inventoryList
                .GroupBy(x => new
                {
-                   x.product.Id,
+                   x.product.Id, 
                    ExpirationDate = x.inventory.ExpirationDate.HasValue ? x.inventory.ExpirationDate.Value.Date : (DateTime?)null,
                    ManufacturingDate = x.inventory.ManufacturingDate.HasValue ? x.inventory.ManufacturingDate.Value.Date : (DateTime?)null
                })
@@ -127,183 +65,6 @@ public class InventoryService : IInventoryService
         }
 
 
-
-    }
-
-    public async Task<LoadReportInventoryDto> LoadReportInventoryAsync()
-    {
-
-        var reportInventorys= new LoadReportInventoryDto();
-        var inventories = await _inventoryRepo.GetAllAsync();
-        var importDetails = await _warehouseImportDetailRepo.GetAllAsync();
-        var imports = await _warehouseImportRepo.GetAllAsync();
-        var exports = await _warehouseExportRepo.GetAllAsync();
-        var exportDetails = await _warehouseExporDetailRepo.GetAllAsync();
-        var prescriptions = await _prescriptionRepo.GetAllAsync();
-        var prescriptionDetails = await _prescriptionDetailRepo.GetAllAsync();
-        var product = await _productRepo.GetAllAsync();
-
-        var baseInventory = new List<BaseInventory>();
-        var month = DateTime.Now.Month - 1;
-        var year = DateTime.Now.Year;
-
-        if (month == 0)
-        {
-            month = 12;      
-            year -= 1;       
-        }
-        //Đang có báo cáo tồn kho tháng trước
-        var prevMonth = month - 1;
-        var prevYear = year;
-        if (prevMonth == 0)
-        {
-            prevMonth = 12;
-            prevYear -= 1;
-        }
-        var reports = await _reportInventoryRepo.GetAllAsync();
-        var prevReport = reports.FirstOrDefault(r => r.Month == prevMonth && r.Year == prevYear);
-
-        List<ReportInventoryDetail> prevDetails = new();
-        if (prevReport != null)
-        {
-            var details = await _reportInventoryDetailRepo.GetAllAsync();
-            prevDetails = details.Where(d => d.ReportInventoryId == prevReport.Id).ToList();
-        }
-        //------------
-
-        var result = inventories
-          .GroupBy(x => x.ProductId)
-          .Select(g => new BaseInventory
-          {
-              ProductId = g.Key,
-              TotalQuantity = g.Sum(x => x.Quantity),
-              LatestDateManfacture = g.Max(x => x.ManufacturingDate)
-          })
-          .ToList();
-        baseInventory = result.ToList();
-
-        if (baseInventory.Count > 0)
-        {
-            reportInventorys.CreatedDate = DateTime.Now;
-            reportInventorys.Month = month;
-            reportInventorys.Year = year;
-            reportInventorys.CreatedBy = prevReport?.CreatedBy;
-            foreach (var item in baseInventory)
-            {
-
-
-                var reportInventory = new LoadReportInventoryDetailDto();
-
-                reportInventory.ProductId = item.ProductId;
-                reportInventory.ExpirationDate = item.LatestDateManfacture;
-
-              //  reportInventory.BeginningInventory = item.TotalQuantity;
-                reportInventory.ProductName = product.First(x => x.Id == item.ProductId).Name;
-                reportInventory.Unit = product.First(x => x.Id == item.ProductId).Unit;
-                // ===== Gán BeginningInventory từ tháng trước nếu có =====
-
-                var prevDetail = prevDetails.FirstOrDefault(d => d.ProductId == item.ProductId);
-                if (prevDetail != null)
-                {
-                    reportInventory.BeginningInventory = prevDetail.TotalStock;
-                    #region Lấy tổng số lượng mới nhập (NewInbound)
-                    var newInbound = importDetails
-                        .Join(imports,
-                              detail => detail.WarehouseImportId,
-                              import => import.Id,
-                              (detail, import) => new { detail, import })
-                        .Where(x => x.detail.ProductId == item.ProductId
-                                    && x.import.CreatedDate.Year == year
-                                    && x.import.CreatedDate.Month == month)
-                        .Sum(x => x.detail.Quantity);
-                    reportInventory.NewInbound = newInbound;
-                    #endregion
-                    // Lấy tổng thuốc xuất kho trong tháng trước
-                    var consumExport = exportDetails
-                        .Join(exports,
-                              detail => detail.WarehouseExportId,
-                              export => export.Id,
-                              (detail, export) => new { detail, export })
-                        .Where(x => x.detail.ProductId == item.ProductId
-                                    && x.export.CreatedDate.Year == year
-                                    && x.export.CreatedDate.Month == month)
-                        .Sum(x => x.detail.Quantity);
-
-                    // Lấy tổng thuốc đã dùng trong đơn thuốc trong tháng trước
-                    var consumPrescription = prescriptionDetails
-                        .Join(prescriptions,
-                              detail => detail.PrescriptionId,
-                              pres => pres.Id,
-                              (detail, pres) => new { detail, pres })
-                        .Where(x => x.detail.ProductId == item.ProductId
-                                    && x.pres.CreatedDate.Year == year
-                                    && x.pres.CreatedDate.Month == month)
-                        .Sum(x => x.detail.Quantity);
-
-                    // Cộng lại
-                    reportInventory.ConsumPosition = consumExport + consumPrescription;
-                }    
-                   
-
-                else
-                    reportInventory.BeginningInventory = item.TotalQuantity;
-                //=================================================================
-                //#region Lấy tổng số lượng mới nhập (NewInbound)
-                //var newInbound = importDetails
-                //    .Join(imports,
-                //          detail => detail.WarehouseImportId,
-                //          import => import.Id,
-                //          (detail, import) => new { detail, import })
-                //    .Where(x => x.detail.ProductId == item.ProductId
-                //                && x.import.CreatedDate.Year == year
-                //                && x.import.CreatedDate.Month == month)
-                //    .Sum(x => x.detail.Quantity);
-                //reportInventory.NewInbound = newInbound;
-                //#endregion
-                //// Lấy tổng thuốc xuất kho trong tháng trước
-                //var consumExport = exportDetails
-                //    .Join(exports,
-                //          detail => detail.WarehouseExportId,
-                //          export => export.Id,
-                //          (detail, export) => new { detail, export })
-                //    .Where(x => x.detail.ProductId == item.ProductId
-                //                && x.export.CreatedDate.Year == year
-                //                && x.export.CreatedDate.Month == month)
-                //    .Sum(x => x.detail.Quantity);
-
-                //// Lấy tổng thuốc đã dùng trong đơn thuốc trong tháng trước
-                //var consumPrescription = prescriptionDetails
-                //    .Join(prescriptions,
-                //          detail => detail.PrescriptionId,
-                //          pres => pres.Id,
-                //          (detail, pres) => new { detail, pres })
-                //    .Where(x => x.detail.ProductId == item.ProductId
-                //                && x.pres.CreatedDate.Year == year
-                //                && x.pres.CreatedDate.Month == month)
-                //    .Sum(x => x.detail.Quantity);
-
-                //// Cộng lại
-                //reportInventory.ConsumPosition = consumExport + consumPrescription;
-                reportInventory.TotalStock = reportInventory.BeginningInventory
-                            + reportInventory.NewInbound
-                            - reportInventory.ConsumPosition;
-                ////data Symple
-
-
-                //
-                reportInventorys.LoadReportInventoryDetail.Add(reportInventory);
-            }
-        }
-
-
-        return reportInventorys;
-
-    }
-    private class BaseInventory
-    {
-        public Guid ProductId { get; set; }
-        public decimal TotalQuantity { get; set; }
-        public DateTime? LatestDateManfacture { get; set; }
 
     }
 }

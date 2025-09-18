@@ -461,7 +461,6 @@ public class UserService : IUserService
                    join department in await _departmentRepo.GetQueryableAsync()
                    on user.DepartmentId equals department.Id
                    into d from department in d.DefaultIfEmpty()
-                   where user.IsActive == true
                    select new UserContributerDto
                    {
                        Id = user.Id,

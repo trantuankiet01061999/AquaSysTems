@@ -689,75 +689,6 @@ namespace AquaSolution.Data.Migrations
                     b.ToTable("tbl_Products", (string)null);
                 });
 
-            modelBuilder.Entity("AquaSolution.Data.Data.Entities.ReportInventory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Month")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedBy");
-
-                    b.ToTable("tbl_ReportInventory", (string)null);
-                });
-
-            modelBuilder.Entity("AquaSolution.Data.Data.Entities.ReportInventoryDetail", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("BeginningInventory")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ConsumPosition")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("ExpirationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("NewInbound")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ProductName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ReportInventoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("TotalStock")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Unit")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ReportInventoryId");
-
-                    b.ToTable("tbl_ReportInventoryDetail", (string)null);
-                });
-
             modelBuilder.Entity("AquaSolution.Data.Data.Entities.RequestClinic", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1403,30 +1334,6 @@ namespace AquaSolution.Data.Migrations
                     b.HasOne("AquaSolution.Data.Data.Entities.Prescription", null)
                         .WithMany()
                         .HasForeignKey("PrescriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AquaSolution.Data.Data.Entities.ReportInventory", b =>
-                {
-                    b.HasOne("AquaSolution.Data.Data.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AquaSolution.Data.Data.Entities.ReportInventoryDetail", b =>
-                {
-                    b.HasOne("AquaSolution.Data.Data.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AquaSolution.Data.Data.Entities.ReportInventory", null)
-                        .WithMany()
-                        .HasForeignKey("ReportInventoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

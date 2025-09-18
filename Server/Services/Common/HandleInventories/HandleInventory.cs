@@ -59,6 +59,7 @@ namespace AquaSolution.Server.Services.Common.HandleInventories
                 return await _inventoryRepo.SaveChangesAsync() > 0;
             }
         }
+
         public async Task<bool> MinusInventory(HandleInventoryDto handleInventoryDto)
         {
 
@@ -89,19 +90,7 @@ namespace AquaSolution.Server.Services.Common.HandleInventories
                     throw new InvalidOperationException($"{productName} -Insufficient inventory");
                 }
                 existingInventory.Quantity -= handleInventoryDto.Quantity;
-               await _inventoryRepo.UpdateAsync(existingInventory);
-                var deleteInventoryZero = await _inventoryRepo.WhereAsync(x => x.ProductId == handleInventoryDto.ProductId);
-                if (deleteInventoryZero.Count>1) 
-                {
-                    foreach ( var item in deleteInventoryZero )
-                    {
-                        if (item.Quantity == 0)
-                        {
-                            await _inventoryRepo.DeleteAsync(item);
-                        }
-                    }    
-                }
-                return true;
+              return  await _inventoryRepo.UpdateAsync(existingInventory);
             }
             return false;
         }
@@ -139,6 +128,7 @@ namespace AquaSolution.Server.Services.Common.HandleInventories
                 throw;
             }
         }
+
         public async Task<decimal?> GetActualInventory(HandleInventoryDto handleInventoryDto)
         {
             var inventoryQuery = await _inventoryRepo.GetQueryableAsync();
