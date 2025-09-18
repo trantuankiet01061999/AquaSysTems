@@ -46,7 +46,7 @@ namespace AquaSolution.Client.Common.SendEmailHelper
                     bodyEmail.AppendLine($"<li><p><strong>Status: </strong> <span style='color:#1890ff;'>InProgress</span></p></li>");
                     bodyEmail.AppendLine($"<li><strong>Created Time: </strong> {requestSuportDto.CreatedDate:yyyy-MM-dd HH:mm}</li>");
                     bodyEmail.AppendLine($"<li><strong>Start Date: </strong> {requestSuportDto.InProgessDate:yyyy-MM-dd HH:mm}</li>");
-                    bodyEmail.AppendLine($"<li><strong>Due Date: </strong> {requestSuportDto.DueDate:yyyy-MM-dd}</li>");
+                    bodyEmail.AppendLine($"<li><strong>Due Date: </strong> {requestSuportDto.DueDate:yyyy-MM-dd HH:mm}</li>");
                     bodyEmail.AppendLine("</ul>");
                     break;
                 case RequestSuportStatusType.Resolved:
@@ -58,7 +58,7 @@ namespace AquaSolution.Client.Common.SendEmailHelper
                     bodyEmail.AppendLine($"<li> <p><strong>Status: </strong> <span style='color:#52c41a;'>Resolved</span></p> </li>");
                     bodyEmail.AppendLine($"<li><strong>Created Time: </strong> {requestSuportDto.CreatedDate:yyyy-MM-dd HH:mm}</li>");
                     bodyEmail.AppendLine($"<li><strong>Start Date: </strong> {requestSuportDto.InProgessDate:yyyy-MM-dd HH:mm}</li>");
-                    bodyEmail.AppendLine($"<li><strong>Due Date: </strong> {requestSuportDto.DueDate:yyyy-MM-dd}</li>");
+                    bodyEmail.AppendLine($"<li><strong>Due Date: </strong> {requestSuportDto.DueDate:yyyy-MM-dd HH:mm}</li>");
                     bodyEmail.AppendLine($"<li><strong>Resolved Date: </strong> {requestSuportDto.ResolveDate:yyyy-MM-dd HH:mm}</li>");
                     bodyEmail.AppendLine("</ul>");
                     break;

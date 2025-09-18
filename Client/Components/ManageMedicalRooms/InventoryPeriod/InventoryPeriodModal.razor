@@ -23,7 +23,7 @@
 }
 <style>
     .CustomTable {
-        max-height: 50vh;
+        max-height: 43vh;
         overflow: auto;
     }
 
@@ -39,7 +39,7 @@
         }
 
     .ant-modal-body {
-        height: 90vh;
+        height: 85vh;
     }
     .sticky-start-btn {
     top: 21px;
@@ -49,7 +49,7 @@
     border-radius:5px;
 }
 </style>
-<Modal @bind-Visible="IsModalVisible" Style="z-index: 9999;width:1050px;margin-top:-90px" Footer="@footer" Header="@null">
+<Modal @bind-Visible="IsModalVisible" Style="z-index: 9999;width:1050px;margin-top:-95px" Footer="@footer" Header="@null">
     <Form @ref="formRef"
           Model="@ViewInventoryPeriodDto"
           Layout="FormLayout.Vertical"
@@ -58,7 +58,7 @@
           ValidateOnChange="true">
         <!-- === Header: Thông tin nhập kho === -->
         <Card>
-            <Row Gutter="16" Style="height:75px">
+            <Row Gutter="16" Style="height:65px">
                 <Col Span="6">
                 <FormItem Label="Code">
                     <Input Disabled="true" @bind-Value="ViewInventoryPeriodDto.InventoryPeriodDto.Code" />
@@ -66,19 +66,19 @@
                 </Col>
                 <Col Span="9">
                 <FormItem Required="true" Label="Name">
-                    <Input @bind-Value="ViewInventoryPeriodDto.InventoryPeriodDto.Name" />
+                    <Input Disabled="IsView" @bind-Value="ViewInventoryPeriodDto.InventoryPeriodDto.Name" />
                 </FormItem>
                 </Col>
 
                 <Col Span="3">
                 <FormItem Required="true" Label="Year">
-                    <Input @bind-Value="ViewInventoryPeriodDto.InventoryPeriodDto.Year" />
+                    <Input Disabled="IsView" @bind-Value="ViewInventoryPeriodDto.InventoryPeriodDto.Year" />
                 </FormItem>
                 </Col>
 
                 <Col Span="3">
                 <FormItem Required="true" Label="Month">
-                    <Input @bind-Value="ViewInventoryPeriodDto.InventoryPeriodDto.Month" />
+                    <Input Disabled="IsView" @bind-Value="ViewInventoryPeriodDto.InventoryPeriodDto.Month" />
                 </FormItem>
                 </Col>
                 <Col Span="3">
@@ -88,15 +88,15 @@
                 </FormItem>
                 </Col>
             </Row>
-            <Row Gutter="16" Style="height:65px">
+            <Row Gutter="16" Style="height:45px">
                 <Col Span="24">
                 <FormItem Label="Note">
-                    <TextArea @bind-Value="ViewInventoryPeriodDto.InventoryPeriodDto.Note" MaxRows="2" />
+                    <TextArea @bind-Value="ViewInventoryPeriodDto.InventoryPeriodDto.Note" MaxRows="1" />
                 </FormItem>
                 </Col>
 
             </Row>
-            @if (IsView)
+            @if (!IsView)
             {
                 <Button Class="sticky-start-btn" OnClick="@StartAsync">
                     <Icon Type="plus" />Start Inventory

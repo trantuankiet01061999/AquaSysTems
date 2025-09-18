@@ -1,4 +1,5 @@
 ﻿using AquaSolution.Server.Services.ManageMedicalRooms.InventoriesService;
+using AquaSolution.Shared.ManageMedicalRooms.Inventories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AquaSolution.Server.Controllers.ManageMedicalRooms.Inventories
@@ -19,6 +20,24 @@ namespace AquaSolution.Server.Controllers.ManageMedicalRooms.Inventories
             var result = await _inventoryService.LoadListAsync();
             return Ok(result);
         }
+        [HttpGet("get-report")]
+        public async Task<IActionResult> GetReportByMonth()
+        {
+            var result = await _inventoryService.LoadReportInventoryAsync();
+            return Ok(result);
+        }
+        [HttpPost("create-report")]
+        public async Task<IActionResult> CreateReport([FromBody] CreatedReportInventoryDto request)
+        {
+            if (request == null)
+                return BadRequest("Invalid data");
 
+            var success = await _inventoryService.InsertReportInventoryAsync(request);
+
+            if (success)
+                return Ok(new { message = "Report created successfully" });
+
+            return StatusCode(500, "Failed to create report");
+        }
     }
 }

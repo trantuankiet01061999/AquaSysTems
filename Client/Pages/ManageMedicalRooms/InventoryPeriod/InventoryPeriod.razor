@@ -44,6 +44,11 @@
         .ant-table-content {
             min-height: 65vh !important;
         }
+
+        .customTable2{
+            overflow:auto;
+            max-height:43vh;
+        }
     </style>
     <button @onclick="CreatedAsync" class="btn btn-primary custom-button-type">
         <Icon Type="plus" />Created
@@ -52,7 +57,7 @@
 <div style="width:100%;overflow-x:scroll ;max-height:70vh; ">
     <Table TItem="InventoryPeriodDto"
            Size="TableSize.Small"
-           Class="customTable fix-table-header"
+           Class="customTable2 fix-table-header"
            DataSource="inventoryPeriodDtos">
         <ColumnDefinitions Context="row">
             <PropertyColumn Width="200" Title="Code" Property="c => c.Code"></PropertyColumn>

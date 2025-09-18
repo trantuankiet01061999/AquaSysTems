@@ -1,5 +1,6 @@
 ﻿@page "/inventory-management"
 @using AquaSolution.Client.Components.ManageMedicalRooms.Products
+@using AquaSolution.Client.Components.ManageMedicalRooms.ReportInventory
 @using AquaSolution.Client.Components.ManageMedicalRooms.WarehouseExports
 @using AquaSolution.Client.Components.ManageMedicalRooms.WarehouseImports
 @using AquaSolution.Client.Components.Administration.Users
@@ -46,13 +47,10 @@
             min-height: 65vh !important;
         }
     </style>
-    <button @onclick="ImportWarehouse" class="btn btn-primary custom-button-type">
-        <Icon Type="plus" />ImportWarehouse
-    </button>
-    <button @onclick="ExportWarehouse" class="btn btn-primary custom-button-type">
-        <Icon Type="plus" />ExportWarehouse
-    </button>
 
+    <button @onclick="ExportReportMonth" class="btn btn-primary custom-button-type">
+        <Icon Type="plus" />ExportReportMonth
+    </button>
 </div>
 <div style="width:99%;overflow-x:scroll ;max-height:70vh; ">
     <Table TItem="InventoryDto"
@@ -71,5 +69,4 @@
         </ColumnDefinitions>
     </Table>
 </div>
-<WarehouseImportModal OnSaved="LoadDataAsync" @ref="@_warehouseImportModal"></WarehouseImportModal> 
-<WarehouseExportModal OnSaved="LoadDataAsync" @ref="@_warehouseExportModal"></WarehouseExportModal> 
+<ReportInventoryModal @ref="reportInventoryModal"></ReportInventoryModal>
