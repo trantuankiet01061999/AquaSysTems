@@ -77,7 +77,13 @@
            Class="customTable fix-table-header"
            DataSource="_requestSuportFillter">
         <ColumnDefinitions Context="row">
-            <PropertyColumn Width="300" Title="RequestTitle" Property="c => c.RequestTitle"></PropertyColumn>
+            <PropertyColumn Width="300" Title="RequestTitle" Property="c => c.RequestTitle">
+                <Template>
+                    <a href="javascript:void(0);" @onclick="() => ViewAsync(row)">
+                        @row.RequestTitle
+                    </a>
+                </Template>
+            </PropertyColumn>
             <PropertyColumn Width="100" Title="Status" Property="c => c.Status" Filters="_statusFilter">
                 <Tag Color="@GetTagColor.GetTagColorCss(row.Status.ToString())">@row.Status</Tag>
             </PropertyColumn>
