@@ -31,7 +31,7 @@ namespace AquaSolution.Client.Pages.ManageMedicalRooms.Inventories
         private async Task LoadDataAsync()
         {
             _listInventory = await Http.GetFromJsonAsync<List<InventoryDto>>("api/Inventory/get-all");
-            _listInventoryFilter =_listInventory.ToList();
+            _listInventoryFilter =_listInventory;
             await InvokeAsync(StateHasChanged);
         }
         #endregion
