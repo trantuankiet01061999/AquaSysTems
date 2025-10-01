@@ -54,6 +54,15 @@ public class InventoryService : IInventoryService
     public async Task<bool> InsertReportInventoryAsync(CreatedReportInventoryDto createdReportInventoryDto)
     {
         int sumContextChange = 0;
+        var existReport = await _reportInventoryRepo
+      .FirstOrDefaultAsync(x => x.Month == createdReportInventoryDto.Month
+                             && x.Year == createdReportInventoryDto.Year);
+
+        if (existReport != null)
+        {
+            
+            return false;
+        }
         var reportinventory = new ReportInventory
         {
             Id = Guid.NewGuid(),

@@ -48,7 +48,8 @@ namespace AquaSolution.Client.Components.ManageMedicalRooms.ReportInventory
             }
             else
             {
-                await Message.Error("Failed to submit the report.");
+                var errorContent = await response.Content.ReadAsStringAsync();
+                await Message.Error($"Failed to submit the report. {errorContent}");
             }
         }
         private void Close()
