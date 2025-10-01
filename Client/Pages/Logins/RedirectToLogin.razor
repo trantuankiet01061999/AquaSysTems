@@ -9,27 +9,23 @@
 }
  *@
 @inject NavigationManager Nav
-@implements IDisposable
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 
 @code {
-    protected override void OnInitialized()
-    {
-        // Subscribe sự kiện LocationChanged
-        Nav.LocationChanged += OnLocationChanged;
+    private DebugLogger logger;
 
-        // Force chuyển hướng đến login
+    protected override async Task OnInitializedAsync()
+    {
+        logger = new DebugLogger(SessionStorage);
+
+        await logger.LogAsync("Navigating to login page");
+
         var baseUri = Nav.BaseUri.TrimEnd('/');
-        Console.WriteLine($"[DEBUG] BaseUri = {baseUri}");
-        Nav.NavigateTo($"{baseUri}/login", true);
-    }
+        var targetUrl = $"{baseUri}/login";
 
-    private void OnLocationChanged(object sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
-    {
-        Console.WriteLine($"[DEBUG] Navigation: {e.Location}");
-    }
+        await logger.LogAsync($"Target URL: {targetUrl}");
 
-    public void Dispose()
-    {
-        Nav.LocationChanged -= OnLocationChanged;
+        Nav.NavigateTo(targetUrl, true);
     }
 }
+
