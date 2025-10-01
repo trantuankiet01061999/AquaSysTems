@@ -40,10 +40,13 @@ namespace AquaSolution.Server.Controllers.ManageMedicalRooms.Inventories
 
             var success = await _inventoryService.InsertReportInventoryAsync(request);
 
-            if (success)
-                return Ok(new { message = "Report created successfully" });
+            if (!success)
+            {
+                // Nếu đã tồn tại báo cáo tháng/năm, trả về lỗi
+                return BadRequest($"Report for month {request.Month} and year {request.Year} already exists.");
+            }
 
-            return StatusCode(500, "Failed to create report");
+            return Ok(new { message = "Report created successfully" });
         }
         [HttpGet("get-report/{month:int}/{year:int}")]
         public async Task<IActionResult> GetReportByMonthYear(int month, int year)
