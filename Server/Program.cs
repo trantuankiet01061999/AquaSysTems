@@ -68,9 +68,10 @@ else
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/AquaSolution/swagger/v1/swagger.json", "AquaSolution API v1");
-    c.RoutePrefix = "AquaSolution/swagger"; // đường dẫn http://server14/AquaSolution/swagger
+    c.SwaggerEndpoint("v1/swagger.json", "AquaSolution API v1");
+    c.RoutePrefix = "swagger";
 });
+
 app.UseAuthentication(); 
 app.UseAuthorization();  
 app.UseHttpsRedirection();
