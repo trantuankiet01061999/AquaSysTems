@@ -1,9 +1,35 @@
-﻿@inject NavigationManager Nav
+﻿@* @inject NavigationManager Nav
 
 @code {
     protected override void OnInitialized()
     {
         var baseUri = Nav.BaseUri.TrimEnd('/');
         Nav.NavigateTo($"{baseUri}/login", true);
+    }
+}
+ *@
+@inject NavigationManager Nav
+@implements IDisposable
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Subscribe sự kiện LocationChanged
+        Nav.LocationChanged += OnLocationChanged;
+
+        // Force chuyển hướng đến login
+        var baseUri = Nav.BaseUri.TrimEnd('/');
+        Console.WriteLine($"[DEBUG] BaseUri = {baseUri}");
+        Nav.NavigateTo($"{baseUri}/login", true);
+    }
+
+    private void OnLocationChanged(object sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        Console.WriteLine($"[DEBUG] Navigation: {e.Location}");
+    }
+
+    public void Dispose()
+    {
+        Nav.LocationChanged -= OnLocationChanged;
     }
 }
