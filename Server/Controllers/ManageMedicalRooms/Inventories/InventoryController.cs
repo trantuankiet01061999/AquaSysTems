@@ -21,10 +21,10 @@ namespace AquaSolution.Server.Controllers.ManageMedicalRooms.Inventories
             return Ok(result);
         }
         [HttpGet("get-all-list")]
-        public async Task<IActionResult> GetList()
+        public async Task<List<InventoryDto>> GetList()
         {
             var result = await _inventoryService.LoadListAsync();
-            return Ok(result);
+            return result;
         }
         [HttpGet("get-report")]
         public async Task<IActionResult> GetReportByMonth()
