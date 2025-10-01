@@ -3,8 +3,10 @@
 @code {
     protected override void OnInitialized()
     {
-        var baseUri = Nav.BaseUri.TrimEnd('/');
-        Nav.NavigateTo($"{baseUri}/login", true);
+        // var baseUri = Nav.BaseUri.TrimEnd('/');
+        // Nav.NavigateTo($"{baseUri}/login", true);
+        Nav.NavigateTo("/AquaSolution/login", true); // dùng path tuyệt đối có /AquaSolution
+
     }
 }
 
