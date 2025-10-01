@@ -138,14 +138,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 //--------------------------------------------------------------------
 var app = builder.Build();
-app.UsePathBase("/AquaSolution");
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AquaDbContext>();
-    db.Database.Migrate();
-    //DbSeeder.SeedData(db);
-}
-// Configure the HTTP request pipeline.
+
+app.UsePathBase("/AquaSolution"); // giữ nguyên path base
+
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
@@ -155,17 +150,18 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseHttpsRedirection();
 
-app.UseBlazorFrameworkFiles();
+app.UseHttpsRedirection();        
+
 app.UseStaticFiles();
+app.UseBlazorFrameworkFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();
@@ -173,3 +169,4 @@ app.MapHub<SignalrHub>("/signalrhub");
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
