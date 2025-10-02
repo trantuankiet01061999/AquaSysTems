@@ -161,7 +161,7 @@ else
 app.UseHttpsRedirection();        
 
 app.UseStaticFiles();
-app.UseBlazorFrameworkFiles();
+app.UseBlazorFrameworkFiles("/AquaSolution");
 
 app.UseRouting();
 
