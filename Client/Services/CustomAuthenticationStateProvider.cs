@@ -15,15 +15,59 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         _navigation = navigation;
     }
 
+    //public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+    //{
+    //    var token = await _sessionStorage.GetItemAsync<string>("authToken");
+
+    //    if (string.IsNullOrWhiteSpace(token) || token.Count(c => c == '.') != 2)
+    //    {
+    //        // Không có token => quay về trang login
+    //      //  _navigation.NavigateTo("/login", forceLoad: false);
+    //        _navigation.NavigateTo($"{_navigation.BaseUri}login", forceLoad: false);
+
+    //        return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+    //    }
+
+    //    try
+    //    {
+    //        var handler = new JwtSecurityTokenHandler();
+    //        var jwt = handler.ReadJwtToken(token);
+
+    //        // Nếu token hết hạn thì cũng logout
+    //        if (jwt.ValidTo < DateTime.UtcNow)
+    //        {
+    //            await _sessionStorage.RemoveItemAsync("authToken");
+    //          //  _navigation.NavigateTo("/login", forceLoad: true);
+    //            _navigation.NavigateTo($"{_navigation.BaseUri}login", forceLoad: false);
+    //            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+    //        }
+
+    //        var identity = new ClaimsIdentity(jwt.Claims, "jwt");
+    //        var user = new ClaimsPrincipal(identity);
+
+    //        return new AuthenticationState(user);
+    //    }
+    //    catch
+    //    {
+    //        // Token lỗi => quay về login
+    //      //  _navigation.NavigateTo("/login", forceLoad: true);
+    //        _navigation.NavigateTo($"{_navigation.BaseUri}login", forceLoad: false);
+    //        return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+    //    }
+    //}
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         var token = await _sessionStorage.GetItemAsync<string>("authToken");
+        var currentUri = _navigation.Uri;
+
+        bool isLoginPage = currentUri.EndsWith("/login", StringComparison.OrdinalIgnoreCase);
 
         if (string.IsNullOrWhiteSpace(token) || token.Count(c => c == '.') != 2)
         {
-            // Không có token => quay về trang login
-            _navigation.NavigateTo("/login", forceLoad: false);
-
+            if (!isLoginPage)
+            {
+                _navigation.NavigateTo($"{_navigation.BaseUri}login", forceLoad: false);
+            }
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
 
@@ -32,11 +76,13 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
             var handler = new JwtSecurityTokenHandler();
             var jwt = handler.ReadJwtToken(token);
 
-            // Nếu token hết hạn thì cũng logout
             if (jwt.ValidTo < DateTime.UtcNow)
             {
                 await _sessionStorage.RemoveItemAsync("authToken");
-                _navigation.NavigateTo("/login", forceLoad: true);
+                if (!isLoginPage)
+                {
+                    _navigation.NavigateTo($"{_navigation.BaseUri}login", forceLoad: false);
+                }
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
 
@@ -47,8 +93,10 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         }
         catch
         {
-            // Token lỗi => quay về login
-            _navigation.NavigateTo("/login", forceLoad: true);
+            if (!isLoginPage)
+            {
+                _navigation.NavigateTo($"{_navigation.BaseUri}login", forceLoad: false);
+            }
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
     }
