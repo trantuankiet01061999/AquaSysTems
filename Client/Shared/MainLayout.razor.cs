@@ -195,7 +195,8 @@ namespace AquaSolution.Client.Shared
         {
             await _sessionStorage.RemoveItemAsync("authToken");
             await Http.PostAsync("api/auth/logout", null);
-            NavigationManager.NavigateTo("/login"); // không reload toàn trang
+            //NavigationManager.NavigateTo("/login"); // không reload toàn trang
+            NavigationManager.NavigateTo($"{NavigationManager.BaseUri}login");
         }
 
         private void Home()
