@@ -138,26 +138,23 @@ namespace AquaSolution.Server.Services.ManageMedicalRooms.WarehouseExportService
                     var handleInventorydto = new HandleInventoryDto
                     {
                         ProductId = item.ProductId,
-                        ExpirationDate = item.DateManufacture,
+                        ExpirationDate = item.ExpiryDate,
                         Quantity = item.Quantity,
-                        ManufacturingDate = item.ExpiryDate,
+                        ManufacturingDate = item.DateManufacture,
                     };
                     var oldInventory =await _handleInventory.GetActualInventory(handleInventorydto);
                     await _handleInventory.MinusInventory(handleInventorydto);
                     var oldInventoryFormatted = oldInventory?.ToString("0") ?? "0";
-                    history.AppendLine($" - đã cập nhật tồn kho productName {item.ProductName} từ {oldInventoryFormatted} trừ đi {item.Quantity} - vào lúc {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                    history.AppendLine($" - đã cập nhật tồn kho productName {item.ProductName} từ {oldInventoryFormatted} trừ đi {item.Quantity} - vào lúc {DateTime.Now:yyyy-MM-dd HH:mm:ss}- Type : {createdWarehouseExportDto.WarehouseExportDto.WarehouseExportType}");
                 }
 
-                if (createdWarehouseExportDto.WarehouseExportDto.WarehouseExportType ==
-                           WarehouseExportType.InventoryAdjustment)
+        
+                var sysTemHistory = new SysTemHistory
                 {
-                    var sysTemHistory = new SysTemHistory
-                    {
-                        Id = Guid.NewGuid(),
-                        HistoryFlow = history.ToString()
-                    };
-                    await _sysTemHistory.InsertAsync(sysTemHistory);
-                }
+                    Id = Guid.NewGuid(),
+                    HistoryFlow = history.ToString()
+                };
+                await _sysTemHistory.InsertAsync(sysTemHistory);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
                 return true;
