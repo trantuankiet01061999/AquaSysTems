@@ -1,5 +1,6 @@
 ﻿using AntDesign;
 using AntDesign.Select.Internal;
+using AquaSolution.Client.Common.SendEmailHelper;
 using AquaSolution.Shared.Administration.UserManagements;
 using AquaSolution.Shared.Enum;
 using AquaSolution.Shared.ManageMedicalRooms.RequestClinics;
@@ -179,9 +180,11 @@ namespace AquaSolution.Client.Components.ManageMedicalRooms.RequestClinics
             var response = await httpClient.PostAsJsonAsync("api/myrequestclinic/create-request", HandleMyRequestClinic);
             if (response.IsSuccessStatusCode)
             {
+                var manager = Listusers.FirstOrDefault(x=>x.Id == HandleMyRequestClinic.ManagerId);
+                await SendEmailRequestClinic.SendEmailRequestAsync(manager.Email);
                 await Message.Success("Success!");
                 IsVisible = false;
-                await OnSaved.InvokeAsync();
+                await OnSaved.InvokeAsync(); 
             }
             else
             {

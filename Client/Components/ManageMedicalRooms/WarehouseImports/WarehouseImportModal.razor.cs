@@ -37,6 +37,10 @@ namespace AquaSolution.Client.Components.ManageMedicalRooms.WarehouseImports
             CurrenUser = await CurrenUserClass.LoadCurrenUser();
             await InvokeAsync(StateHasChanged);
         }
+        private string GetPurposeTypeLabel(WarehouseImportType type)
+        {
+            return EnumExtensions.GetDisplayName(type);
+        }
         private async Task LoadProduct()
         {
             _products = await Http.GetFromJsonAsync<List<ProductDto>>("api/product/get-all-by-import");

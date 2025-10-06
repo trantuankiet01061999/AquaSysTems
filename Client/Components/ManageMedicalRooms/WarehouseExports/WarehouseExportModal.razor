@@ -71,7 +71,7 @@
                             DataSource="@ListWarehouseExportType"
                             @bind-Value="@WarehouseExportTypeValue"
                             ItemValue="c => c"
-                            ItemLabel="c => c.ToString()">
+                            ItemLabel="c =>GetPurposeTypeLabel(c)">
                     </Select>
                 </FormItem>
                 </Col>

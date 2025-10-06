@@ -20,6 +20,7 @@ namespace AquaSolution.Shared.Enum
         BD,
         OPERATION,
         PRODUCTION,
-        RD
+        RD,
+        HR
     }
 }

@@ -6,8 +6,10 @@ using AquaSolution.Shared.ManageMedicalRooms.WarehouseExports;
 using AquaSolution.Shared.ManageMedicalRooms.WarehouseImports;
 using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http.Json;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 
@@ -110,6 +112,10 @@ namespace AquaSolution.Client.Components.ManageMedicalRooms.WarehouseExports
             {
                 WarehouseExportTypeValue = ListWarehouseExportType.First();
             }
+        }
+        private string GetPurposeTypeLabel(WarehouseExportType type)
+        {
+            return EnumExtensions.GetDisplayName(type);
         }
         private WarehouseExportType _warehouseImportTypeValue;
         private WarehouseExportType WarehouseExportTypeValue

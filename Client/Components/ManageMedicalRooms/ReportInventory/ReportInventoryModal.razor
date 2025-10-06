@@ -60,16 +60,16 @@
                 }
         </style>
         <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:-15px;">
-            <h3 style="margin-bottom:5px;color:red">Medication Usage Report</h3>
-            <h5 style="color:red">@($"Month - {loadReportInventory.Month.ToString("D2")} - {loadReportInventory.Year}")</h5>
+            <h3 style="margin-bottom:5px;color:red">BÁO CÁO SỬ DỤNG THUỐC</h3>
+            <h5 style="color:red">@($"Tháng - {loadReportInventory.Month.ToString("D2")} - {loadReportInventory.Year}")</h5>
 
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; width: 98%;">
             @{
                 <div style="display:flex; flex-direction:column; color:#123d6b; font-weight:700;">
-                    <span>Created By: @(CurrenUser.FullName)</span>
-                    <span>Created Date: @(loadReportInventory != null ? loadReportInventory.CreatedDate?.ToString("dd/MM/yyyy") : "")</span>
+                    <span>Người lập: @(CurrenUser.FullName)</span>
+                    <span>Ngày lập: @(loadReportInventory != null ? loadReportInventory.CreatedDate?.ToString("dd/MM/yyyy") : "")</span>
                 </div>
             }
 
@@ -87,21 +87,21 @@
            DataSource="loadReportInventory.LoadReportInventoryDetail">
         <ColumnDefinitions Context="row">
             <!-- Text: căn trái -->
-            <PropertyColumn Width="250" Title="Product" Property="c => c.ProductName" Align="ColumnAlign.Left">
+            <PropertyColumn Width="250" Title="TÊN THUỐC" Property="c => c.ProductName" Align="ColumnAlign.Left">
                 <Template>
                     <span style="color:#123d6b; font-weight:700;">
                         @row.ProductName
                     </span>
                 </Template>
             </PropertyColumn>
-            <PropertyColumn Width="50" Title="Unit" Property="c => c.Unit" Align="ColumnAlign.Left">
+            <PropertyColumn Width="50" Title="ĐVT" Property="c => c.Unit" Align="ColumnAlign.Left">
                 <Template>
                     <span style="color:#123d6b; font-weight:700;">
                         @row.Unit
                     </span>
                 </Template>
             </PropertyColumn>
-            <PropertyColumn Width="110" Title="ExpirationDate" Property="c => c.ExpirationDate" Format="dd/MM/yyyy" Align="ColumnAlign.Left">
+            <PropertyColumn Width="110" Title="HSD" Property="c => c.ExpirationDate" Format="dd/MM/yyyy" Align="ColumnAlign.Left">
                 <Template>
                     <span style="color:red; font-weight:600;">
                         @row.ExpirationDate?.ToString("dd/MM/yyyy")
@@ -110,28 +110,28 @@
             </PropertyColumn>
 
             <!-- Number: căn phải -->
-            <PropertyColumn Width="160" Title="BeginningInventory" Property="c => c.BeginningInventory" Format="N2" Align="ColumnAlign.Right">
+            <PropertyColumn Width="160" Title="TỒN CŨ" Property="c => c.BeginningInventory" Format="N2" Align="ColumnAlign.Right">
                 <Template>
                     <span style="color:red; font-weight:600;">
                         @row.BeginningInventory.ToString("N2")
                     </span>
                 </Template>
             </PropertyColumn>
-            <PropertyColumn Width="160" Title="NewInbound" Property="c => c.NewInbound" Format="N2" Align="ColumnAlign.Right">
+            <PropertyColumn Width="160" Title="NHẬP MỚI" Property="c => c.NewInbound" Format="N2" Align="ColumnAlign.Right">
                 <Template>
                     <span style="color:red; font-weight:600;">
                         @row.NewInbound.ToString("N2")
                     </span>
                 </Template>
             </PropertyColumn>
-            <PropertyColumn Width="160" Title="ConsumPosition" Property="c => c.ConsumPosition" Format="N2" Align="ColumnAlign.Right">
+            <PropertyColumn Width="160" Title="SỬ DỤNG" Property="c => c.ConsumPosition" Format="N2" Align="ColumnAlign.Right">
                 <Template>
                     <span style="color:red; font-weight:600;">
                         @row.ConsumPosition.ToString("N2")
                     </span>
                 </Template>
             </PropertyColumn>
-            <PropertyColumn Width="100" Title="TotalStock" Property="c => c.TotalStock" Format="N2" Align="ColumnAlign.Right">
+            <PropertyColumn Width="100" Title="TỔNG TỒN" Property="c => c.TotalStock" Format="N2" Align="ColumnAlign.Right">
                 <Template>
                     <span style="color:red; font-weight:600;">
                         @row.TotalStock.ToString("N2")
