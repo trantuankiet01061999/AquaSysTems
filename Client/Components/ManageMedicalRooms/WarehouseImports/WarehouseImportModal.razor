@@ -74,7 +74,7 @@
                             DataSource="@ListWarehouseImportType"
                             @bind-Value="@WarehouseImportTypeValue"
                             ItemValue="c => c"
-                            ItemLabel="c => c.ToString()">
+                            ItemLabel="c =>GetPurposeTypeLabel(c)">
                     </Select>
                 </FormItem>
                 </Col>
@@ -124,7 +124,7 @@
 
                         <Column Width="110" TData="WarehouseImportDetailDto" Title="Unit">
                             <Template>
-                                <Input Disabled="IsView" @bind-Value="row2.Unit" />
+                                <Input Disabled="true" @bind-Value="row2.Unit" />
                             </Template>
                         </Column>
                         <Column Width="100" TData="WarehouseImportDetailDto" Title="Quantity">
