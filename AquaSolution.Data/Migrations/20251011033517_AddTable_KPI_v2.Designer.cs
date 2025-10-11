@@ -4,6 +4,7 @@ using AquaSolution.Data.Connection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AquaSolution.Data.Migrations
 {
     [DbContext(typeof(AquaDbContext))]
-    partial class AquaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251011033517_AddTable_KPI_v2")]
+    partial class AddTable_KPI_v2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -370,11 +373,6 @@ namespace AquaSolution.Data.Migrations
                     b.Property<Guid>("RequesterId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("StatusType")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ApprovedBy");
@@ -438,66 +436,6 @@ namespace AquaSolution.Data.Migrations
                     b.HasIndex("UpdatedBy");
 
                     b.ToTable("tbl_KPIActuals", (string)null);
-                });
-
-            modelBuilder.Entity("AquaSolution.Data.Data.Entities.KPIDetailScore", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Achievement")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Actual")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Bottom")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("HalfYear")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal>("Max")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("Month")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Quarter")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Score")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Target")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("TaskId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TotalScoreId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Weight")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TaskId");
-
-                    b.HasIndex("TotalScoreId");
-
-                    b.ToTable("tbl_KPIDetailScores", (string)null);
                 });
 
             modelBuilder.Entity("AquaSolution.Data.Data.Entities.KPIRequest", b =>
@@ -1811,21 +1749,6 @@ namespace AquaSolution.Data.Migrations
                     b.HasOne("AquaSolution.Data.Data.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UpdatedBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AquaSolution.Data.Data.Entities.KPIDetailScore", b =>
-                {
-                    b.HasOne("AquaSolution.Data.Data.Entities.KPITask", null)
-                        .WithMany()
-                        .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("AquaSolution.Data.Data.Entities.KPITotalScore", null)
-                        .WithMany()
-                        .HasForeignKey("TotalScoreId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
