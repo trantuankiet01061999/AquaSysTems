@@ -52,7 +52,7 @@ namespace AquaSolution.Client.Pages.ToDoList.MedicalRoomRequest
         {
             users = await Http.GetFromJsonAsync<List<UserDto>>("api/user/get-all");
             var data = await Http.GetFromJsonAsync<List<MyRequestClinicDto>>("api/MyRequestClinic/get-reuqest-by-user");
-            if (CurrenUser.Roles.Any(x=>x.Name== "Admin"))
+            if (CurrenUser.Roles.Any(x=>x.Name == "Admin"))
             {
                 MyRequestClinicData = data.ToList();
             }

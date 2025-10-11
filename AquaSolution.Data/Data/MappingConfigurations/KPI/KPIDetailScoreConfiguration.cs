@@ -4,19 +4,20 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AquaSolution.Data.Data.MappingConfigurations.KPI
 {
-    public class UserTaskConfiguration : IEntityTypeConfiguration<UserTask>
+    public class KPIDetailScoreConfiguration : IEntityTypeConfiguration<KPIDetailScore>
     {
-        public void Configure(EntityTypeBuilder<UserTask> builder)
+        public void Configure(EntityTypeBuilder<KPIDetailScore> builder)
         {
-            builder.ToTable("tbl_UserTasks");
+            builder.ToTable("tbl_KPIDetailScores");
             builder.HasKey(e => e.Id);
-            builder.HasOne<User>()
+            builder.HasOne<KPITotalScore>()
              .WithMany()
-             .HasForeignKey(u => u.UserId)
+             .HasForeignKey(u => u.TotalScoreId)
              .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasOne<KPITask>()
              .WithMany()
-             .HasForeignKey(u => u.KPITaskId)
+             .HasForeignKey(u => u.TaskId)
              .OnDelete(DeleteBehavior.Restrict);
         }
     }

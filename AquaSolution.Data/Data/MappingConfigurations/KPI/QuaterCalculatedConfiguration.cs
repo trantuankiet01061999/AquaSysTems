@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AquaSolution.Data.Data.MappingConfigurations
+namespace AquaSolution.Data.Data.MappingConfigurations.KPI
 {
     public class QuaterCalculatedConfiguration : IEntityTypeConfiguration<QuaterCalculated>
     {
