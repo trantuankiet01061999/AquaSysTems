@@ -2,7 +2,6 @@
 using OfficeOpenXml;
 public static class ExcelImportHelper
 {
-    // Đọc Excel từ Stream thay vì IFormFile
     public static async Task<List<T>> ReadFromExcelAsync<T>(Stream excelStream, Func<ExcelWorksheet, int, T> mapFunc)
     {
         try

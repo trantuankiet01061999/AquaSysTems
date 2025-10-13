@@ -1,13 +1,9 @@
 ﻿@page "/position-management"
 @using AquaSolution.Client.Components.Administration.Position
-@using AquaSolution.Client.Components.Administration.Users
 @using AntDesign
-@inject ModalService modal
-@inject NavigationManager Navigation
+@inject ModalService Modal
 @inject IMessageService Message
 @using AquaSolution.Shared.Position
-@using Microsoft.AspNetCore.Components.Authorization
-@inject AuthenticationStateProvider AuthStateProvider
 <PageTitle>Position</PageTitle>
 <div class="mb-3">
     <style>
@@ -52,7 +48,7 @@
     <Table TItem="PositionDto"
            Size="TableSize.Small"
            Class="customTable fix-table-header"
-           DataSource="ListPosition">
+           DataSource="_listPosition">
         <ColumnDefinitions Context="row">
             <PropertyColumn Title="Code" Property="c => c.Code"></PropertyColumn>
             <PropertyColumn Title="Name" Property="c => c.Name"></PropertyColumn>
@@ -82,4 +78,4 @@
         </ColumnDefinitions>
     </Table>
 </div>
-<PositionModal OnSave="LoadDataAsync" @ref="@positionModal"></PositionModal> 
+<PositionModal OnSave="LoadDataAsync" @ref="@_positionModal"></PositionModal> 

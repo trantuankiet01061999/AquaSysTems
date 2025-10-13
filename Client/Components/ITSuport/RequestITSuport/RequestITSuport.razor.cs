@@ -1,5 +1,4 @@
-﻿
-using AntDesign;
+﻿using AntDesign;
 using AquaSolution.Client.Common;
 using AquaSolution.Client.Common.SendEmailHelper;
 using AquaSolution.Shared.Enum;

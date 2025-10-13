@@ -1,8 +1,5 @@
-﻿using AntDesign;
-using AquaSolution.Client.Common;
+﻿using AquaSolution.Client.Common;
 using AquaSolution.Client.Components.Administration.Roles;
-using AquaSolution.Shared.CommonDto;
-using AquaSolution.Shared.Departments;
 using AquaSolution.Shared.Roles;
 using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
@@ -12,9 +9,9 @@ namespace AquaSolution.Client.Pages.Administration
 {
     public partial class RoleManagement
     {
-        List<RoleDto> Roles = new();
-        private PermissionModal permissionModal;
-        [Inject] private HttpClient Http { get; set; }
+        private List<RoleDto>? _roles = new();
+        private PermissionModal? _permissionModal;
+        [Inject] private HttpClient? Http { get; set; }
         protected override async Task OnInitializedAsync()
         {
             await LoadRoles();
@@ -24,7 +21,7 @@ namespace AquaSolution.Client.Pages.Administration
 
             try
             {
-                Roles = await Http.GetFromJsonAsync<List<RoleDto>>("api/roles/get-all");
+                if (Http != null) _roles = await Http.GetFromJsonAsync<List<RoleDto>>("api/roles/get-all");
             }
             catch (Exception ex)
             {
@@ -41,10 +38,10 @@ namespace AquaSolution.Client.Pages.Administration
         {
 
             var message = $"Are you sure you want to delete the department \"{role.Name}\"?";
-            var confirm = await MessageBox.Confirm(modal, message.ToString());
+            var confirm = await MessageBox.Confirm(Modal, message);
             if (confirm)
             {
-                var response = await Http.DeleteAsync($"api/roles/delete-role/{role.Id}");
+                var response = await Http?.DeleteAsync($"api/roles/delete-role/{role.Id}")!;
                 if (response.IsSuccessStatusCode)
                 {
                     await Message.Success("Role deleted successfully.");
@@ -63,24 +60,28 @@ namespace AquaSolution.Client.Pages.Administration
 
        private async Task  ShowPermissionModal(RoleDto role)
         {
-          await  permissionModal.Show(role);
+          await  _permissionModal?.Show(role)!;
         }
 
         #region Modal Add Role
         public bool IsVisible { get; set; }
-        private HandleRoleDto createdRoleDto { get; set; } = new HandleRoleDto();
+        private HandleRoleDto CreatedRoleDto { get; set; } = new HandleRoleDto();
         private async Task Save()
         {
-            var response = await Http.PostAsJsonAsync($"api/roles/create", createdRoleDto);
-            if (response.IsSuccessStatusCode)
+            if (Http != null)
             {
-                await LoadRoles();
-                await Message.Success("Role created successfully.");
+                var response = await Http.PostAsJsonAsync($"api/roles/create", CreatedRoleDto);
+                if (response.IsSuccessStatusCode)
+                {
+                    await LoadRoles();
+                    await Message.Success("Role created successfully.");
+                }
+                else
+                {
+                    await Message.Error("Failed to create role.");
+                }
             }
-            else
-            {
-                await Message.Error("Failed to create role.");
-            }
+
             IsVisible = false;
         }
         private void Close()

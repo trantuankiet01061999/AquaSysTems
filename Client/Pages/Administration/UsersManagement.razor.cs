@@ -6,15 +6,11 @@ using AquaSolution.Shared.CommonDto;
 using AquaSolution.Shared.Departments;
 using AquaSolution.Shared.Enum;
 using AquaSolution.Shared.Factory;
-using AquaSolution.Shared.ITSuport.RequestSuport;
 using AquaSolution.Shared.Position;
 using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.SignalR.Client;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 
 namespace AquaSolution.Client.Pages.Administration
 {
@@ -22,17 +18,14 @@ namespace AquaSolution.Client.Pages.Administration
     {
 
         #region Declaration
-        [Inject] private HttpClient Http { get; set; }
-        private List<UserDto> users = new();
-        private List<UserDto> userFilter = new();
-        private bool isLoading = true;
-        private RoleManagerDialog roleManagerDialog;
-        private UserDto selectedUser;
-        private HasPermission hasPermission = new();
-        private UserModal userModal;
-        private List<CreatedAndUpdateUserDto> CreatedUser = new();
-        private UserDto CurrenUser { get; set; }
-        private UserDetailModal detailModal;
+        [Inject] private HttpClient? Http { get; set; }
+        private List<UserDto>? _users = new();
+        private List<UserDto>? _userFilter = new();
+        private bool _isLoading = true;
+        private RoleManagerDialog? _roleManagerDialog;
+        private UserModal? _userModal;
+        private UserDto? CurrenUser { get; set; }
+        private UserDetailModal? _detailModal;
         private bool Created { get; set; }
         private bool Edit { get; set; }
         private bool Delete { get; set; }
@@ -47,21 +40,19 @@ namespace AquaSolution.Client.Pages.Administration
             await CheckPermission();
             await LoadData();
             await LoadDataFilterAsync();
-            isLoading = false;
+            _isLoading = false;
         }
         private async Task GetPage()
         {
-
             var url = "user-management";
-            PageId = await Http.GetFromJsonAsync<Guid>($"api/Page/GetPageIdByUrl/{url}");
-
+            if (Http != null) PageId = await Http.GetFromJsonAsync<Guid>($"api/Page/GetPageIdByUrl/{url}");
         }
         private async Task LoadData()
         {
             try
             {
-                users = await Http.GetFromJsonAsync<List<UserDto>>("api/user/get-all");
-                userFilter = users;
+                if (Http != null) _users = await Http.GetFromJsonAsync<List<UserDto>>("api/user/get-all");
+                _userFilter = _users;
                 await Search();
             }
             catch (Exception ex)
@@ -71,8 +62,12 @@ namespace AquaSolution.Client.Pages.Administration
         }
         private async Task CheckPermission()
         {
-            var CurrenUserClass = new CurrenUser(Http, AuthStateProvider);
-            CurrenUser = await CurrenUserClass.LoadCurrenUser();
+            if (Http != null)
+            {
+                var currenUserClass = new CurrenUser(Http, AuthStateProvider);
+                CurrenUser = await currenUserClass.LoadCurrenUser();
+            }
+
             EditRole =await permissionService.HasPermissionAsync(PageId, PermissionActionType.EditRole);
             Created = await permissionService.HasPermissionAsync(PageId, PermissionActionType.Add);
             Edit = await permissionService.HasPermissionAsync(PageId, PermissionActionType.Edit);
@@ -82,7 +77,7 @@ namespace AquaSolution.Client.Pages.Administration
         #region Action
         private async Task AddUserDialog()
         {
-            await userModal.ShowModelAsync(false, new CreatedAndUpdateUserDto(), CurrenUser);
+            if (CurrenUser != null) await _userModal?.ShowModelAsync(false, new CreatedAndUpdateUserDto(), CurrenUser)!;
         }
 
         private async Task EditUser(UserDto user)
@@ -102,25 +97,22 @@ namespace AquaSolution.Client.Pages.Administration
                 PositionId = user.PositionId,
                 IsActive = user.IsActive
             };
-            await userModal.ShowModelAsync(true, updateDto, CurrenUser);
+            if (CurrenUser != null) await _userModal?.ShowModelAsync(true, updateDto, CurrenUser)!;
         }
 
         private Task ShowRoleDialog(UserDto user)
         {
-
-            selectedUser = user;
-            roleManagerDialog.Show(user);
+            _roleManagerDialog?.Show(user);
             return Task.CompletedTask;
         }
 
         private async Task DeleteAsync(UserDto user)
         {
-            selectedUser = user;
             var message = $"Are you sure you want to delete the user \" {user.FullName} \" ?";
-            var confirm = await MessageBox.Confirm(modal, message.ToString());
+            var confirm = await MessageBox.Confirm(modal, message);
             if (confirm)
             {
-                var response = await Http.DeleteAsync($"api/user/Delete/{user.Id}");
+                var response = await Http?.DeleteAsync($"api/user/Delete/{user.Id}")!;
                 await LoadData();
                 var content = await response.Content.ReadFromJsonAsync<ApiResponse>();
                 if (response.IsSuccessStatusCode)
@@ -136,7 +128,7 @@ namespace AquaSolution.Client.Pages.Administration
         }
         private async Task DetailUser(UserDto user)
         {
-            await detailModal.ShowModal(user, new CurrentUserInfo(), false);
+            await _detailModal?.ShowModal(user, new CurrentUserInfo(), false)!;
         }
         #endregion
         #region Handle Data
@@ -164,89 +156,102 @@ namespace AquaSolution.Client.Pages.Administration
         {
             FullName = e.Value?.ToString();
         }
-        private async Task Search()
+        private Task Search()
         {
             try
             {
                 var workDayId = StringHelper.NormalizeText(WorkDayId?.Trim());
                 var fullName = StringHelper.NormalizeText(FullName?.Trim());
 
-                var filtered = users
-                    .Where(x =>
-                        (string.IsNullOrWhiteSpace(workDayId) || (!string.IsNullOrEmpty(x.WorkDayId) && StringHelper.NormalizeText(x.WorkDayId).Contains(workDayId))) &&
-                        (string.IsNullOrWhiteSpace(fullName) || (!string.IsNullOrEmpty(x.FullName) && StringHelper.NormalizeText(x.FullName).Contains(fullName)))
-                    )
-                    .ToList();
-
-                if (string.IsNullOrWhiteSpace(workDayId) &&
-                    string.IsNullOrWhiteSpace(fullName))
+                if (_users != null)
                 {
-                    filtered = users;
-                }
+                    var filtered = _users
+                        .Where(x =>
+                            (string.IsNullOrWhiteSpace(workDayId) || (!string.IsNullOrEmpty(x.WorkDayId) && StringHelper.NormalizeText(x.WorkDayId).Contains(workDayId))) &&
+                            (string.IsNullOrWhiteSpace(fullName) || (!string.IsNullOrEmpty(x.FullName) && StringHelper.NormalizeText(x.FullName).Contains(fullName)))
+                        )
+                        .ToList();
 
-                userFilter = filtered;
+                    if (string.IsNullOrWhiteSpace(workDayId) &&
+                        string.IsNullOrWhiteSpace(fullName))
+                    {
+                        filtered = _users;
+                    }
+
+                    _userFilter = filtered;
+                }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Lỗi trong Search(): " + ex.Message);
             }
+
+            return Task.CompletedTask;
         }
         private async Task Reset()
         {
             WorkDayId = null;
             FullName = null;
-            userFilter = users;
-            tableRef?.ReloadData();
+            _userFilter = _users;
+            _tableRef?.ReloadData();
             await InvokeAsync(StateHasChanged);
         }
-        private Table<UserDto> tableRef;
-        private List<DepartmentDto> ListDepartment = new();
-        private List<FactoryDto> ListFactory = new();
-        private List<PositionDto> ListPosition = new();
+        private Table<UserDto>? _tableRef;
+        private List<DepartmentDto> _listDepartment = new();
+        private List<FactoryDto> _listFactory = new();
+        private List<PositionDto> _listPosition = new();
         TableFilter<string>[] _departmentFilter = Array.Empty<TableFilter<string>>();
         TableFilter<string>[] _factoryFilter = Array.Empty<TableFilter<string>>();
         TableFilter<string>[] _positionFilter = Array.Empty<TableFilter<string>>();
 
         private async Task LoadDataFilterAsync()
         {
-            ListDepartment = await Http.GetFromJsonAsync<List<DepartmentDto>>("api/department/get-all") ?? new List<DepartmentDto>();
-            _departmentFilter = ListDepartment
-                .Where(x => !string.IsNullOrWhiteSpace(x.Name)) // loại bỏ null/empty
-                .Select(x => new TableFilter<string>
-                {
-                    Text = x.Name,
-                    Value = x.Name,
-                    Selected = false
-                })
-                .ToArray();
-
-            ListFactory = await Http.GetFromJsonAsync<List<FactoryDto>>("api/factory/get-all") ?? new List<FactoryDto>();
-            _factoryFilter = ListFactory
-                .Where(x => !string.IsNullOrWhiteSpace(x.Name))
-                .Select(x => new TableFilter<string>
-                {
-                    Text = x.Name,
-                    Value = x.Name,
-                    Selected = false
-                })
-                .ToArray();
-
-            ListPosition = await Http.GetFromJsonAsync<List<PositionDto>>("api/position/get-all") ?? new List<PositionDto>();
-            _positionFilter = ListPosition
-                .Where(x => !string.IsNullOrWhiteSpace(x.Name))
-                .Select(x => new TableFilter<string>
-                {
-                    Text = x.Name,
-                    Value = x.Name,
-                    Selected = false
-                })
-                .ToArray();
-            foreach (var user in users)
+            if (Http != null)
             {
-                user.FactoryName ??= string.Empty;
-                user.DepartmentName ??= string.Empty;
-                user.PositionName ??= string.Empty;
+                _listDepartment = await Http.GetFromJsonAsync<List<DepartmentDto>>("api/department/get-all") ??
+                                  new List<DepartmentDto>();
+                _departmentFilter = _listDepartment
+                    .Where(x => !string.IsNullOrWhiteSpace(x.Name)) // loại bỏ null/empty
+                    .Select(x => new TableFilter<string>
+                    {
+                        Text = x.Name,
+                        Value = x.Name,
+                        Selected = false
+                    })
+                    .ToArray();
+
+                _listFactory = await Http.GetFromJsonAsync<List<FactoryDto>>("api/factory/get-all") ??
+                               new List<FactoryDto>();
+                _factoryFilter = _listFactory
+                    .Where(x => !string.IsNullOrWhiteSpace(x.Name))
+                    .Select(x => new TableFilter<string>
+                    {
+                        Text = x.Name,
+                        Value = x.Name,
+                        Selected = false
+                    })
+                    .ToArray();
+
+                _listPosition = await Http.GetFromJsonAsync<List<PositionDto>>("api/position/get-all") ??
+                                new List<PositionDto>();
             }
+
+            _positionFilter = _listPosition
+                .Where(x => !string.IsNullOrWhiteSpace(x.Name))
+                .Select(x => new TableFilter<string>
+                {
+                    Text = x.Name,
+                    Value = x.Name,
+                    Selected = false
+                })
+                .ToArray();
+            if (_users != null)
+                foreach (var user in _users)
+                {
+                    user.FactoryName ??= string.Empty;
+                    user.DepartmentName ??= string.Empty;
+                    user.PositionName ??= string.Empty;
+                }
         }
         #endregion
         #region Import

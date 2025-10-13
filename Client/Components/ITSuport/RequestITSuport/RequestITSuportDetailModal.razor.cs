@@ -1,10 +1,8 @@
-﻿
-using AquaSolution.Shared.ITSuport.Attachments;
+﻿using AquaSolution.Shared.ITSuport.Attachments;
 using AquaSolution.Shared.ITSuport.RequestSuport;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Net.Http.Json;
-using static System.Net.WebRequestMethods;
 
 namespace AquaSolution.Client.Components.ITSuport.RequestITSuport
 {

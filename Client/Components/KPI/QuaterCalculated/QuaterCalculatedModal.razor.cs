@@ -1,15 +1,6 @@
 ﻿using AntDesign;
-using AquaSolution.Client.Common;
-using AquaSolution.Shared.Administration.UserManagements;
-using AquaSolution.Shared.CommonDto;
-using AquaSolution.Shared.Departments;
-using AquaSolution.Shared.Enum;
 using AquaSolution.Shared.Enum.KPIType;
-using AquaSolution.Shared.Factory;
-using AquaSolution.Shared.KPI.Formula;
-using AquaSolution.Shared.KPI.KPITasks;
 using AquaSolution.Shared.KPI.QuaterCalculated;
-using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 

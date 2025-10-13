@@ -10,9 +10,9 @@ namespace AquaSolution.Client.Pages.Administration
     public partial class FactoryManagement
     {
         #region Declaration
-        [Inject] private HttpClient Http { get; set; }
-        private List<FactoryDto> ListFactory = new();
-        private FactoryModal factoryModal = new FactoryModal();
+        [Inject] private HttpClient? Http { get; set; }
+        private List<FactoryDto>? _listFactory = new();
+        private FactoryModal _factoryModal = new FactoryModal();
         #endregion
 
         #region Innit
@@ -23,7 +23,7 @@ namespace AquaSolution.Client.Pages.Administration
         }
         private async Task LoadDataAsync()
         {
-            ListFactory = await Http.GetFromJsonAsync<List<FactoryDto>>("api/factory/get-all");
+            if (Http != null) _listFactory = await Http.GetFromJsonAsync<List<FactoryDto>>("api/factory/get-all");
             await InvokeAsync(StateHasChanged);
         }
         #endregion
@@ -31,19 +31,19 @@ namespace AquaSolution.Client.Pages.Administration
         #region Action
         private async Task CreatedFactory()
         {
-            await factoryModal.Showmodal(new FactoryDto(), false);
+            await _factoryModal.Showmodal(new FactoryDto(), false);
         }
         private async Task EditFactory(FactoryDto factoryDto)
         {
-            await factoryModal.Showmodal(factoryDto, true);
+            await _factoryModal.Showmodal(factoryDto, true);
         }
         private async Task DeleteAsync(FactoryDto factoryDto)
         {
             var message = $"Are you sure you want to delete the factory \" {factoryDto.Name} \"?";
-            var confirm = await MessageBox.Confirm(modal, message.ToString());
+            var confirm = await MessageBox.Confirm(Modal, message);
             if (confirm)
             {
-                var response = await Http.DeleteAsync($"api/factory/delete/{factoryDto.Id}");
+                var response = await Http?.DeleteAsync($"api/factory/delete/{factoryDto.Id}")!;
                 await LoadDataAsync();
                 var content = await response.Content.ReadFromJsonAsync<ApiResponse>();
                 if (response.IsSuccessStatusCode)

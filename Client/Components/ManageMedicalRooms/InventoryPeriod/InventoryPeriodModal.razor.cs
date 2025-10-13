@@ -1,10 +1,8 @@
 ﻿using AntDesign;
-using AquaSolution.Client.Common;
 using AquaSolution.Shared.CommonDto;
 using AquaSolution.Shared.ManageMedicalRooms.Inventories;
 using AquaSolution.Shared.ManageMedicalRooms.InventoryPeriod;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Json;
 
 namespace AquaSolution.Client.Components.ManageMedicalRooms.InventoryPeriod

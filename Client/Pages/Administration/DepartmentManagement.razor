@@ -1,13 +1,9 @@
 ﻿@page "/department-management"
 @using AquaSolution.Client.Components.Administration.Department
-@using AquaSolution.Client.Components.Administration.Users
 @using AntDesign
-@inject ModalService modal
-@inject NavigationManager Navigation
+@inject ModalService Modal
 @inject IMessageService Message
 @using AquaSolution.Shared.Departments
-@using Microsoft.AspNetCore.Components.Authorization
-@inject AuthenticationStateProvider AuthStateProvider
 <PageTitle>Department</PageTitle>
 <div class="mb-3">
     <style>
@@ -44,7 +40,7 @@
         }
 
     </style>
-    <button @onclick="CreatedDeparment" class="btn btn-primary custom-button-type">
+    <button @onclick="CreatedDepartment" class="btn btn-primary custom-button-type">
         <Icon Type="plus" />Created
     </button>
 </div>
@@ -52,7 +48,7 @@
     <Table TItem="DepartmentDto"
            Size="TableSize.Small"
            Class="customTable fix-table-header"
-           DataSource="ListDepartment">
+           DataSource="_listDepartment">
         <ColumnDefinitions Context="row">
             <PropertyColumn Title="Code" Property="c => c.Code"></PropertyColumn>
             <PropertyColumn Title="Name" Property="c => c.Name"></PropertyColumn>
@@ -70,7 +66,7 @@
                         </ChildContent>
                         <ContentTemplate>
                             <div style="display: flex; flex-direction: column; gap: 4px; padding: 8px;">
-                                <Button Type="ButtonType.Text" OnClick="@(async () => await EditDeparment(row))" Style="text-align: left;">
+                                <Button Type="ButtonType.Text" OnClick="@(async () => await EditDepartment(row))" Style="text-align: left;">
                                     <Icon Type="plus" /> Edit
                                 </Button>
                                 <Button Type="ButtonType.Text" OnClick="@(async () => await DeleteAsync(row))" Style="text-align: left;">
@@ -84,4 +80,4 @@
         </ColumnDefinitions>
     </Table>
 </div>
-<DepartmentModal OnSave="LoadDataAsync" @ref="@departmentModal"></DepartmentModal>
+<DepartmentModal OnSave="LoadDataAsync" @ref="@_departmentModal"></DepartmentModal>

@@ -1,7 +1,4 @@
-﻿using AquaSolution.Server.SignalR;
-using Azure.Core;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace AquaSolution.Server.Controllers.Administration.Common
 {
@@ -10,7 +7,6 @@ namespace AquaSolution.Server.Controllers.Administration.Common
     public class UploadController : ControllerBase
     {
         private readonly IWebHostEnvironment _env;
-        private readonly IHubContext<SignalrHub> _hubContext;
         public UploadController(IWebHostEnvironment env)
         {
             _env = env;
