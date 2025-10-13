@@ -10,9 +10,9 @@ namespace AquaSolution.Client.Pages.Administration
     public partial class DepartmentManagement
     {
         #region Declaration
-        [Inject] private HttpClient Http { get; set; }
-        private List<DepartmentDto> ListDepartment = new();
-        private DepartmentModal departmentModal = new DepartmentModal();
+        [Inject] private HttpClient? Http { get; set; }
+        private List<DepartmentDto>? _listDepartment = new();
+        private DepartmentModal _departmentModal = new DepartmentModal();
         #endregion
 
         #region Innit
@@ -23,28 +23,29 @@ namespace AquaSolution.Client.Pages.Administration
         }
         private async Task LoadDataAsync()
         {
-            ListDepartment = await Http.GetFromJsonAsync<List<DepartmentDto>>("api/department/get-all");
+            if (Http != null)
+                _listDepartment = await Http.GetFromJsonAsync<List<DepartmentDto>>("api/department/get-all");
             await InvokeAsync(StateHasChanged);
         }
         #endregion
 
         #region Action
-        private async Task  CreatedDeparment()
+        private async Task  CreatedDepartment()
         {
-            await departmentModal.Showmodal(new DepartmentDto(),false);
+            await _departmentModal.Showmodal(new DepartmentDto(),false);
         }
-        private async Task EditDeparment(DepartmentDto deparmentDto) 
+        private async Task EditDepartment(DepartmentDto departmentDto) 
         {
-            await departmentModal.Showmodal(deparmentDto, true);
+            await _departmentModal.Showmodal(departmentDto, true);
         }
-        private async Task DeleteAsync(DepartmentDto deparmentDto)
+        private async Task DeleteAsync(DepartmentDto departmentDto)
         {
-            var message = $"Are you sure you want to delete the department \"{deparmentDto.Name}\"?";
+            var message = $"Are you sure you want to delete the department \"{departmentDto.Name}\"?";
 
-            var confirm = await MessageBox.Confirm(modal, message.ToString());
+            var confirm = await MessageBox.Confirm(Modal, message);
             if (confirm)
             {
-                var response = await Http.DeleteAsync($"api/department/delete/{deparmentDto.Id}");
+                var response = await Http?.DeleteAsync($"api/department/delete/{departmentDto.Id}")!;
                 await LoadDataAsync();
                 var content = await response.Content.ReadFromJsonAsync<ApiResponse>();
                 if (response.IsSuccessStatusCode)

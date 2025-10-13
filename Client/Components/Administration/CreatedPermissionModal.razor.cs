@@ -3,7 +3,6 @@ using AquaSolution.Shared.CommonDto;
 using AquaSolution.Shared.Enum;
 using AquaSolution.Shared.Permissions;
 using Microsoft.AspNetCore.Components;
-using System.Net.Http;
 using System.Net.Http.Json;
 
 namespace AquaSolution.Client.Components.Administration

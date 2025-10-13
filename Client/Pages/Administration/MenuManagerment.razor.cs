@@ -18,7 +18,7 @@ namespace AquaSolution.Client.Pages.Administration
         }
         private async Task LoadMenu()
         {
-            var menuTree = await httpClient.GetFromJsonAsync<List<MenuDto>>($"api/Menu/GetAllMenu");
+            var menuTree = await HttpClient.GetFromJsonAsync<List<MenuDto>>($"api/Menu/GetAllMenu");
             Menus = menuTree;
         }
         private Task CreatedMenu()

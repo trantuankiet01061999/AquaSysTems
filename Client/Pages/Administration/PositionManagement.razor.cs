@@ -10,9 +10,9 @@ namespace AquaSolution.Client.Pages.Administration
     public partial class PositionManagement
     {
         #region Declaration
-        [Inject] private HttpClient Http { get; set; }
-        private List<PositionDto> ListPosition = new();
-        private PositionModal positionModal = new PositionModal();
+        [Inject] private HttpClient? Http { get; set; }
+        private List<PositionDto>? _listPosition = new();
+        private PositionModal _positionModal = new PositionModal();
         #endregion
 
         #region Innit
@@ -23,7 +23,7 @@ namespace AquaSolution.Client.Pages.Administration
         }
         private async Task LoadDataAsync()
         {
-            ListPosition = await Http.GetFromJsonAsync<List<PositionDto>>("api/position/get-all");
+            if (Http != null) _listPosition = await Http.GetFromJsonAsync<List<PositionDto>>("api/position/get-all");
             await InvokeAsync(StateHasChanged);
         }
         #endregion
@@ -31,19 +31,19 @@ namespace AquaSolution.Client.Pages.Administration
         #region Action
         private async Task CreatedPosition()
         {
-            await positionModal.Showmodal(new PositionDto(), false);
+            await _positionModal.Showmodal(new PositionDto(), false);
         }
         private async Task EditPosition(PositionDto positionDto)
         {
-            await positionModal.Showmodal(positionDto, true);
+            await _positionModal.Showmodal(positionDto, true);
         }
         private async Task DeleteAsync(PositionDto positionDto)
         {
             var message = $"Are you sure you want to delete the position \" {positionDto.Name} \" ?";
-            var confirm = await MessageBox.Confirm(modal, message.ToString());
+            var confirm = await MessageBox.Confirm(Modal, message);
             if (confirm)
             {
-                var response = await Http.DeleteAsync($"api/position/delete/{positionDto.Id}");
+                var response = await Http?.DeleteAsync($"api/position/delete/{positionDto.Id}")!;
                 await LoadDataAsync();
                 var content = await response.Content.ReadFromJsonAsync<ApiResponse>();
                 if (response.IsSuccessStatusCode)

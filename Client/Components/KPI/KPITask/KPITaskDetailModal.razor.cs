@@ -1,5 +1,4 @@
-﻿
-using AquaSolution.Shared.ITSuport.Attachments;
+﻿using AquaSolution.Shared.ITSuport.Attachments;
 using AquaSolution.Shared.KPI.KPITasks;
 using Microsoft.AspNetCore.Components;
 

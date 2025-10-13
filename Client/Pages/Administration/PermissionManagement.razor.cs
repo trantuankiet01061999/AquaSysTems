@@ -1,11 +1,8 @@
-﻿using AntDesign;
-using AquaSolution.Client.Common;
+﻿using AquaSolution.Client.Common;
 using AquaSolution.Client.Components.Administration;
 using AquaSolution.Shared.CommonDto;
 using AquaSolution.Shared.Menus;
-using AquaSolution.Shared.Pages;
 using AquaSolution.Shared.Permissions;
-using System.Net.Http;
 using System.Net.Http.Json;
 
 namespace AquaSolution.Client.Pages.Administration
@@ -13,8 +10,9 @@ namespace AquaSolution.Client.Pages.Administration
     public partial class PermissionManagement
     {
         #region Declaration
-        List<MenuDto>? Menus = new();
-        private CreatedPermissionModal createdPermissionModal;
+
+        private List<MenuDto>? _menus = new();
+        private CreatedPermissionModal? _createdPermissionModal;
         #endregion
         protected override async Task OnInitializedAsync()
         {
@@ -22,21 +20,21 @@ namespace AquaSolution.Client.Pages.Administration
         }
         private async Task LoadData()
         {
-            var menuTree = await httpClient.GetFromJsonAsync<List<MenuDto>>($"api/permission/get-all");
-            Menus = menuTree;
+            var menuTree = await HttpClient.GetFromJsonAsync<List<MenuDto>>($"api/permission/get-all");
+            _menus = menuTree;
         }
         private async Task CreatedPermissionAsync()
         {
-            await createdPermissionModal.ShowMidaleAsync();
+            await _createdPermissionModal?.ShowMidaleAsync()!;
         }
-        private async Task DeleteAsync(HandlePermissionDto HandlePermissionDto)
+        private async Task DeleteAsync(HandlePermissionDto handlePermissionDto)
         {
-            var message = $"Are you sure you want to delete the permission \" {HandlePermissionDto.Action} \" ?";
-            var confirm = await MessageBox.Confirm(modal, message.ToString());
+            var message = $"Are you sure you want to delete the permission \" {handlePermissionDto.Action} \" ?";
+            var confirm = await MessageBox.Confirm(Modal, message);
             if(confirm)
             {
-                var response = await httpClient.DeleteAsync
-                    ($"api/permission/delete/{HandlePermissionDto.Id}");
+                var response = await HttpClient.DeleteAsync
+                    ($"api/permission/delete/{handlePermissionDto.Id}");
                 var content = await response.Content.ReadFromJsonAsync<ApiResponse>();
                 if (response.IsSuccessStatusCode)
                 {

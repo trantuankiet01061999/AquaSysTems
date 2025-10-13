@@ -1,8 +1,7 @@
 ﻿@page "/roles-management"
 @using AquaSolution.Client.Components.Administration.Roles
-@using AquaSolution.Client.Components.Administration.Users
 @using AntDesign
-@inject ModalService modal
+@inject ModalService Modal
 @inject IMessageService Message
 @using AquaSolution.Shared.UserManagements
 <PageTitle>Roles</PageTitle>
@@ -49,7 +48,7 @@
 <Table TItem="RoleDto"
        Size="TableSize.Small"
        Class="customTable fix-table-header"
-       DataSource="Roles">
+       DataSource="_roles">
     <ColumnDefinitions Context="row">
         <PropertyColumn Title="RoleName" Property="c => c.Name"></PropertyColumn>
         <Column Fixed="ColumnFixPlacement.Right" TData="UserDto"  Context="row">
@@ -69,7 +68,7 @@
         </Column>
     </ColumnDefinitions>
 </Table>
-<PermissionModal @ref="permissionModal" OnSave="LoadRoles" />
+<PermissionModal @ref="_permissionModal" OnSave="LoadRoles" />
 <!-- #region name -->
 @{
     RenderFragment footer = @<Template>
@@ -87,12 +86,12 @@
 <Modal @bind-Visible="IsVisible"
        Style="z-index: 9999;width:500px ;height:78vh !important"
        Footer="@footer" Title="Permission Settings">
-    <Form Model="@createdRoleDto" Layout="FormLayout.Vertical">
+    <Form Model="@CreatedRoleDto" Layout="FormLayout.Vertical">
         <Row Gutter="24">
             <Col Span="24">
             <FormItem Label="Role Name" Required="true">
                 <TextArea ShowCount MinRows="1" MaxRows="1"
-                          @bind-Value="@createdRoleDto.RoleName"
+                          @bind-Value="@CreatedRoleDto.RoleName"
                           AllowClear="true" />
             </FormItem>
             </Col>

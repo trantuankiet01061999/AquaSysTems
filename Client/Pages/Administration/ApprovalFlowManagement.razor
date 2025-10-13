@@ -1,7 +1,6 @@
 ﻿@page "/approval-flow-management"
 @using AntDesign
-@using AquaSolution.Shared.ApprovalFlows
-@inject ModalService modal
+@inject ModalService Modal
 @inject NavigationManager Navigation
 @inject IMessageService Message
 @using Microsoft.AspNetCore.Components.Authorization
@@ -21,7 +20,7 @@
     </div>
     <div style="width:100%;overflow-x:scroll ;max-height:70vh; ">
         <Collapse>
-            @foreach (var group in groupedList)
+            @foreach (var group in _groupedList)
             {
                 <Panel Header="@($"{group.PositionName} - {group.System}")">
                     <Table PaginationPosition="false" DataSource="@group.Items">

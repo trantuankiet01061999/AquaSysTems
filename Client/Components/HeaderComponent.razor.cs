@@ -26,7 +26,6 @@ namespace AquaSolution.Client.Components
                 await JSRuntime.InvokeVoidAsync("sessionStorage.removeItem", "authToken");
                 var baseUri = Navigation.BaseUri.TrimEnd('/');
                 Navigation.NavigateTo($"{baseUri}/login", true);
-                await Message.Success("Đăng xuất thành công!", 2);
             }
             catch (Exception ex)
             {

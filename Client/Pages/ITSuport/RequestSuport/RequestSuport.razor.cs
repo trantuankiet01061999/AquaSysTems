@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
-using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Json;
 
 namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
@@ -18,17 +17,17 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
     public partial class RequestSuport
     {
         #region Declaration
-        [Inject] private HttpClient Http { get; set; }
+        [Inject] private HttpClient? Http { get; set; }
 
         private List<RequestSuportDto> _requestSuport = new();
         private List<RequestSuportDto> _requestSuportFillter = new();
         private HubConnection? _hubConnection;
-        private List<UserContributerDto> ListTechnician = new List<UserContributerDto>();
-        private HasPermission hasPermission = new();
-        private RequestITSuportDetailModal requestITSuportDetailModal = new();
-        private UserDto CurrenUser { get; set; }
-        private RequestITSuport requestITSuport = new();
-        private List<AttachmentDto> Attachment = new();
+        private List<UserContributerDto> _listTechnician = new List<UserContributerDto>();
+        private readonly HasPermission _hasPermission = new();
+        private RequestITSuportDetailModal _requestItSuportDetailModal = new();
+        private UserDto? CurrenUser { get; set; }
+        private RequestITSuport _requestItSuport = new();
+        private List<AttachmentDto> _attachment = new();
         private bool Created { get; set; }
         private bool Edit { get; set; }
         private bool Delete { get; set; }
@@ -52,43 +51,53 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
             await LoadTechnician();
             await GetPage();
             await CheckPermission();
-            SelectedChange += Search;
+            _selectedChange += Search;
         }
         private async Task GetPage()
         {
-
             var url = "request-it-suport";
-            PageId = await Http.GetFromJsonAsync<Guid>($"api/Page/GetPageIdByUrl/{url}");
-
+            if (Http != null) PageId = await Http.GetFromJsonAsync<Guid>($"api/Page/GetPageIdByUrl/{url}");
         }
         private async Task LoadData()
         {
             _requestSuport = new();
-            var data = await Http.GetFromJsonAsync<List<RequestSuportDto>>("api/RequestITSuport/get-all");
-            _requestSuport = data.ToList();
+            if (Http != null)
+            {
+                var data = await Http.GetFromJsonAsync<List<RequestSuportDto>>("api/RequestITSuport/get-all");
+                if (data != null) _requestSuport = data.ToList();
+            }
+
             _requestSuportFillter = _requestSuport.ToList();
             StateHasChanged();
         }
         private async Task CheckPermission()
         {
-            var CurrenUserClass = new CurrenUser(Http, AuthStateProvider);
-            CurrenUser = await CurrenUserClass.LoadCurrenUser();
-            Created = await hasPermission.CheckPermissions(PageId, PermissionActionType.Add.ToString(), CurrenUser);
+            if (Http != null)
+            {
+                var currenUserClass = new CurrenUser(Http, AuthStateProvider);
+                CurrenUser = await currenUserClass.LoadCurrenUser();
+            }
 
-            Edit = await hasPermission.CheckPermissions(PageId, PermissionActionType.Edit.ToString(), CurrenUser);
+            if (CurrenUser != null)
+            {
+                Created = await _hasPermission.CheckPermissions(PageId, nameof(PermissionActionType.Add),
+                    CurrenUser);
 
-            Delete = await hasPermission.CheckPermissions(PageId, PermissionActionType.Delete.ToString(), CurrenUser);
+                Edit = await _hasPermission.CheckPermissions(PageId, nameof(PermissionActionType.Edit), CurrenUser);
 
+                Delete = await _hasPermission.CheckPermissions(PageId, nameof(PermissionActionType.Delete),
+                    CurrenUser);
+            }
         }
         #endregion
         #region Action
         private async Task CreatedAsync()
         {
-            await requestITSuport.ShowModal(false);
+            await _requestItSuport.ShowModal(false);
         }
         private async Task UpdateAsync(RequestSuportDto requestSuportDto)
         {
-            await requestITSuport.ShowModal(true, requestSuportDto);
+            await _requestItSuport.ShowModal(true, requestSuportDto);
         }
         private async Task DeleteAsync(Guid id)
         {
@@ -96,7 +105,7 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
             if (!confirm)
                 return;
             await DeleteFileServer(id);
-            var response = await Http.DeleteAsync($"api/RequestITSuport/delete/{id}");
+            var response = await Http?.DeleteAsync($"api/RequestITSuport/delete/{id}")!;
 
             if (response.IsSuccessStatusCode)
             {
@@ -112,22 +121,26 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
         }
         private async Task DeleteFileServer(Guid requestSuportId)
         {
-            Attachment = new();
-            var data = await Http.GetFromJsonAsync<List<AttachmentDto>>($"api/RequestITSuport/get-attechment/{requestSuportId}");
-            Attachment = data.ToList();
-            foreach (var item in Attachment)
+            _attachment = new();
+            if (Http != null)
+            {
+                var data = await Http.GetFromJsonAsync<List<AttachmentDto>>($"api/RequestITSuport/get-attechment/{requestSuportId}");
+                if (data != null) _attachment = data.ToList();
+            }
+
+            foreach (var item in _attachment)
             {
                 var url = $"{item.FilePath}";
-                var response = await Http.DeleteAsync($"api/Common/delete-file-suport?avatarUrl={url}");
+                await Http?.DeleteAsync($"api/Common/delete-file-suport?avatarUrl={url}")!;
             }
         }
         private async Task ViewAsync(RequestSuportDto requestSuportDto)
         {
-            await requestITSuportDetailModal.ShowModal(requestSuportDto);
+            await _requestItSuportDetailModal.ShowModal(requestSuportDto);
         }
         #endregion
         #region Filter
-        private Func<Task> SelectedChange;
+        private Func<Task>? _selectedChange;
         private string? RequesterName { get; set; }
 
         private async Task HandleKeyDown(KeyboardEventArgs e)
@@ -145,10 +158,14 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
         TableFilter<RequestSuportStatusType>[] _statusFilter = Array.Empty<TableFilter<RequestSuportStatusType>>();
         private async Task LoadTechnician()
         {
-            ListTechnician = new List<UserContributerDto>();
-            var data = await Http.GetFromJsonAsync<List<UserContributerDto>>("api/user/get-contributer");
-            ListTechnician = data.Where(x => x.DepartmentType == DepartmentType.IT).ToList();
-            _technicianNameFilter = ListTechnician
+            _listTechnician = new List<UserContributerDto>();
+            if (Http != null)
+            {
+                var data = await Http.GetFromJsonAsync<List<UserContributerDto>>("api/user/get-contributer");
+                if (data != null) _listTechnician = data.Where(x => x.DepartmentType == DepartmentType.IT).ToList();
+            }
+
+            _technicianNameFilter = _listTechnician
                .Select(x => new TableFilter<string>
                {
                    Text = x.Name,
@@ -158,7 +175,7 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
                .ToArray();
         }
 
-        private async Task LoadStatusOptions()
+        private Task LoadStatusOptions()
         {
             _statusFilter = Enum.GetValues(typeof(RequestSuportStatusType))
                .Cast<RequestSuportStatusType>()
@@ -169,9 +186,9 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
                    Selected = false
                })
                .ToArray();
-
+            return Task.CompletedTask;
         }
-        private async Task Search()
+        private Task Search()
         {
             var name = StringHelper.NormalizeText(RequesterName?.Trim());
 
@@ -188,13 +205,14 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
                 filtered = _requestSuport;
             }
             _requestSuportFillter = filtered;
+            return Task.CompletedTask;
         }
-        private Table<RequestSuportDto> tableRef;
+        private Table<RequestSuportDto>? _tableRef;
         private async Task Reset()
         {
             RequesterName = null;
             _requestSuportFillter = _requestSuport;
-            tableRef?.ReloadData();
+            _tableRef?.ReloadData();
             await InvokeAsync(StateHasChanged);
 
         }
