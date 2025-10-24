@@ -7,11 +7,13 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
 {
     public interface IKPISubmitService
     {
-        Task<List<HandleKPISubmitDto>> GetHandleKPISubmitByUserId(Guid userId,int year, int? month);
+        Task<List<HandleActualDto>> GetHandleKPISubmitByUserId(Guid userId,int year, int? month);
+        Task<List<HandleActualDto>> GetApprovedOMG(Guid userId,int year, int month);
+
         Task<List<YearDto>> GetKPIScoreByUserId(Guid userId, int year);
-        Task<bool> SubmitKPIAsync(List<HandleKPISubmitDto> submitKPIDto);
+        Task<bool> SubmitKPIAsync(HandleKPISubmitDto submitKPIDto);
         Task<List<KPITotalScoreDto> > GetKPITotalScoreByUserId(Guid userId, int year, int? month);
-        Task<List<KPITotalScoreDto>> GetKPITotalScoreQuarterByUserId(Guid userId, int year, int? quater);
+        Task<KPITotalScoreDto> GetKPITotalScoreQuarterByUserId(Guid userId, int year, int? quater);
         Task<List<IndexWeightDto>> GetIndexWeight(PositionType positionType,PeriodType periodType);
     }
 }

@@ -37,46 +37,78 @@ public class DealineManagementService : IDealineManagementService
         var totalScores = await _kpiTotalScoreRepo.GetAllAsync();
         var requests = await _kpiRequestRepo.GetAllAsync();
 
-        // Bước 1: lấy tất cả các tháng có target, chưa có actual, deadline hợp lệ
         var eligibleMonths = deadlines
             .Where(d =>
                 d.StartDate <= now &&
                 d.EndDate >= now &&
-                targets.Any(t =>
-                    t.Month.HasValue &&
-                    t.Month.Value == d.Month &&
-                    t.Year == d.Year
-                ) &&
-                !actuals.Any(a =>
-                    a.Month.HasValue &&
-                    a.Year.HasValue &&
-                    a.Month.Value == d.Month &&
-                    a.Year.Value == d.Year
-                )
+                targets.Any(t => t.Month.HasValue && t.Year == d.Year && t.Month.Value == d.Month) &&
+                !actuals.Any(a => a.Month.HasValue && a.Year.HasValue && a.Month.Value == d.Month && a.Year.Value == d.Year)
             )
-            .OrderBy(d => d.Year).ThenBy(d => d.Month)
+            .OrderBy(d => d.Year)
+            .ThenBy(d => d.Month)
             .ToList();
 
-        // Bước 2: kiểm tra theo thứ tự, chỉ hiển thị tháng khi tất cả các tháng trước đó đã được duyệt
-        var approvedMonths = new List<DealineManagementDto>();
+        var resultList = new List<DealineManagementDto>();
 
         foreach (var deadline in eligibleMonths)
         {
-            bool allPreviousApproved = approvedMonths
-                .All(prev =>
-                    totalScores.Any(ts =>
-                        ts.Month == prev.Month &&
-                        ts.Year == prev.Year &&
-                        requests.Any(r =>
-                            r.SubmitId == ts.SubmitId &&
-                            r.RequestStatus == StatusKPIRequestType.Approved
-                        )
-                    )
-                );
+            int m = deadline.Month;
+            int y = deadline.Year;
+            bool allowDisplay = false;
 
-            if (approvedMonths.Count == 0 || allPreviousApproved)
+            // Kiểm tra request của tháng trước
+            if (m > 1)
             {
-                approvedMonths.Add(new DealineManagementDto
+                var tsPrev = totalScores.FirstOrDefault(ts => ts.Month == m - 1 && ts.Year == y);
+                var reqPrev = tsPrev != null ? requests.FirstOrDefault(r => r.SubmitId == tsPrev.SubmitId) : null;
+                if (reqPrev != null && reqPrev.RequestStatus == StatusKPIRequestType.Rejected)
+                {
+                    deadline.Month = deadline.Month - 1;
+                    // Nếu tháng trước bị Reject → hiển thị lại tháng trước
+                    allowDisplay = true;
+                }
+            }
+
+            // Nếu không hiển thị tháng trước, kiểm tra tháng hiện tại
+            if (!allowDisplay)
+            {
+                var tsCurrent = totalScores.FirstOrDefault(ts => ts.Month == m && ts.Year == y);
+                var reqCurrent = tsCurrent != null ? requests.FirstOrDefault(r => r.SubmitId == tsCurrent.SubmitId) : null;
+
+                if (reqCurrent != null && reqCurrent.RequestStatus == StatusKPIRequestType.Rejected)
+                {
+                    // Nếu tháng hiện tại bị Reject → hiển thị lại tháng hiện tại
+                    allowDisplay = true;
+                }
+                else if (reqCurrent != null && reqCurrent.RequestStatus == StatusKPIRequestType.Approved)
+                {
+                    // Nếu tháng hiện tại đã Approved → cho phép hiển thị tháng tiếp theo
+                    allowDisplay = true;
+                }
+                else
+                {
+                    // Nếu chưa có request hoặc Pending → kiểm tra tháng trước
+                    if (m > 1)
+                    {
+                        var tsPrev = totalScores.FirstOrDefault(ts => ts.Month == m - 1 && ts.Year == y);
+                        var reqPrev = tsPrev != null ? requests.FirstOrDefault(r => r.SubmitId == tsPrev.SubmitId) : null;
+                        if (reqPrev != null && reqPrev.RequestStatus == StatusKPIRequestType.Approved)
+                        {
+                            // Nếu tháng trước đã Approved → cho phép hiển thị tháng hiện tại
+                            allowDisplay = true;
+                        }
+                    }
+                    else
+                    {
+                        // Tháng 1 của năm → cho phép hiển thị
+                        allowDisplay = true;
+                    }
+                }
+            }
+
+            if (allowDisplay)
+            {
+                resultList.Add(new DealineManagementDto
                 {
                     Id = deadline.Id,
                     Month = deadline.Month,
@@ -88,12 +120,13 @@ public class DealineManagementService : IDealineManagementService
             }
             else
             {
-                // Dừng khi gặp tháng chưa được duyệt → không cho hiển thị các tháng sau
+                // Nếu không cho phép hiển thị, dừng khỏi loop
                 break;
             }
         }
 
-        return approvedMonths;
+        return resultList;
     }
+
 
 }

@@ -23,12 +23,12 @@ namespace AquaSolution.Server.Controllers.KPI.KPISubmit
             return Ok(result);
         }
         [HttpPost("create")]
-        public async Task<IActionResult> CreateAsync([FromBody] List<HandleKPISubmitDto> submitKPIDto)
+        public async Task<IActionResult> CreateAsync([FromBody] HandleKPISubmitDto submitKPIDto)
         {
             var result = await _kPISubmitService.SubmitKPIAsync(submitKPIDto);
             return result ? Ok(true) : BadRequest("New creation failed");
         }
-        [HttpGet("get-resul-kpi/{userId}/{year}/{month}")]
+        [HttpGet("get-result-kpi/{userId}/{year}/{month}")]
         public async Task<IActionResult> GetResult(Guid userId, int year, int? month)
         {
             var result = await _kPISubmitService.GetKPITotalScoreByUserId(userId, year, month);
@@ -44,6 +44,12 @@ namespace AquaSolution.Server.Controllers.KPI.KPISubmit
         public async Task<IActionResult> GetIndexWeight(PositionType positionType,PeriodType periodType )
         {
             var result = await _kPISubmitService.GetIndexWeight(positionType, periodType);
+            return Ok(result);
+        }
+        [HttpGet("get-result-omg/{userId}/{year}/{month}")]
+        public async Task<IActionResult> GetOMG(Guid userId, int year, int month)
+        {
+            var result = await _kPISubmitService.GetApprovedOMG(userId, year, month);
             return Ok(result);
         }
     }

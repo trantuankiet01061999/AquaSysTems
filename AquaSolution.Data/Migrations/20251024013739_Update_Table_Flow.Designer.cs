@@ -4,6 +4,7 @@ using AquaSolution.Data.Connection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AquaSolution.Data.Migrations
 {
     [DbContext(typeof(AquaDbContext))]
-    partial class AquaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251024013739_Update_Table_Flow")]
+    partial class Update_Table_Flow
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -453,51 +456,6 @@ namespace AquaSolution.Data.Migrations
                     b.HasIndex("SubmitId");
 
                     b.ToTable("tbl_KPIApprovalTasks", (string)null);
-                });
-
-            modelBuilder.Entity("AquaSolution.Data.Data.Entities.KPI.RequestApprovalTask", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ApprovalDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("ApprovedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("RejectBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("RejectDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("RequesterId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("StatusType")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<Guid>("SubmitId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApprovedBy");
-
-                    b.HasIndex("RejectBy");
-
-                    b.HasIndex("RequesterId");
-
-                    b.HasIndex("SubmitId");
-
-                    b.ToTable("tbl_RequestApprovalTasks", (string)null);
                 });
 
             modelBuilder.Entity("AquaSolution.Data.Data.Entities.KPIDetailScore", b =>
@@ -1913,31 +1871,6 @@ namespace AquaSolution.Data.Migrations
                 });
 
             modelBuilder.Entity("AquaSolution.Data.Data.Entities.KPI.KPIApprovalTask", b =>
-                {
-                    b.HasOne("AquaSolution.Data.Data.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("ApprovedBy")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("AquaSolution.Data.Data.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("RejectBy")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("AquaSolution.Data.Data.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("RequesterId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("AquaSolution.Data.Data.Entities.KPIRequest", null)
-                        .WithMany()
-                        .HasForeignKey("SubmitId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AquaSolution.Data.Data.Entities.KPI.RequestApprovalTask", b =>
                 {
                     b.HasOne("AquaSolution.Data.Data.Entities.User", null)
                         .WithMany()

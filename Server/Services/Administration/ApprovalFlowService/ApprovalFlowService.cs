@@ -25,12 +25,11 @@ namespace AquaSolution.Server.Services.Administration.ApprovalFlowService
             {
                 Id = Guid.NewGuid(),
                 Name = approvalFlowDto.Name,
-                UserApproveId = approvalFlowDto.UserApproveId,
+                DecisionMaker = approvalFlowDto.DecisionMaker,
                 PositionId = approvalFlowDto.PositionId,
                 DesCription = approvalFlowDto.DesCription,
                 CurrentStep = approvalFlowDto.CurrentStep,
                 NextStep = approvalFlowDto.NextStep,
-                System = approvalFlowDto.System,
                 ApprovalSettingType = approvalFlowDto.ApprovalSettingType,
                 CreatedDate = DateTime.Now,
             };
@@ -55,22 +54,21 @@ namespace AquaSolution.Server.Services.Administration.ApprovalFlowService
                                    on approvalFlow.PositionId equals position.Id
 
                                    join user in await _userRepo.GetQueryableAsync()
-                                   on approvalFlow.UserApproveId equals user.Id
+                                   on approvalFlow.DecisionMaker equals user.Id
                                    into u1 from user in u1.DefaultIfEmpty()
                               select new ApprovalFlowDto
                               {
-                                  Id = Guid.NewGuid(),
+                                  Id = approvalFlow.Id,
                                   Name = approvalFlow.Name,
-                                  UserApproveId = approvalFlow.UserApproveId,
+                                  DecisionMaker = approvalFlow.DecisionMaker,
                                   PositionId = approvalFlow.PositionId,
                                   DesCription = approvalFlow.DesCription,
                                   CurrentStep = approvalFlow.CurrentStep,
                                   NextStep = approvalFlow.NextStep,
-                                  System = approvalFlow.System,
                                   ApprovalSettingType = approvalFlow.ApprovalSettingType,
                                   CreatedDate = approvalFlow.CreatedDate,
                                   PositionName =position.Name,
-                                  UserApproveName = user.FullName
+                                  DecisionMakerName = user.FullName
                               };
             var dataReturn =  approvalFlowData.ToList();
             if (dataReturn.Count > 0)
@@ -82,17 +80,24 @@ namespace AquaSolution.Server.Services.Administration.ApprovalFlowService
 
         public async Task<bool> UpdateApprovalFlow(ApprovalFlowDto approvalFlowDto)
         {
-            var approvalFlow = await _approvalFlowRepo.GetByIdAsync(approvalFlowDto.Id);
-            if(approvalFlow == null) return false;
-            approvalFlow.Name = approvalFlowDto.Name;
-            approvalFlow.UserApproveId = approvalFlowDto.UserApproveId;
-            approvalFlow.PositionId = approvalFlowDto.PositionId;
-            approvalFlow.DesCription = approvalFlowDto.DesCription;
-            approvalFlow.NextStep = approvalFlowDto.NextStep;
-            approvalFlow.CurrentStep = approvalFlowDto.CurrentStep;
-            approvalFlow.System = approvalFlowDto.System;
-            approvalFlow.ApprovalSettingType = approvalFlowDto.ApprovalSettingType;
-            return await _approvalFlowRepo.UpdateAsync(approvalFlow);
+            try
+            {
+                var approvalFlow = await _approvalFlowRepo.GetByIdAsync(approvalFlowDto.Id);
+                if (approvalFlow == null) return false;
+                approvalFlow.Name = approvalFlowDto.Name;
+                approvalFlow.DecisionMaker = approvalFlowDto.DecisionMaker;
+                approvalFlow.PositionId = approvalFlowDto.PositionId;
+                approvalFlow.DesCription = approvalFlowDto.DesCription;
+                approvalFlow.NextStep = approvalFlowDto.NextStep;
+                approvalFlow.CurrentStep = approvalFlowDto.CurrentStep;
+                approvalFlow.ApprovalSettingType = approvalFlowDto.ApprovalSettingType;
+                return await _approvalFlowRepo.UpdateAsync(approvalFlow);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+           
         }
     }
 }

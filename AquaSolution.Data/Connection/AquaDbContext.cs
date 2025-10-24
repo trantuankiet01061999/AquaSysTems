@@ -69,6 +69,7 @@ namespace AquaSolution.Data.Connection
         public DbSet<DealineKPISubmitManagement> tbl_DealineKPISubmitManagement { get; set; }
         public DbSet<KPIIndexWeight> tbl_KPIIndexWeights { get; set; }
         public DbSet<KPIActualMaster> tbl_KPIActualMasters { get; set; }
+        public DbSet<RequestApprovalTask> tbl_RequestApprovalTasks { get; set; }
 
 
         #endregion
@@ -128,6 +129,7 @@ namespace AquaSolution.Data.Connection
             modelBuilder.ApplyConfiguration(new KPIDetailScoreConfiguration());
             modelBuilder.ApplyConfiguration(new KPIIndexWeightConfiguration());
             modelBuilder.ApplyConfiguration(new KPIActualMasterConfiguration());
+            modelBuilder.ApplyConfiguration(new RequestApprovalTaskConfiguration());
 
             #endregion
 
