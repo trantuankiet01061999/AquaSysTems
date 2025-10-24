@@ -3,6 +3,7 @@ using AquaSolution.Shared.CommonDto;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 using AquaSolution.Shared.ApprovalFlows;
+using AquaSolution.Client.Components.Administration.ApprovalFlows;
 
 namespace AquaSolution.Client.Pages.Administration
 {
@@ -12,8 +13,7 @@ namespace AquaSolution.Client.Pages.Administration
         [Inject] private HttpClient? Http { get; set; }
         private List<ApprovalFlowDto>? _listApprovalFlow = new();
         private List<ApprovalFlowGroupDto> _groupedList = new();
-
-        // private ApprovalFlowModal ApprovalFlowModal = new ApprovalFlowModal();
+        private ApprovalFlowModal approvalFlowModal;
         #endregion
 
         #region Innit
@@ -25,35 +25,34 @@ namespace AquaSolution.Client.Pages.Administration
         private async Task LoadDataAsync()
         {
             if (Http != null)
-                _listApprovalFlow = await Http.GetFromJsonAsync<List<ApprovalFlowDto>>
-                    ("api/ApprovalFlow/get-all");
-            if (_listApprovalFlow != null)
-                _groupedList = _listApprovalFlow
-                    .GroupBy(x => new { x.PositionName, x.System })
-                    .Select(group => new ApprovalFlowGroupDto
-                    {
-                        PositionName = group.Key.PositionName,
-                        System = group.Key.System,
-                        Items = group.Select(item => new ApprovalFlowItemDto
+            {
+                _listApprovalFlow = await Http.GetFromJsonAsync<List<ApprovalFlowDto>>("api/ApprovalFlow/get-all");
+
+                if (_listApprovalFlow != null)
+                {
+                    _groupedList = _listApprovalFlow
+                        .GroupBy(x => new { x.PositionId, x.PositionName })
+                        .Select(g => new ApprovalFlowGroupDto
                         {
-                            CurrentStep = item.CurrentStep,
-                            NextStep = item.NextStep,
-                            UserApproveName = item.UserApproveName,
-                            ApprovalSettingType = item.ApprovalSettingType
-                        }).ToList()
-                    })
-                    .ToList();
+                            PositionId = g.Key.PositionId,
+                            PositionName = g.Key.PositionName,
+                            Items = g.OrderBy(x => x.CurrentStep).ToList()
+                        })
+                        .ToList();
+                }
+            }
         }
+
         #endregion
 
         #region Action
         private async Task CreatedApprovalFlow()
         {
-            // await ApprovalFlowModal.Showmodal(new ApprovalFlowDto(), false);
+             await approvalFlowModal.Showmodal(new ApprovalFlowDto(), false);
         }
         private async Task EditApprovalFlow(ApprovalFlowDto approvalFlowDto)
         {
-            // await ApprovalFlowModal.Showmodal(ApprovalFlowDto, true);
+            await approvalFlowModal.Showmodal(approvalFlowDto, true);
         }
         private async Task DeleteAsync(ApprovalFlowDto approvalFlowDto)
         {

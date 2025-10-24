@@ -3,6 +3,8 @@
 @inject ModalService Modal
 @inject NavigationManager Navigation
 @inject IMessageService Message
+@using AquaSolution.Client.Components.Administration.ApprovalFlows
+@using AquaSolution.Shared.ApprovalFlows
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider AuthStateProvider
 <PageTitle>Approval Flow</PageTitle>
@@ -22,14 +24,35 @@
         <Collapse>
             @foreach (var group in _groupedList)
             {
-                <Panel Header="@($"{group.PositionName} - {group.System}")">
+                <Panel Header="@($"{group.PositionName}({group.Items.Count})")">
                     <Table PaginationPosition="false" DataSource="@group.Items">
-                        <ChildContent Context="p">
-                            <PropertyColumn Title="CurrenStep" Width="150" Property="c => c.CurrentStep"></PropertyColumn>
-                            <PropertyColumn Title="NextStep" Width="150" Property="c => c.NextStep"></PropertyColumn>
-                            <PropertyColumn Title="UserApproveName" Width="auto" Property="c => c.UserApproveName"></PropertyColumn>
-                            <PropertyColumn Title="ApprovalSettingType" Width="auto" Property="c => c.ApprovalSettingType"></PropertyColumn>
-                        </ChildContent>
+                        <ColumnDefinitions Context="rowItem">
+                            <PropertyColumn Title="Name" Width="150" Property="c => c.Name"></PropertyColumn>
+                            <PropertyColumn Title="Position" Width="auto" Property="c => c.PositionName"></PropertyColumn>
+                            <PropertyColumn Title="User Approve" Width="auto" Property="c => c.DecisionMakerName"></PropertyColumn>
+                            <PropertyColumn Title="Approval Type" Width="auto" Property="c => c.ApprovalSettingType"></PropertyColumn>
+                            <PropertyColumn Title="Current Step" Width="150" Property="c => c.CurrentStep"></PropertyColumn>
+                            <PropertyColumn Title="Next Step" Width="150" Property="c => c.NextStep"></PropertyColumn>
+                            <Column Fixed="ColumnFixPlacement.Right" TData="ApprovalFlowDto" Width="50px" Context="rowItem">
+                                <Template>
+                                    <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">
+                                        <ChildContent>
+                                            <Button Icon="menu" />
+                                        </ChildContent>
+                                        <ContentTemplate>
+                                            <div style="display: flex; flex-direction: column; gap: 4px; padding: 8px;">
+                                                <Button Type="ButtonType.Text" OnClick="@(async () => await EditApprovalFlow(rowItem))" Style="text-align: left;">
+                                                    <Icon Type="plus" /> Edit
+                                                </Button>
+                                                <Button Type="ButtonType.Text" OnClick="@(async () => await DeleteAsync(rowItem))" Style="text-align: left;">
+                                                    <Icon Type="delete" /> Delete
+                                                </Button>
+                                            </div>
+                                        </ContentTemplate>
+                                    </Popover>
+                                </Template>
+                            </Column>
+                        </ColumnDefinitions>
                     </Table>
                 </Panel>
             }
@@ -38,4 +61,4 @@
     </div>
    
 </div>
-@* <FactoryModal OnSave="LoadDataAsync" @ref="@factoryModal"></FactoryModal>  *@
+<ApprovalFlowModal OnSave="LoadDataAsync" @ref="@approvalFlowModal"></ApprovalFlowModal>  

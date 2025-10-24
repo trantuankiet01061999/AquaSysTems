@@ -16,12 +16,13 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         #region Declaration
         [Inject] private HttpClient Http { get; set; }
         private bool IsModalVisible { get; set; } = false;
-        private List<HandleKPISubmitDto> HandleKPISubmit = new();
+        //private List<HandleKPISubmitDto> HandleKPISubmit = new();
         private List<HandleKPISubmitDto> Header = new();
         private UserDto CurrenUser = new();
         private List<DealineManagementDto> DealineManagement = new();
         private List<IndexWeightDto> IndexWeight = new();
 
+        private HandleKPISubmitDto HandleKPISubmitDto = new();
         public DealineManagementDto KPIPeriodSubmit { get; set; }
         private string activeTabKey { get; set; } = string.Empty;
         private string TitleButton = string.Empty;
@@ -32,7 +33,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         #region Init  
         public async Task ShowModal(UserDto currenUser)
         {
-            HandleKPISubmit = new List<HandleKPISubmitDto>();
+            HandleKPISubmitDto = new HandleKPISubmitDto();
             CurrenUser = currenUser;
             await GetDeadline();
             await GetIndexWeight();
@@ -42,15 +43,15 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
             IsModalVisible = true;
             await InvokeAsync(StateHasChanged);
         }
-        private async Task<List<HandleKPISubmitDto>> LoadSelectedKPiSubmit(int year, int? month)
+        private async Task<List<HandleActualDto>> LoadSelectedKPiSubmit(int year, int? month)
         {
 
-            var result = await Http.GetFromJsonAsync<List<HandleKPISubmitDto>>($"api/kpisubmit/get-kpi-submit/{CurrenUser.Id}/{year}/{month}");
+            var result = await Http.GetFromJsonAsync<List<HandleActualDto>>($"api/kpisubmit/get-kpi-submit/{CurrenUser.Id}/{year}/{month}");
             if (result != null)
             {
                 return result;
             }
-            return new List<HandleKPISubmitDto>();
+            return new List<HandleActualDto>();
         }
         private async Task GetDeadline()
         {
@@ -98,7 +99,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         }
         private async Task SaveAsync()
         {
-            var response = await Http.PostAsJsonAsync($"api/kpisubmit/create", HandleKPISubmit);
+            var response = await Http.PostAsJsonAsync($"api/kpisubmit/create", HandleKPISubmitDto);
             if (response.IsSuccessStatusCode)
             {
                 await Message.Success("Created successfully.");
@@ -115,8 +116,8 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         {
             if (KPIPeriodSubmit != null)
             {
-                HandleKPISubmit = await LoadSelectedKPiSubmit(KPIPeriodSubmit.Year, KPIPeriodSubmit.Month);
-                if (HandleKPISubmit != null && HandleKPISubmit.Any())
+                HandleKPISubmitDto.HandleActual = await LoadSelectedKPiSubmit(KPIPeriodSubmit.Year, KPIPeriodSubmit.Month);
+                if (HandleKPISubmitDto.HandleActual != null && HandleKPISubmitDto.HandleActual.Any())
                 {
                     IsInputActual = true;
                 }
@@ -133,41 +134,38 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
 
                 activeTabKey = "2";
                 TitleButton = "Back";
-                foreach (var item in HandleKPISubmit)
+                foreach (var item in HandleKPISubmitDto.HandleActual)
                 {
                     await CalculatedScore(item);
-
-                    //if (item.HalfYear != null)
-                    //{
-                    //    item.HeaderTitle = $"EMC - {CurrenUser.FullName} - H{item.HalfYear}";
-                    //}
-                    item.HeaderTitle = $"EMC - {CurrenUser.FullName} - {KPIPeriodSubmit.MonthString}";
+                    item.HeaderTitle = $"EMC - {KPIPeriodSubmit.MonthString} - {CurrenUser.FullName}";
 
                 }
-                SetTotalScoreForAllRows(HandleKPISubmit);
+                await AddCurrenTask(HandleKPISubmitDto);
+                var kpiScore = HandleKPISubmitDto.HandleActual?.Sum(x => x.KPIScore) ?? 0;
+                var keyTaskScore = HandleKPISubmitDto.HandleActual?.Sum(x => x.KeyTaskScore) ?? 0;
+                var omgScore = HandleKPISubmitDto.HandleActual?.Sum(x => x.OMGScore) ?? 0;
 
-
-                var totalScore = HandleKPISubmit?.FirstOrDefault()?.TotaleScore ?? 0;
+                var totalScore = keyTaskScore + kpiScore + omgScore;
 
                 HeaderLine = $"{(KPIPeriodSubmit.MonthString)}  {CurrenUser.FullName}"
                          + "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"
-                         + $"KPI Score:{ConvertNumberCommon.ConvertNumber(HandleKPISubmit?.Sum(x => x.KPIScore) ?? 0)}"
+                         + $"KPI Score:{ConvertNumberCommon.ConvertNumber(kpiScore)}"
                          + "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"
-                         + $"KeyTaskScore:{ConvertNumberCommon.ConvertNumber(HandleKPISubmit?.Sum(x => x.KeyTaskScore) ?? 0)}"
+                         + $"KeyTaskScore:{ConvertNumberCommon.ConvertNumber(keyTaskScore)}"
                          + "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"
-                         + $"OMGScore:{ConvertNumberCommon.ConvertNumber(HandleKPISubmit?.Sum(x => x.OMGScore) ?? 0)}"
+                         + $"OMGScore:{ConvertNumberCommon.ConvertNumber(omgScore)}"
                          + "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"
                          + $"Total Score:{ConvertNumberCommon.ConvertNumber(totalScore)}";
-                if (HandleKPISubmit != null)
+                if (HandleKPISubmitDto.HandleActual != null)
                 {
-                    if (HandleKPISubmit?.FirstOrDefault()?.Month == 3 || HandleKPISubmit?.FirstOrDefault()?.Month == 6 ||
-                        HandleKPISubmit?.FirstOrDefault()?.Month == 9 || HandleKPISubmit?.FirstOrDefault()?.Month == 12)
+                    if (HandleKPISubmitDto.HandleActual?.FirstOrDefault()?.Month == 3 || HandleKPISubmitDto.HandleActual?.FirstOrDefault()?.Month == 6 ||
+                       HandleKPISubmitDto.HandleActual?.FirstOrDefault()?.Month == 9 || HandleKPISubmitDto.HandleActual?.FirstOrDefault()?.Month == 12)
                     {
-                        await CalculateQuarterScores(HandleKPISubmit, HandleKPISubmit?.FirstOrDefault()?.Month);
+                        await CalculateQuarterScores(HandleKPISubmitDto, HandleKPISubmitDto.HandleActual?.FirstOrDefault()?.Month);
                     }
-                    if (HandleKPISubmit?.FirstOrDefault()?.Month == 6 || HandleKPISubmit?.FirstOrDefault()?.Month == 12)
+                    if (HandleKPISubmitDto.HandleActual?.FirstOrDefault()?.Month == 6 || HandleKPISubmitDto.HandleActual?.FirstOrDefault()?.Month == 12)
                     {
-                        await CalculateHalfYearScoresFromQuarters(HandleKPISubmit, HandleKPISubmit?.FirstOrDefault()?.Month);
+                        await CalculateHalfYearScoresFromQuarters(HandleKPISubmitDto, HandleKPISubmitDto.HandleActual?.FirstOrDefault()?.Month);
                     }
                 }
             }
@@ -177,17 +175,25 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
                 TitleButton = "Next";
             }
         }
-        private void SetTotalScoreForAllRows(List<HandleKPISubmitDto> list)
+        private Task AddCurrenTask(HandleKPISubmitDto handleKPISubmit)
         {
-            decimal totalKPI = list.Sum(x => x.KPIScore ?? 0);
-            decimal totalKeyTask = list.Sum(x => x.KeyTaskScore ?? 0);
+            CurrenTotalScore = new KPITotalScoreDto();
+            decimal totalKPI = handleKPISubmit.HandleActual.Sum(x => x.KPIScore ?? 0);
+            decimal totalKeyTask = handleKPISubmit.HandleActual.Sum(x => x.KeyTaskScore ?? 0);
+            decimal omgScore = handleKPISubmit.HandleActual.Sum(x => x.OMGScore ?? 0);
             decimal totalScore = totalKPI + totalKeyTask;
-            var listSetValue = list.Where(x => x.Month != null);
-            foreach (var item in listSetValue)
-            {
-                item.TotaleScore = totalScore;
-            }
+            var listSetValue = handleKPISubmit.HandleActual.Where(x => x.Month != null);
+            CurrenTotalScore.Title = $"EMC - {KPIPeriodSubmit.MonthString} - {CurrenUser.FullName} ";
+            CurrenTotalScore.KPIScore = totalKPI;
+            CurrenTotalScore.KeyTaskScore = totalKeyTask;
+            CurrenTotalScore.TotaleScore = totalScore;
+            CurrenTotalScore.OMGScore = 0;
+            CurrenTotalScore.Month = handleKPISubmit.HandleActual.FirstOrDefault()?.Month;
+            CurrenTotalScore.Year = handleKPISubmit.HandleActual.FirstOrDefault()?.Year ?? 0;
+            CurrenTotalScore.CreatedBy = CurrenUser.Id;
+            return Task.CompletedTask;
         }
+        private KPITotalScoreDto CurrenTotalScore = new();
         #endregion
         #region HandleScore
         private List<int> GetMonthsInQuarter(int month)
@@ -200,7 +206,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         }
         #endregion
         #region HandleMonthlyScore
-        private async Task CalculatedScore(HandleKPISubmitDto handleKPISubmit)
+        private async Task CalculatedScore(HandleActualDto handleKPISubmit)
         {
             if (handleKPISubmit == null || !handleKPISubmit.ActualValue.HasValue || !handleKPISubmit.TargetValue.HasValue)
                 return;
@@ -288,156 +294,152 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         }
         #endregion
         #region HandleQuarterlyScore
-        private async Task CalculateQuarterScores(List<HandleKPISubmitDto> handleKPISubmit, int? month)
+        private async Task CalculateQuarterScores(HandleKPISubmitDto handleKPISubmit, int? month)
         {
-            if (!month.HasValue || handleKPISubmit == null || !handleKPISubmit.Any())
-                return;
-
-            var listMonths = GetMonthsInQuarter(month.Value);
-            var kpiTotalScoreDto = new List<KPITotalScoreDto>();
-
-            foreach (var m in listMonths)
+            try
             {
-                var result = await Http.GetFromJsonAsync<List<KPITotalScoreDto>>(
-                    $"api/kpisubmit/get-result-kpi/{CurrenUser.Id}/{handleKPISubmit.First().Year}/{m}");
+                if (!month.HasValue || handleKPISubmit == null || !handleKPISubmit.HandleActual.Any())
+                    return;
 
-                if (result != null && result.Any())
+                var listMonths = GetMonthsInQuarter(month.Value);
+                var actuals = new List<KPITotalScoreDto>();
+                var listResultDetail = new List<HandleActualDto>();
+                foreach (var m in listMonths)
                 {
-                    kpiTotalScoreDto.AddRange(result);
-                }
-            }
+                    var result = await Http.GetFromJsonAsync<List<KPITotalScoreDto>>(
+                        $"api/kpiSubmit/get-result-kpi/{CurrenUser.Id}/{handleKPISubmit.HandleActual.First().Year}/{m}");
 
-            var currentMonth = handleKPISubmit.First().Month;
-
-            if (!kpiTotalScoreDto.Any(x => x.Month == currentMonth))
-            {
-                var currentData = handleKPISubmit.FirstOrDefault();
-                if (currentData != null)
-                {
-                    kpiTotalScoreDto.Add(new KPITotalScoreDto
+                    if (result != null && result.Any())
                     {
-                        KPIScore = currentData.KPIScore ?? 0,
-                        KeyTaskScore = currentData.KeyTaskScore ?? 0,
-                        OMGScore = currentData.OMGScore ?? 0,
-                        TotaleScore = currentData.TotaleScore ?? 0,
-                        Month = currentMonth,
-                        CreatedBy = CurrenUser.Id,
-                        Year = currentData.Year
-                    });
+                        actuals.AddRange(result);
+                    }
+
+                    var resultOMG = await Http.GetFromJsonAsync<List<HandleActualDto>>(
+                       $"api/kpiSubmit/get-result-omg/{CurrenUser.Id}/{handleKPISubmit.HandleActual.First().Year}/{m}");
+                    if (resultOMG != null && resultOMG.Any())
+                    {
+                        listResultDetail.AddRange(resultOMG);
+                    }
                 }
-            }
+                listResultDetail.AddRange(handleKPISubmit.HandleActual.Where(x=>x.Month == month));
 
-            if (kpiTotalScoreDto.Count == 3)
-            {
-                decimal avgKPI = kpiTotalScoreDto.Sum(x => x.KPIScore) / 3;
-                decimal avgKeyTask = kpiTotalScoreDto.Sum(x => x.KeyTaskScore) / 3;
-                decimal avgOMG = kpiTotalScoreDto.Sum(x => x.OMGScore) / 3;
-                var indexWeights = IndexWeight?.Where(x => x.PeriodType == PeriodType.Quarter).ToList();
+                var currentMonth = handleKPISubmit.HandleActual.First().Month;
+                if (!actuals.Any(x => x.Month == currentMonth))
+                {
 
+                    actuals.Add(CurrenTotalScore);
+
+                }
+                if (actuals.Count < 2)
+                    return;
+
+
+                decimal kpiScore = 0;
+                decimal omgscore = 0;
+                decimal keytaskscore = 0;
+
+                var indexWeights = IndexWeight?.Where(x => x.PeriodType == PeriodType.Quarter).ToList() ?? new List<IndexWeightDto>();
+
+                decimal omgWeight = indexWeights?.FirstOrDefault(x => x.KPIIndexType == KPIIndexType.OMG)?.Weight ?? 0;
                 decimal kpiWeight = indexWeights?.FirstOrDefault(x => x.KPIIndexType == KPIIndexType.KPI)?.Weight ?? 0;
                 decimal keyTaskWeight = indexWeights?.FirstOrDefault(x => x.KPIIndexType == KPIIndexType.KeyTask)?.Weight ?? 0;
-                decimal omgWeight = indexWeights?.FirstOrDefault(x => x.KPIIndexType == KPIIndexType.OMG)?.Weight ?? 0;
 
-                // === 3. Tính điểm tổng ===
-                var kpiscore = avgKPI * kpiWeight;
-                var keytaskscore = avgKeyTask * keyTaskWeight;
-                var omgscore = avgOMG * omgWeight;
-                decimal totalScore = kpiscore + keytaskscore + omgscore;
+                if (listResultDetail != null && listResultDetail.Any())
+                {
+                    // OMG
+                    var listOMGDetails = listResultDetail.Where(x => x.KPIIndexType == KPIIndexType.OMG).ToList();
+                    decimal sumOMG = listOMGDetails.Sum(x => x.Score ?? 0);
+                    var avgOMG = listOMGDetails.Count > 0 ? sumOMG / listOMGDetails.Count : 0;
+                    omgscore = avgOMG * omgWeight;
+
+                    // KPI
+                    var listKPIDetails = listResultDetail.Where(x => x.KPIIndexType == KPIIndexType.KPI).ToList();
+                    decimal sumKPI = listKPIDetails.Sum(x => x.Score ?? 0);
+                    var avgKPI = listKPIDetails.Count > 0 ? sumKPI / listKPIDetails.Count : 0;
+                    kpiScore = avgKPI * kpiWeight;
+
+                    // KeyTask
+                    var listKeyTaskDetails = listResultDetail.Where(x => x.KPIIndexType == KPIIndexType.KeyTask).ToList();
+                    decimal sumKeyTask = listKeyTaskDetails.Sum(x => x.Score ?? 0);
+                    var avgKeyTask = listKeyTaskDetails.Count > 0 ? sumKeyTask / listKeyTaskDetails.Count : 0;
+                    keytaskscore = avgKeyTask * keyTaskWeight;
+                }
+
+                decimal totalScore = kpiScore + keytaskscore + omgscore;
+
                 int quarter = (month.Value + 2) / 3;
 
-                //bool alreadyExists = handleKPISubmit.Any(x => x.HeaderTitle != null && x.HeaderTitle.Contains($"Q{quarter}"));
-                //if (!alreadyExists)
-                //{
-                var quarterScore = new HandleKPISubmitDto
+                // Kiểm tra đã có chưa
+                bool alreadyExists = handleKPISubmit.KPITotalScore.Any(x => x.Quarter == quarter && x.Month == null && x.HalfYear == null);
+                if (!alreadyExists)
                 {
-                    KPIScore = Math.Round(kpiscore, 2),
-                    KeyTaskScore = Math.Round(keytaskscore, 2),
-                    OMGScore = Math.Round(omgscore, 2),
-                    TotaleScore = Math.Round(totalScore, 2),
-                    HeaderTitle = $"EMC - {CurrenUser.FullName} - Q{quarter}",
-                    Year = handleKPISubmit.First().Year,
-                    Month = null,
-                    Quarter = quarter,
-                    CreatedBy = CurrenUser.Id
-                };
+                    var quarterScore = new KPITotalScoreDto
+                    {
+                        KPIScore = ConvertNumberCommon.ConvertNumber(kpiScore),
+                        KeyTaskScore = ConvertNumberCommon.ConvertNumber(keytaskscore),
+                        OMGScore = ConvertNumberCommon.ConvertNumber(omgscore),
+                        TotaleScore = ConvertNumberCommon.ConvertNumber(totalScore),
+                        Title = $"EMC - {handleKPISubmit.HandleActual.First().Year} - Q{quarter} - {CurrenUser.FullName} ",
+                        Year = handleKPISubmit.HandleActual.First().Year,
+                        Month = null,
+                        Quarter = quarter,
+                        CreatedBy = CurrenUser.Id
+                    };
 
-                handleKPISubmit.Add(quarterScore);
-                //}
+                    handleKPISubmit.KPITotalScore.Add(quarterScore);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[CLIENT ERROR] CalculateQuarterScores Failed: {ex.Message}");
             }
 
             await Task.CompletedTask;
         }
         #endregion
         #region HandleHalfYearlyScore
-        private async Task CalculateHalfYearScoresFromQuarters(List<HandleKPISubmitDto> handleKPISubmit, int? month)
+        private async Task CalculateHalfYearScoresFromQuarters(HandleKPISubmitDto handleKPISubmit, int? month)
         {
-            if (handleKPISubmit == null || !handleKPISubmit.Any())
+            if (handleKPISubmit == null || !handleKPISubmit.KPITotalScore.Any())
                 return;
             int halfYear = (month.Value <= 6) ? 1 : 2;
-            var quarterNumbers = month == 6 ? new List<int> { 1, 2 } : new List<int> { 3, 4 };
-            var quarterScores = new List<HandleKPISubmitDto>();
-
-            foreach (var quarter in quarterNumbers)
+            var quarterNumbers = month == 6 ? 1 : 3;
+            var quarterScores = new List<KPITotalScoreDto>();
+            var result = await Http.GetFromJsonAsync<KPITotalScoreDto>(
+                $"api/kpisubmit/get-result-quarter/{CurrenUser.Id}/{handleKPISubmit.HandleActual.First().Year}/{quarterNumbers}");
+            if (result != null)
             {
-                // Ưu tiên lấy từ handleKPISubmit
-                var existingQuarter = handleKPISubmit.FirstOrDefault(x => x.Quarter == quarter && x.Month == null);
-                if (existingQuarter != null)
-                {
-                    quarterScores.Add(existingQuarter);
-                }
-                else
-                {
-                    // Nếu chưa có thì gọi API để lấy
-                    var result = await Http.GetFromJsonAsync<List<KPITotalScoreDto>>(
-                        $"api/kpisubmit/get-result-quarter/{CurrenUser.Id}/{handleKPISubmit.First().Year}/{quarter}");
-
-                    var data = result?.FirstOrDefault();
-                    if (data != null)
-                    {
-                        quarterScores.Add(new HandleKPISubmitDto
-                        {
-                            KPIScore = data.KPIScore,
-                            KeyTaskScore = data.KeyTaskScore,
-                            OMGScore = data.OMGScore,
-                            TotaleScore = data.TotaleScore,
-                            Quarter = quarter,
-                            Year = data.Year,
-                            CreatedBy = CurrenUser.Id,
-                        });
-                    }
-                }
+                quarterScores.Add(result);
             }
-
-            // Đảm bảo đủ 2 quý
+            if(handleKPISubmit.KPITotalScore.Any())
+            {
+                 quarterScores.Add(handleKPISubmit.KPITotalScore.First(x=>x.Quarter == (quarterNumbers+1)));
+            }    
             if (quarterScores.Count != 2)
                 return;
 
             // Trung bình cộng
-            decimal avgKPI = quarterScores.Average(x => x.KPIScore ?? 0);
-            decimal avgKeyTask = quarterScores.Average(x => x.KeyTaskScore ?? 0);
-            decimal avgOMG = quarterScores.Average(x => x.OMGScore ?? 0);
-            decimal avgTotal = quarterScores.Average(x => x.TotaleScore ?? 0);
+            decimal avgKPI = quarterScores.Average(x => x.KPIScore);
+            decimal avgKeyTask = quarterScores.Average(x => x.KeyTaskScore);
+            decimal avgOMG = quarterScores.Average(x => x.OMGScore);
+            decimal avgTotal = quarterScores.Average(x => x.TotaleScore);
 
-            // Kiểm tra xem đã có Bán niên trong danh sách chưa
-            //bool exists = handleKPISubmit.Any(x => x.HalfYear == halfYear && x.Quarter == null && x.Month == null);
-            //if (!exists)
-            //{
-            var halfYearScore = new HandleKPISubmitDto
+            var halfYearScore = new KPITotalScoreDto
             {
                 KPIScore = Math.Round(avgKPI, 2),
                 KeyTaskScore = Math.Round(avgKeyTask, 2),
                 OMGScore = Math.Round(avgOMG, 2),
                 TotaleScore = Math.Round(avgTotal, 2),
-                HeaderTitle = $"EMC - {CurrenUser.FullName} - H {halfYear}",
-                Year = handleKPISubmit.First().Year,
+                Title = $"EMC - {handleKPISubmit.HandleActual.First().Year} - H{halfYear} - {CurrenUser.FullName} ",
+                Year = handleKPISubmit.HandleActual.First().Year,
                 HalfYear = halfYear,
                 CreatedBy = CurrenUser.Id
             };
 
-            handleKPISubmit.Add(halfYearScore);
-            //}
+            handleKPISubmit.KPITotalScore.Add(halfYearScore);
         }
         #endregion
-      
+
     }
 }

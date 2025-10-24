@@ -1,6 +1,7 @@
 ﻿@using AntDesign
 @using AntDesign.ProLayout
 @using AquaSolution.Client.Common
+@using AquaSolution.Client.Common.ConvertNumber
 @using AquaSolution.Shared.KPI.KPISubmit;
 @using AquaSolution.Shared.KPI.DealineManagement
 @inject ModalService Modal
@@ -35,7 +36,7 @@
         width: fit-content !important;
     }
 
-    h7 {
+    .customH {
         color: red;
         margin-left: 10px;
     }
@@ -56,17 +57,17 @@
             <div style="width:100%;overflow-x:scroll ;height:65vh; ">
                 <Tabs @bind-ActiveKey="activeTabKey" Centered>
                     <TabPane Key="1">
-                        <Table TItem="HandleKPISubmitDto"
+                        <Table TItem="HandleActualDto"
                                Size="TableSize.Small"
                                Class="customTable fix-table-header"
-                               DataSource="HandleKPISubmit.Where(x=>x.Month !=null)">
+                               DataSource="HandleKPISubmitDto.HandleActual.Where(x=>x.Month !=null)">
                             <ColumnDefinitions Context="row">
                                 <PropertyColumn Width="320px" Title="TaskName" Property="c => c.TaskName"></PropertyColumn>
                                 <PropertyColumn Width="100px" Title="Category" Property="c => c.KPICategory"></PropertyColumn>
                                 <PropertyColumn Width="100px" Title="Index" Property="c => c.KPIIndexType"></PropertyColumn>
                                 <PropertyColumn Width="90px" Title="Unit" Property="c => c.Unit"></PropertyColumn>
                                 <PropertyColumn Width="100px" Title="Target" Property="c => c.TargetValue" Format="0.00"></PropertyColumn>
-                                <Column Title="Actual" Width="100px" TData="HandleKPISubmitDto">
+                                <Column Title="Actual" Width="100px" TData="HandleActualDto">
                                     <AntDesign.InputNumber @bind-Value="row.ActualValue" DefaultValue="0" Format="0.00" />
                                 </Column>
                             </ColumnDefinitions>
@@ -74,11 +75,42 @@
                     </TabPane>
                     <TabPane Key="2">
                         <Collapse DefaultActiveKey="@(new[] { "1" })">
+                            @{
+                                var halfYearScore = HandleKPISubmitDto.KPITotalScore?.FirstOrDefault(x => x.HalfYear != null);
+                                if (halfYearScore != null)
+                                {
+                                    var title = $"{halfYearScore.Title}"
+                                    + "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"
+                                    + $"KPI Score:{ConvertNumberCommon.ConvertNumber(halfYearScore.KPIScore)}"
+                                    + "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"
+                                    + $"KeyTaskScore:{ConvertNumberCommon.ConvertNumber(halfYearScore.KeyTaskScore)}"
+                                    + "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"
+                                    + $"OMGScore:{ConvertNumberCommon.ConvertNumber(halfYearScore.OMGScore)}"
+                                    + "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"
+                                    + $"Total Score:{ConvertNumberCommon.ConvertNumber(halfYearScore.TotaleScore)}";
+                                    <h7 style="margin-left:10px;display:block">@title</h7>
+                                }
+
+                                var quarterScore = HandleKPISubmitDto.KPITotalScore?.FirstOrDefault(x => x.Quarter != null);
+                                if (quarterScore != null)
+                                {
+                                    var quarterTitle = $"{quarterScore.Title}"
+                                    + "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"
+                                    + $"KPI Score:{ConvertNumberCommon.ConvertNumber(quarterScore.KPIScore)}"
+                                    + "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"
+                                    + $"KeyTaskScore:{ConvertNumberCommon.ConvertNumber(quarterScore.KeyTaskScore)}"
+                                    + "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"
+                                    + $"OMGScore:{ConvertNumberCommon.ConvertNumber(quarterScore.OMGScore)}"
+                                    + "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"
+                                    + $"Total Score:{ConvertNumberCommon.ConvertNumber(quarterScore.TotaleScore)}";
+                                    <h7 style="margin-left:10px">@quarterTitle</h7>
+                                }
+                            }
                             <Panel Class="customMonthInfor" Header="@HeaderLine" Key="1">
-                                <Table TItem="HandleKPISubmitDto"
+                                <Table TItem="HandleActualDto"
                                        Size="TableSize.Small"
                                        Class="customTable fix-table-header"
-                                       DataSource="HandleKPISubmit.Where(x=>x.Month !=null)">
+                                       DataSource="HandleKPISubmitDto.HandleActual.Where(x=>x.Month !=null)">
 
                                     <ColumnDefinitions Context="rowTarget">
                                         <PropertyColumn Width="250px" Title="TaskName" Property="c => c.TaskName"></PropertyColumn>
@@ -99,19 +131,13 @@
                                     </ColumnDefinitions>
                                 </Table>
                             </Panel>
-                            @if (HandleKPISubmit.FirstOrDefault(x => x.Quarter != null) != null)
-                            {
-                                <h5>@HandleKPISubmit?.FirstOrDefault(x => x.Quarter != null)?.HeaderTitle</h5>
-                            }
-                            @if (HandleKPISubmit?.FirstOrDefault(x => x.HalfYear != null) != null)
-                            {
-                                <h5>@HandleKPISubmit?.FirstOrDefault(x => x.HalfYear != null)?.HeaderTitle</h5>
-                            }
+                           
+
                             @*  <Panel Class="customMonthInfor" Header="@HeaderLine" Key="2">
-                                <Table TItem="HandleKPISubmitDto"
+                                <Table TItem="HandleKPISubmitDto.HandleActualDto"
                                        Size="TableSize.Small"
                                        Class="customTable fix-table-header"
-                                       DataSource="HandleKPISubmit">
+                                       DataSource="HandleKPISubmitDto.HandleActual">
 
                                     <ColumnDefinitions Context="rowTarget">
                                         <PropertyColumn Width="250px" Title="TaskName" Property="c => c.TaskName"></PropertyColumn>
@@ -140,7 +166,7 @@
     }
     @if (!DealineManagement.Any())
     {
-        <h7>Currently, there is no KPI available for input, or the previous month's submission is still pending approval. Please try again later!</h7>
+        <h7 class="customH">Currently, there is no KPI available for input, or the previous month's submission is still pending approval. Please try again later!</h7>
     }
 
 </Modal>

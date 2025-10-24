@@ -9,6 +9,7 @@ namespace AquaSolution.Shared.KPI.KPISubmit
 {
     public class KPITotalScoreDto
     {
+        public string Title { get; set; }
         public decimal KPIScore { get; set; }
         public decimal KeyTaskScore { get; set; }
         public decimal OMGScore { get; set; }

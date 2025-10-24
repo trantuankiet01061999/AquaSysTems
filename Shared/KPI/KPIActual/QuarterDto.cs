@@ -11,6 +11,6 @@ namespace AquaSolution.Shared.KPI.KPIActual
         public decimal? OMGScore { get; set; }
         public decimal? TotalScore { get; set; }
 
-        public List<HandleKPISubmitDto> Months { get; set; } = new List<HandleKPISubmitDto>();
+        public List<HandleActualDto> Months { get; set; } = new List<HandleActualDto>();
     }
 }

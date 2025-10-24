@@ -9,8 +9,8 @@ namespace AquaSolution.Shared.ApprovalFlows
 {
     public class ApprovalFlowGroupDto
     {
-        public string PositionName { get; set; } = string.Empty;
-        public SystemType System { get; set; }
-        public List<ApprovalFlowItemDto> Items { get; set; } = new();
+        public Guid PositionId { get; set; }
+        public string? PositionName { get; set; }
+        public List<ApprovalFlowDto> Items { get; set; } = new();
     }
 }
