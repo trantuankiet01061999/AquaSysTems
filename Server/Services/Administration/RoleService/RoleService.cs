@@ -36,7 +36,7 @@ namespace AquaSolution.Server.Services.Administration.RoleService
                 UserId = userId,
                 RoleId = roleId.Id
             }).ToList();
-            await _userRoleRepository.AddRangeAsync(newUserRoles);
+            await _userRoleRepository.InsertRangeAsync(newUserRoles);
             await _userRoleRepository.SaveChangesAsync(); 
             return true;
         }

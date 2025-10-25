@@ -11,7 +11,7 @@ namespace AquaSolution.Shared.Enum.KPIType
         Rejected ,
         InReview,
         Pending,
-        Approved,
+        Approval,
         Cancel
     }
 }

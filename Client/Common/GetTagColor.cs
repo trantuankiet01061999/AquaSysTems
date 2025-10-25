@@ -6,15 +6,18 @@
         {
             return status switch
             {
-                "Open" => "#d3d0d0",         // Xám đậm
-                "OnHold" => "#d48806",       // Cam vàng
-                "Resolved" => "#389e0d",     // Xanh lá đậm
-                "InProgress" => "#096dd9",   // Xanh dương đậm
-                "Cancel" => "#cf1322",       // Đỏ đậm
-                "New" => "#13c2c2",          // Xanh ngọc (khác AntD)
-                "Approval" => "#389e0d",     // Tím đậm
-                "Done" => "#2f54eb",         // Xanh đậm khác
-                "Rejected" => "#ff4d4f",
+                "Open" => "#d3d0d0",       
+                "OnHold" => "#d48806",     
+                "Resolved" => "#389e0d",   
+                "InProgress" => "#096dd9", 
+                "Cancel" => "#cf1322",     
+                "New" => "#13c2c2",        
+                "Approval" => "#389e0d",
+                "Done" => "#2f54eb",       
+                "Rejected" => "#F44336",
+                "WaitingForApproval" => "#FFC107",
+                "InReview" => "#2196F3",
+                "Pending" => "#9E9E9E",
                 _ => "#bfbfbf",
             };
         }

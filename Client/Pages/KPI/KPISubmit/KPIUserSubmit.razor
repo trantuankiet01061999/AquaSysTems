@@ -4,9 +4,11 @@
 @inject NavigationManager Navigation
 @inject IMessageService Message
 @inject IJSRuntime JS
+@using AquaSolution.Client.Common
 @using AquaSolution.Client.Components.KPI.KPISubmit
 @using AquaSolution.Shared.UserManagements
 @using Microsoft.AspNetCore.Components.Authorization
+@using AquaSolution.Shared.KPI.KPISubmit
 @inject AuthenticationStateProvider AuthStateProvider
 <PageTitle>RequestSuport</PageTitle>
 <div class="mb-3">
@@ -48,13 +50,41 @@
         <button @onclick="SelectedKPI" class="btn btn-primary custom-button-type">
             <Icon Type="plus" />Selected KPI
         </button>
-      
+
     </div>
 
 </div>
 
 <div style="width:98%;overflow-x:scroll ;max-height:70vh; ">
 
-   
+    <Table TItem="ViewKPITotalScoreDto"
+           @ref="TableRef"
+           Size="TableSize.Small"
+           Class="customTable fix-table-header"
+           DataSource="DataSource">
+        <ColumnDefinitions Context="row">
+            <PropertyColumn Fixed="ColumnFixPlacement.Left" Width="300px" Title="Title" Property="c => c.Title"></PropertyColumn>
+            <PropertyColumn Width="100px" Title="Status" Property="c => c.Status">
+                <Tag Color="@GetTagColor.GetTagColorCss(row.Status.ToString())">@row.Status</Tag>
+            </PropertyColumn>
+            <PropertyColumn Width="200px" Title="UserName" Property="c => c.UserName"></PropertyColumn>
+            <PropertyColumn Width="200px" Title="ManagerName" Property="c => c.ManagerName"></PropertyColumn>
+            <PropertyColumn Width="100px" Title="KPIScore" Property="c => c.KPIScore"></PropertyColumn>
+            <PropertyColumn Width="100px" Title="KeyTaskScore" Property="c => c.KeyTaskScore"></PropertyColumn>
+            <PropertyColumn Width="100px" Title="OMGScore" Property="c => c.OMGScore"></PropertyColumn>
+            <PropertyColumn Width="100px" Title="OMGScore" Property="c => c.TotaleScore"></PropertyColumn>
+            <PropertyColumn Width="50px" Title="Year" Property="c => c.Year"></PropertyColumn>
+            <Column Fixed="ColumnFixPlacement.Right" TData="ViewKPITotalScoreDto" Title="Acction" Width="50px" Context="row">
+                @if (row.Month != null)
+                {
+                    <Template>
+                        <Button Type="ButtonType.Primary" OnClick="@(async () => await ViewAsync(row))" Style="text-align: left;">
+                            <Icon Type="eye" /> Detail
+                        </Button>
+                    </Template>
+                }
+            </Column>
+        </ColumnDefinitions>
+    </Table>
 </div>
 <SelectedKPISubmitModalrazor @ref="SelectedKPISubmitModalrazor"></SelectedKPISubmitModalrazor>

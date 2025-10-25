@@ -1,0 +1,73 @@
+﻿@page "/kpi-approval"
+@using AntDesign
+@inject ModalService modal
+@inject NavigationManager Navigation
+@inject IMessageService Message
+@inject IJSRuntime JS
+@using AquaSolution.Client.Common
+@using AquaSolution.Client.Components.KPI.KPISubmit
+@using AquaSolution.Shared.Enum.KPIType
+@using AquaSolution.Shared.UserManagements
+@using Microsoft.AspNetCore.Components.Authorization
+@using AquaSolution.Shared.KPI.KPISubmit
+@inject AuthenticationStateProvider AuthStateProvider
+<PageTitle>KPI For Approval</PageTitle>
+<div class="user-management-container">
+    <div class="mb-3">
+        <style>
+            .custom-button-type {
+                height: 30px;
+                font-size: 12px;
+            }
+        </style>
+    </div>
+    <div style="width:100%;overflow-x:scroll ;max-height:70vh; ">
+        <Collapse>
+            @foreach (var group in _groupedList)
+            {
+                <Panel Header="@($"{group.StatusName} ({group.Items.Count})")">
+                    <Table PaginationPosition="false" DataSource="@group.Items">
+                        <ColumnDefinitions Context="rowItem">
+                            <PropertyColumn Title="Position" Property="c => c.Position" Width="60" />
+                            <PropertyColumn Title="Title" Property="c => c.Title" Width="200" />
+                            <PropertyColumn Title="Requester" Property="c => c.CreatedByName" Width="120" />
+
+                            <PropertyColumn Width="100" Title="Status" Property="c => c.EApprovalStatusType">
+                                <Tag Color="@GetTagColor.GetTagColorCss(rowItem.EApprovalStatusType.ToString())">@rowItem.EApprovalStatusType</Tag>
+                            </PropertyColumn>
+                            <PropertyColumn Title="CreatedDate" Property="c => c.CreatedDate" Format="dd/MM/yyyy HH:mm:ss" Width="120" />
+                            <Column Fixed="ColumnFixPlacement.Right" TData="ViewKPIForApprovalDto" Width="60px" Context="row">
+                                <Template>
+                                    <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">
+                                        <ChildContent>
+                                            <Button Icon="menu" />
+                                        </ChildContent>
+                                        <ContentTemplate>
+                                            <div style="display: flex; flex-direction: column; gap: 4px; padding: 8px;">
+                                                <Button Type="ButtonType.Text" OnClick="@(async () => await ViewDetail(rowItem))" Style="text-align: left;">
+                                                    <Icon Type="profile" /> Detail
+                                                </Button>
+                                                @if (rowItem.EApprovalStatusType == EApprovalStatusType.InReview)
+                                                {
+                                                    <Button Type="ButtonType.Link" OnClick="@(async () => await ApprovalAsync(rowItem))" Style="text-align: left;">
+                                                        <Icon Type="check" /> Approval
+                                                    </Button>
+                                                    <Button Type="ButtonType.Text" OnClick="@(async () => await RejectedAsync(rowItem))" Style="text-align: left;color:red">
+                                                        <Icon Type="delete" /> Rejected
+                                                    </Button>
+                                                }
+                                            </div>
+                                        </ContentTemplate>
+                                    </Popover>
+                                </Template>
+                            </Column>
+                        </ColumnDefinitions>
+                    </Table>
+                </Panel>
+            }
+        </Collapse>
+
+    </div>
+
+</div>
+<ApprovalTaskModal @ref="ApprovalTaskModalRef"></ApprovalTaskModal>
