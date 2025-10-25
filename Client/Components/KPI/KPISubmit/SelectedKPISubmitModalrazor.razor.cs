@@ -306,6 +306,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
                 var listResultDetail = new List<HandleActualDto>();
                 foreach (var m in listMonths)
                 {
+                    // lấy Total để validate đủ 2 tahngs trở lên không
                     var result = await Http.GetFromJsonAsync<List<KPITotalScoreDto>>(
                         $"api/kpiSubmit/get-result-kpi/{CurrenUser.Id}/{handleKPISubmit.HandleActual.First().Year}/{m}");
 
@@ -313,7 +314,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
                     {
                         actuals.AddRange(result);
                     }
-
+                    // lấy Detail để tính 3 tháng cho quý
                     var resultOMG = await Http.GetFromJsonAsync<List<HandleActualDto>>(
                        $"api/kpiSubmit/get-result-omg/{CurrenUser.Id}/{handleKPISubmit.HandleActual.First().Year}/{m}");
                     if (resultOMG != null && resultOMG.Any())
@@ -323,6 +324,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
                 }
                 listResultDetail.AddRange(handleKPISubmit.HandleActual.Where(x=>x.Month == month));
 
+                //validate
                 var currentMonth = handleKPISubmit.HandleActual.First().Month;
                 if (!actuals.Any(x => x.Month == currentMonth))
                 {

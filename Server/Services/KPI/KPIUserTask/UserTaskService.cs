@@ -96,7 +96,7 @@ namespace AquaSolution.Server.Services.KPI.KPIUserTask
 
                 if (tasksToAdd.Any())
                 {
-                    await _userTaskRepo.AddRangeAsync(tasksToAdd);
+                    await _userTaskRepo.InsertRangeAsync(tasksToAdd);
                     await _userTaskRepo.SaveChangesAsync();
                 }
 
@@ -140,7 +140,7 @@ namespace AquaSolution.Server.Services.KPI.KPIUserTask
                         UserId = dto.UserId,
                     }).ToList();
 
-                    await _KPIMonthlyTargetRepo.AddRangeAsync(newTargets);
+                    await _KPIMonthlyTargetRepo.InsertRangeAsync(newTargets);
                 }
 
                 var result = await _KPIMonthlyTargetRepo.SaveChangesAsync();

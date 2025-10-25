@@ -30,7 +30,7 @@ namespace AquaSolution.Server.Services.Administration.RolePermissionService
                         PermissionId = permission
                     });
                 }
-                await _rolePermissionRepo.AddRangeAsync(listRolePermission);
+                await _rolePermissionRepo.InsertRangeAsync(listRolePermission);
             }
             return await _rolePermissionRepo.SaveChangesAsync();
         }

@@ -17,9 +17,9 @@ namespace AquaSolution.Server.Controllers.KPI.KPISubmit
             _kPISubmitService = kPISubmitService;
         }
         [HttpGet("get-kpi-submit/{userId}/{year}/{month}")]
-        public async Task<IActionResult> GetAsync( Guid userId ,int year, int? month)
+        public async Task<IActionResult> GetAsync(Guid userId, int year, int? month)
         {
-            var result = await _kPISubmitService.GetHandleKPISubmitByUserId( userId,year,month);
+            var result = await _kPISubmitService.GetHandleKPISubmitByUserId(userId, year, month);
             return Ok(result);
         }
         [HttpPost("create")]
@@ -34,14 +34,14 @@ namespace AquaSolution.Server.Controllers.KPI.KPISubmit
             var result = await _kPISubmitService.GetKPITotalScoreByUserId(userId, year, month);
             return Ok(result);
         }
-        [HttpGet("get-result-quarter/{userId}/{year}/{month}")]
+        [HttpGet("get-result-quarter/{userId}/{year}/{quarter}")]
         public async Task<IActionResult> GetQuarter(Guid userId, int year, int? quarter)
         {
             var result = await _kPISubmitService.GetKPITotalScoreQuarterByUserId(userId, year, quarter);
             return Ok(result);
         }
         [HttpGet("get-indexweight/{positionType}/{periodType}")]
-        public async Task<IActionResult> GetIndexWeight(PositionType positionType,PeriodType periodType )
+        public async Task<IActionResult> GetIndexWeight(PositionType positionType, PeriodType periodType)
         {
             var result = await _kPISubmitService.GetIndexWeight(positionType, periodType);
             return Ok(result);
@@ -51,6 +51,32 @@ namespace AquaSolution.Server.Controllers.KPI.KPISubmit
         {
             var result = await _kPISubmitService.GetApprovedOMG(userId, year, month);
             return Ok(result);
+        }
+        [HttpGet("get-kpi-total-score-by-userid/{userId}")]
+        public async Task<IActionResult> GetKPITotalScoreByUserId(Guid userId)
+        {
+            var result = await _kPISubmitService.GetKPITotalScoreByUserId(userId);
+            return Ok(result);
+        }
+        [HttpGet("get-kpi-approval")]
+        public async Task<IActionResult> GetKPIForApproval()
+        {
+            var result = await _kPISubmitService.GetKPIForApproval();
+            return Ok(result);
+        }
+        [HttpGet("get-process-by-submitid/{submitid}")]
+        public async Task<IActionResult> GetProcessApprovalBySubmitIdAsync(Guid submitid)
+        {
+            var result = await _kPISubmitService.GetProcessApprovalBySubmitIdAsync(submitid);
+            return Ok(result);
+        }
+        [HttpGet("get-detail-by-submitid/{submitid}")]
+        public async Task<IActionResult> GetDetailKPIBySubmitId(Guid submitid)
+        {
+
+            var result2 = await _kPISubmitService.GetDetailKPIBySubmitId(submitid);
+            return Ok(result2);
+
         }
     }
 }

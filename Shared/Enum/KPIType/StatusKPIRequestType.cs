@@ -9,7 +9,7 @@ namespace AquaSolution.Shared.Enum.KPIType
     public  enum StatusKPIRequestType
     {
         New,
-        Approved ,
+        Approval,
         Rejected ,
         WaitingForApproval
     }

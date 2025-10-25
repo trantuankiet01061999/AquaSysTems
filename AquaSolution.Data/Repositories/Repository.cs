@@ -48,7 +48,7 @@ namespace AquaSolution.Data.Repositories
             => await _dbSet.Where(predicate).ToListAsync();
 
         public async Task InsertAsync(T entity) => await _dbSet.AddAsync(entity);
-        public async Task AddRangeAsync(IEnumerable<T> entities) => await _dbSet.AddRangeAsync(entities);
+        public async Task InsertRangeAsync(IEnumerable<T> entities) => await _dbSet.AddRangeAsync(entities);
         public void RemoveRange(IEnumerable<T> entities) => _dbSet.RemoveRange(entities);
 
         public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
