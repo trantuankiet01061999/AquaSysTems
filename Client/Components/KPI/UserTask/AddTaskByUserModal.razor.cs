@@ -111,84 +111,84 @@ namespace AquaSolution.Client.Components.KPI.UserTask
         }
         #endregion
         #region Handle Data
-        private List<UpdateTargetDto> CulatedTarget(List<UpdateTargetDto> updateTarget, KPIQuarterCalculateType type)
-        {
-            // Tạo danh sách mới để lưu kết quả
-            var result = new List<UpdateTargetDto>(updateTarget);
+        //private List<UpdateTargetDto> CulatedTarget(List<UpdateTargetDto> updateTarget, KPIQuarterCalculateType type)
+        //{
+        //    // Tạo danh sách mới để lưu kết quả
+        //    var result = new List<UpdateTargetDto>(updateTarget);
 
-            // Bước 2: Tính quý (Q1 → Q4)
-            for (int quarter = 0; quarter < 4; quarter++)
-            {
-                var months = updateTarget
-                    .Where(x => x.Month >= quarter * 3 + 1 && x.Month <= quarter * 3 + 3)
-                    .OrderBy(x => x.Month)
-                    .ToList();
-                decimal value = CalculateValue(months, type);
-                result.Add(new UpdateTargetDto
-                {
-                    TaskId = updateTarget.First().TaskId,
-                    UserId = updateTarget.First().UserId,
-                    Quarter = quarter + 1,
-                    CreatedDate = DateTime.Now,
-                    Year = updateTarget.First().Year,
-                    TargetValue = value
-                });
-            }
-            // Bước 3: Tính nửa năm (2 quý)
-            for (int half = 0; half < 2; half++)
-            {
-                var quarters = result
-                    .Where(x => x.Quarter >= half * 2 + 1 && x.Quarter <= half * 2 + 2)
-                    .ToList();
+        //    // Bước 2: Tính quý (Q1 → Q4)
+        //    for (int quarter = 0; quarter < 4; quarter++)
+        //    {
+        //        var months = updateTarget
+        //            .Where(x => x.Month >= quarter * 3 + 1 && x.Month <= quarter * 3 + 3)
+        //            .OrderBy(x => x.Month)
+        //            .ToList();
+        //        decimal value = CalculateValue(months, type);
+        //        result.Add(new UpdateTargetDto
+        //        {
+        //            TaskId = updateTarget.First().TaskId,
+        //            UserId = updateTarget.First().UserId,
+        //            Quarter = quarter + 1,
+        //            CreatedDate = DateTime.Now,
+        //            Year = updateTarget.First().Year,
+        //            TargetValue = value
+        //        });
+        //    }
+        //    // Bước 3: Tính nửa năm (2 quý)
+        //    for (int half = 0; half < 2; half++)
+        //    {
+        //        var quarters = result
+        //            .Where(x => x.Quarter >= half * 2 + 1 && x.Quarter <= half * 2 + 2)
+        //            .ToList();
 
-                decimal value = CalculateValue(quarters, type);
-                result.Add(new UpdateTargetDto
-                {
-                    TaskId = updateTarget.First().TaskId,
-                    UserId = updateTarget.First().UserId,
-                    HalfYear = half + 1,
-                    CreatedDate = DateTime.Now,
-                    Year = updateTarget.First().Year,
-                    TargetValue = value
-                });
-            }
-            // Bước 4: Tính cả năm
-            var allMonths = updateTarget.Where(x => x.Month >= 1 && x.Month <= 12).ToList();
-            decimal yearValue = CalculateValue(allMonths, type);
+        //        decimal value = CalculateValue(quarters, type);
+        //        result.Add(new UpdateTargetDto
+        //        {
+        //            TaskId = updateTarget.First().TaskId,
+        //            UserId = updateTarget.First().UserId,
+        //            HalfYear = half + 1,
+        //            CreatedDate = DateTime.Now,
+        //            Year = updateTarget.First().Year,
+        //            TargetValue = value
+        //        });
+        //    }
+        //    // Bước 4: Tính cả năm
+        //    var allMonths = updateTarget.Where(x => x.Month >= 1 && x.Month <= 12).ToList();
+        //    decimal yearValue = CalculateValue(allMonths, type);
 
-            result.Add(new UpdateTargetDto
-            {
-                TaskId = updateTarget.First().TaskId,
-                UserId = updateTarget.First().UserId,
-                CreatedDate = DateTime.Now,
-                Year = updateTarget.First().Year,
-                TargetValue = yearValue,
-            });
+        //    result.Add(new UpdateTargetDto
+        //    {
+        //        TaskId = updateTarget.First().TaskId,
+        //        UserId = updateTarget.First().UserId,
+        //        CreatedDate = DateTime.Now,
+        //        Year = updateTarget.First().Year,
+        //        TargetValue = yearValue,
+        //    });
 
-            return result;
-        }
-        private decimal CalculateValue(List<UpdateTargetDto> list, KPIQuarterCalculateType type)
-        {
-            if (list == null || !list.Any()) return 0;
+        //    return result;
+        //}
+        //private decimal CalculateValue(List<UpdateTargetDto> list, KPIQuarterCalculateType type)
+        //{
+        //    if (list == null || !list.Any()) return 0;
 
-            switch (type)
-            {
-                case KPIQuarterCalculateType.CALCULATE1:
-                    return list.Sum(x => x.TargetValue);
+        //    switch (type)
+        //    {
+        //        case KPIQuarterCalculateType.CALCULATE1:
+        //            return list.Sum(x => x.TargetValue);
 
-                case KPIQuarterCalculateType.CALCULATE2:
-                    return list.Average(x => x.TargetValue);
+        //        case KPIQuarterCalculateType.CALCULATE2:
+        //            return list.Average(x => x.TargetValue);
 
-                case KPIQuarterCalculateType.CALCULATE3:
-                    return list
-                        .Where(x => x.Month != null)
-                        .OrderByDescending(x => x.Month)
-                        .FirstOrDefault()?.TargetValue ?? 0;
+        //        case KPIQuarterCalculateType.CALCULATE3:
+        //            return list
+        //                .Where(x => x.Month != null)
+        //                .OrderByDescending(x => x.Month)
+        //                .FirstOrDefault()?.TargetValue ?? 0;
 
-                default:
-                    return 0;
-            }
-        }
+        //        default:
+        //            return 0;
+        //    }
+        //}
         public List<UpdateTargetDto> ConvertCreatedToUpdateTargets(CreatedTargetDto created)
         {
             var list = new List<UpdateTargetDto>();
@@ -262,8 +262,8 @@ namespace AquaSolution.Client.Components.KPI.UserTask
         }
         private async Task SaveAsync()
         {
-            //var validate =await ValidateWieght();
-            //if (!validate) return;
+            var validate = await ValidateWieght();
+            if (!validate) return;
 
             HandleUserTaskAndTarget = new();
             foreach (var item in CreatedTarget)

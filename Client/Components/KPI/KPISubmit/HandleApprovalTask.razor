@@ -1,0 +1,47 @@
+﻿@using AntDesign
+@using AquaSolution.Client.Common
+@using AquaSolution.Shared.KPI.KPISubmit
+@using AquaSolution.Client.Common.ConvertNumber
+@using AquaSolution.Shared.CommonDto
+@using AquaSolution.Shared.Enum
+@using AquaSolution.Shared.Enum.KPIType
+@using AquaSolution.Shared.ITSuport.RequestSuport
+@inject HttpClient httpClient
+@using AquaSolution.Shared.ITSuport.RequestSuportCategory
+@using AquaSolution.Shared.UserManagements
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IMessageService Message
+@{
+    RenderFragment footer = @<Template>
+        <Button OnClick="@SaveAsync" @key="@( "submit" )"
+                Type="ButtonType.Primary">
+            Approval
+        </Button>
+
+        <Button OnClick="@CancelAsync" @key="@( "Cancel" )"
+                Style="color:red">
+            Cancel
+        </Button>
+    </Template>;
+}
+<style>
+    .customTable-score {
+        width: 100% !important;
+        overflow-x: auto;
+    }
+</style>
+<Modal @bind-Visible="IsVisibleModal"
+       Style="z-index: 9999;width:1200px;margin-top:-90px"
+       Draggable="true"
+       Footer="@footer" Title="@ModalTitle">
+    <Form @ref="formRef" Model="@ApprovalInfo"
+          Layout="FormLayout.Vertical"
+          OnFinish="SaveAsync">
+        <FormItem Required="true" Label="RequestSolution">
+            <TextArea ShowCount MinRows="3" @bind-Value="@ApprovalInfo.Comments" MaxLength="2000" AllowClear="true" />
+        </FormItem>
+    </Form>
+
+</Modal>

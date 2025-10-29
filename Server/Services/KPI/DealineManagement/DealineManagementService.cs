@@ -37,7 +37,6 @@ public class DealineManagementService : IDealineManagementService
         var totalScores = await _kpiTotalScoreRepo.GetAllAsync();
         var requests = await _kpiRequestRepo.GetAllAsync();
 
-        // 🔹 Lọc những deadline hợp lệ (đang trong thời gian hiện tại)
         var eligibleMonths = deadlines
             .Where(d =>
                 d.StartDate <= now &&
@@ -57,39 +56,55 @@ public class DealineManagementService : IDealineManagementService
             int y = deadline.Year;
             bool allowDisplay = false;
 
-            // 🔸 1️⃣ Kiểm tra tháng trước
+            // 1️⃣ Kiểm tra tháng trước
             if (m > 1)
             {
                 var tsPrev = totalScores.FirstOrDefault(ts => ts.Month == m - 1 && ts.Year == y);
                 var reqPrev = tsPrev != null ? requests.FirstOrDefault(r => r.SubmitId == tsPrev.SubmitId) : null;
 
-                // Nếu tháng trước bị Reject và tháng đó đang trong hạn → hiển thị lại tháng trước
+                // Nếu tháng trước bị Reject và đang trong hạn → hiển thị lại tháng trước
                 if (reqPrev != null &&
-                    reqPrev.RequestStatus == StatusKPIRequestType.Rejected &&
-                    deadlines.Any(d => d.Month == m - 1 && d.Year == y && d.StartDate <= now && d.EndDate >= now))
+                    reqPrev.RequestStatus == StatusKPIRequestType.Rejected)
                 {
-                    deadline.Month = m - 1;
-                    allowDisplay = true;
+                    var prevDeadline = deadlines.FirstOrDefault(d => d.Month == m - 1 && d.Year == y);
+                    if (prevDeadline != null &&
+                        prevDeadline.StartDate <= now && prevDeadline.EndDate >= now)
+                    {
+                        deadline.Month = m - 1;
+                        allowDisplay = true;
+                    }
+                    else
+                    {
+                        // ❌ Tháng trước bị reject nhưng đã hết hạn → dừng
+                        break;
+                    }
                 }
             }
 
-            // 🔸 2️⃣ Nếu chưa được hiển thị, kiểm tra tháng hiện tại
+            // 2️⃣ Nếu chưa được hiển thị, kiểm tra tháng hiện tại
             if (!allowDisplay)
             {
                 var tsCurrent = totalScores.FirstOrDefault(ts => ts.Month == m && ts.Year == y);
                 var reqCurrent = tsCurrent != null ? requests.FirstOrDefault(r => r.SubmitId == tsCurrent.SubmitId) : null;
 
-                // Nếu tháng hiện tại bị Reject và đang trong hạn → hiển thị lại tháng hiện tại
                 if (reqCurrent != null &&
-                    reqCurrent.RequestStatus == StatusKPIRequestType.Rejected &&
-                    deadline.StartDate <= now && deadline.EndDate >= now)
+                    reqCurrent.RequestStatus == StatusKPIRequestType.Rejected)
                 {
-                    allowDisplay = true;
+                    // Nếu tháng hiện tại bị Reject và đang trong hạn → cho phép nhập lại
+                    if (deadline.StartDate <= now && deadline.EndDate >= now)
+                    {
+                        allowDisplay = true;
+                    }
+                    else
+                    {
+                        // ❌ Hết hạn → không hiển thị
+                        break;
+                    }
                 }
-                // Nếu tháng hiện tại đã Approved → cho phép hiển thị tháng kế tiếp (nếu còn hạn)
                 else if (reqCurrent != null &&
                          reqCurrent.RequestStatus == StatusKPIRequestType.Approval)
                 {
+                    // Nếu tháng hiện tại đã Approved → hiển thị tháng kế tiếp nếu còn hạn
                     var nextDeadline = deadlines.FirstOrDefault(d => d.Month == m + 1 && d.Year == y);
                     if (nextDeadline != null &&
                         nextDeadline.StartDate <= now && nextDeadline.EndDate >= now)
@@ -97,9 +112,9 @@ public class DealineManagementService : IDealineManagementService
                         allowDisplay = true;
                     }
                 }
-                // Nếu chưa có request hoặc Pending → chỉ hiển thị nếu tháng trước đã approved và tháng hiện tại đang trong hạn
                 else
                 {
+                    // Pending hoặc chưa có request
                     if (m > 1)
                     {
                         var tsPrev = totalScores.FirstOrDefault(ts => ts.Month == m - 1 && ts.Year == y);
@@ -114,14 +129,14 @@ public class DealineManagementService : IDealineManagementService
                     }
                     else
                     {
-                        // Tháng 1 của năm → cho phép hiển thị nếu trong hạn
+                        // Tháng 1 → hiển thị nếu trong hạn
                         if (deadline.StartDate <= now && deadline.EndDate >= now)
                             allowDisplay = true;
                     }
                 }
             }
 
-            // 🔹 3️⃣ Thêm vào kết quả nếu đủ điều kiện
+            // 3️⃣ Thêm vào kết quả nếu đủ điều kiện
             if (allowDisplay)
             {
                 resultList.Add(new DealineManagementDto
@@ -136,13 +151,12 @@ public class DealineManagementService : IDealineManagementService
             }
             else
             {
-                // ❌ Nếu tháng này không hợp lệ thì dừng vòng lặp
+                // ❌ Nếu không hợp lệ thì dừng
                 break;
             }
         }
 
         return resultList;
     }
-
 
 }

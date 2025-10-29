@@ -1,0 +1,140 @@
+﻿@page "/result-kpi"
+@using AquaSolution.Client.Common
+@using AquaSolution.Client.Components.KPI.KPISubmit
+@using AquaSolution.Shared.KPI.Result;
+@using AntDesign
+@inject IJSRuntime JS
+@inject ModalService modal
+@inject NavigationManager Navigation
+@inject IMessageService Message
+@using AquaSolution.Client.Components.KPI.KPITask
+@using AquaSolution.Shared.KPI.KPITasks
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthStateProvider
+@inject PermissionService permissionService
+@using AntDesign
+<PageTitle>Result Kpi</PageTitle>
+<div class="mb-3">
+    <style>
+        .custom-button-type {
+            height: 30px;
+            font-size: 12px;
+        }
+
+        .fix-table-header table {
+            border-collapse: collapse;
+        }
+
+            .fix-table-header table thead th {
+                position: sticky !important;
+                z-index: 8 !important;
+                top: 0;
+                background-color: #fff;
+            }
+
+        .ant-table-content {
+            min-height: 65vh !important;
+        }
+
+        .ant-table-pagination {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 999;
+            background: white;
+            padding: 8px;
+            text-align: center;
+            box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
+            background: transparent !important;
+        }
+
+
+
+        .custom-label {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+            .custom-label:hover {
+                background-color: #0056b3;
+            }
+    </style>
+    <div style="display: flex;  align-items: center; margin-bottom: 10px; ">
+        <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;margin-left:5px">
+            <Input Placeholder="WorkDayId" Value="@WorkDayId" style="margin-left:2px;width:190px;font-size:12px" @onkeydown="HandleKeyDown" @oninput="WorkDayIdInputChanged" />
+            <Input Placeholder="Full Name" Value="@FullName" style="margin-left:2px;width:190px;font-size:12px" @onkeydown="HandleKeyDown" @oninput="FullNameInputChanged" />
+            <button @onclick="Search" style="border-color:#fff">
+                <Icon Type="search" />Search
+            </button>
+
+            <button @onclick="Reset" style="border-color:#fff">
+                <Icon Type="undo" />Reset
+            </button>
+            <button @onclick="ExportExcel" style="border-color:#fff">
+                <Icon Type="file-excel" /> Export Excel
+            </button>
+        </div>
+    </div>
+
+</div>
+<script>
+    window.saveAsFile = async function (filename, bytesBase64) {
+        const byteCharacters = atob(bytesBase64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], {
+            type: "application/vnd.ms-excel"
+        });
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+        URL.revokeObjectURL(link.href);
+    }
+
+</script>
+<div style="width:100%;overflow-x:scroll ;max-height:70vh; ">
+    <Table TItem="ViewResultKpiDto"
+           Size="TableSize.Small"
+           @ref="@_tableRef"
+           Class="customTable fix-table-header"
+           DataSource="DataFilter">
+        <ColumnDefinitions Context="row">
+            <PropertyColumn Width="250px" Title="Name" Property="c => c.UserName">
+                <Template>
+                    <a href="javascript:void(0);" @onclick="() => ViewAsync(row)">
+                        @row.UserName
+                    </a>
+                </Template>
+            </PropertyColumn>
+            <PropertyColumn Width="100px" Title="WorkDayId" Property="c => c.WorkDayId"></PropertyColumn>
+            <PropertyColumn Width="200px" Title="Approver" Property="c => c.Approver"></PropertyColumn>
+            <PropertyColumn Width="100px" Title="Status" Property="c => c.Status"></PropertyColumn>
+            <PropertyColumn Width="160px" Title="ApprovalDate" Property="c => c.ApprovalDate" Format="dd/MM/yyyy HH:mm"></PropertyColumn>
+            <PropertyColumn Title="Month" Property="c => c.Month" Filters="_monthFilter"></PropertyColumn>
+            <PropertyColumn Title="Quarter" Property="c => c.Quarter" Filters="_quaterFilter"></PropertyColumn>
+            <PropertyColumn Title="HalfYear" Property="c => c.HalfYear" Filters="_halfYearFilter"></PropertyColumn>
+            <PropertyColumn Title="Year" Property="c => c.Year" Filters="_yearFilter"></PropertyColumn>
+            <PropertyColumn Title="KPIScore" Property="c => c.KPIScore"></PropertyColumn>
+            <PropertyColumn Title="KeyTaskScore" Property="c => c.KeyTaskScore"></PropertyColumn>
+            <PropertyColumn Title="OMGScore" Property="c => c.OMGScore"></PropertyColumn>
+            <PropertyColumn Title="TotalScroe" Property="c => c.TotalScroe"></PropertyColumn>
+            <Column Fixed="ColumnFixPlacement.Right" TData="ViewResultKpiDto" Width="50px" Context="row">
+                <Template>
+                    <Button Type="ButtonType.Primary" OnClick="@(async () => await ViewAsync(row))" Style="text-align: left;">
+                        <Icon Type="eye" /> Detail
+                    </Button>
+                </Template>
+            </Column>
+        </ColumnDefinitions>
+    </Table>
+</div>
+<ApprovalTaskModal @ref="ApprovalTaskModal"></ApprovalTaskModal>

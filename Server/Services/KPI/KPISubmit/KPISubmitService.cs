@@ -3,12 +3,13 @@ using AquaSolution.Data.Data.Entities;
 using AquaSolution.Data.Data.Entities.KPI;
 using AquaSolution.Data.KPI.Entities;
 using AquaSolution.Data.Repositories;
+using AquaSolution.Server.SignalR;
 using AquaSolution.Shared.Enum;
 using AquaSolution.Shared.Enum.KPIType;
 using AquaSolution.Shared.KPI.KPIActual;
 using AquaSolution.Shared.KPI.KPISubmit;
+using AquaSolution.Shared.KPI.Result;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace AquaSolution.Server.Services.KPI.KPISubmit
 {
@@ -43,8 +44,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
             IRepository<KPIDetailScore> kpiDetailScoreRepo,
             IRepository<RequestApprovalTask> requestApprovalTaskRepo,
             IRepository<ApprovalFlow> approvalFlowRepo,
-        AquaDbContext context
-            )
+            AquaDbContext context)
         {
             _userTaskepo = userTaskepo;
             _kpiTaskRepo = kpiTaskepo;
@@ -306,11 +306,8 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
         }
         public async Task<KPITotalScoreDto> GetKPITotalScoreQuarterByUserId(Guid userId, int year, int? quarter)
         {
-            // Lấy dữ liệu bất đồng bộ
             var totalScores = await _kpiTotalScoreRepo.GetQueryableAsync();
             var requests = await _kpiRequestRepo.GetQueryableAsync();
-
-            // Thực hiện truy vấn LINQ
             var query = from totalScore in totalScores
                         join request in requests on totalScore.SubmitId equals request.SubmitId
                         where request.RequestStatus == StatusKPIRequestType.Approval
@@ -332,8 +329,6 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                             TotaleScore = totalScore.TotaleScore ?? 0,
                             IsActive = totalScore.IsActive
                         };
-
-
             return await query.FirstOrDefaultAsync();
         }
         public async Task<List<IndexWeightDto>> GetIndexWeight(PositionType positionType, PeriodType periodType)
@@ -716,6 +711,8 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                         orderby totalScore.CreatedDate descending
                         select new ViewKPITotalScoreDto
                         {
+                            Id = totalScore.Id,
+                            SubmitId = totalScore.SubmitId,
                             KPIScore = totalScore.KPIScore,
                             KeyTaskScore = totalScore.KeyTaskScore,
                             OMGScore = totalScore.OMGScore,
@@ -776,12 +773,13 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                     Position = positionName,
                     PositionId = positionId ?? Guid.Empty,
                     DecisionMaker = decisionMaker,
+                    Month = req.Month,
                 };
 
                 result.Add(dto);
             }
 
-            return result.OrderByDescending(r => r.CreatedDate).ToList();
+            return result.ToList();
         }
         public async Task<List<ProcessApprovalDto>> GetProcessApprovalBySubmitIdAsync(Guid submitId)
         {
@@ -805,7 +803,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                     StepNumber = task.Step ?? 0
                 };
 
-                if (task.StatusType == EApprovalStatusType.Approval && task.ApprovedBy.HasValue )
+                if (task.StatusType == EApprovalStatusType.Approval && task.ApprovedBy.HasValue)
                 {
                     var user = await _userRepo.FirstOrDefaultAsync(u => u.Id == task.ApprovedBy.Value);
                     process.ApprovalName = user?.FullName ?? "Unknown";
@@ -819,20 +817,20 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                     process.RejectedEmail = user?.Email ?? string.Empty;
                     process.RejectedDate = task.RejectDate;
                 }
-                else if (task.StatusType == EApprovalStatusType.Pending )
+                else if (task.StatusType == EApprovalStatusType.Pending)
                 {
                     var user = await _userRepo.FirstOrDefaultAsync(u => u.Id == task.DecisionMaker.Value);
                     process.PendingEmail = user?.FullName ?? "Unknown";
                     process.PendingName = user?.Email ?? string.Empty;
                 }
-                else if(task.StatusType == EApprovalStatusType.InReview)
+                else if (task.StatusType == EApprovalStatusType.InReview)
                 {
                     var user = await _userRepo.FirstOrDefaultAsync(u => u.Id == task.DecisionMaker.Value);
                     process.ApprovalName = user?.FullName ?? "Unknown";
                     process.ApprovalEmail = user?.Email ?? string.Empty;
                     process.ApprovalDate = task.ApprovalDate;
-                }    
-                    result.Add(process);
+                }
+                result.Add(process);
             }
 
             return result;
@@ -928,12 +926,244 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                     TargetValue = d.Target,
                     Achiement = d.Achievement,
                     Score = d.Score,
-                    KPIFormulaType = formula.KPIFormulaType ,
+                    KPIFormulaType = formula.KPIFormulaType,
                     IndexWeight = d.Weight
                 });
             }
 
             return result;
+        }
+        #endregion
+        #region Approval or Rejected
+        //public async Task<bool> HandleKpiForApproval(ApprovalInfo approvalInfo)
+        //{
+        //    var currentTask = await _requestApprovalTaskRepo
+        //        .FirstOrDefaultAsync(x => x.Id == approvalInfo.RequestTaskId && x.SubmitId == approvalInfo.SubmitId);
+
+        //    if (currentTask == null)
+        //        return false;
+
+        //    if (approvalInfo.IsApproved)
+        //    {
+        //        currentTask.StatusType = EApprovalStatusType.Approval;
+        //        currentTask.ApprovedBy = approvalInfo.DecisionMaker;
+        //        currentTask.ApprovalDate = DateTime.Now;
+        //        currentTask.Comment = approvalInfo.Comments;
+        //    }
+        //    else
+        //    {
+        //        currentTask.StatusType = EApprovalStatusType.Rejected;
+        //        currentTask.RejectBy = approvalInfo.DecisionMaker;
+        //        currentTask.RejectDate = DateTime.Now;
+        //        currentTask.Comment = approvalInfo.Comments;
+        //    }
+        //    await _requestApprovalTaskRepo.SaveChangesAsync();
+        //    var allTasks = await _requestApprovalTaskRepo.GetListAsync(x => x.SubmitId == approvalInfo.SubmitId);
+        //    if (allTasks.Any(x => x.StatusType == EApprovalStatusType.Rejected))
+        //    {
+        //        var kpiTotalList = await _kpiTotalScoreRepo.GetListAsync(x => x.SubmitId == approvalInfo.SubmitId);
+        //        if (kpiTotalList != null && kpiTotalList.Any())
+        //        {
+        //            foreach (var kpiTotal in kpiTotalList)
+        //            {
+        //                kpiTotal.Status = StatusKPIRequestType.Rejected;
+        //            }
+
+        //            await _kpiTotalScoreRepo.SaveChangesAsync();
+        //        }
+        //        var kpiRequest = await _kpiRequestRepo.FirstOrDefaultAsync(x => x.SubmitId == approvalInfo.SubmitId);
+        //        if (kpiRequest != null)
+        //        {
+        //            kpiRequest.RequestStatus = StatusKPIRequestType.Rejected;
+        //            kpiRequest.RejectDate = DateTime.Now;
+        //            var lastStepTask = allTasks.OrderByDescending(x => x.Step).FirstOrDefault();
+        //            if (lastStepTask != null)
+        //            {
+        //                kpiRequest.RejectBy = lastStepTask.DecisionMaker;
+        //            }
+        //        }
+        //        await _kpiRequestRepo.SaveChangesAsync();
+        //        return true;
+        //    }
+        //    if (approvalInfo.IsApproved)
+        //    {
+        //        var nextTask = allTasks
+        //            .FirstOrDefault(x => x.Step == currentTask.Step + 1 && x.StatusType == EApprovalStatusType.Pending);
+
+        //        if (nextTask != null)
+        //        {
+        //            nextTask.StatusType = EApprovalStatusType.InReview; 
+        //            await _requestApprovalTaskRepo.SaveChangesAsync();
+        //        }
+        //    }
+        //    if (allTasks.All(x => x.StatusType == EApprovalStatusType.Approval))
+        //    {
+        //        var kpiTotalList = await _kpiTotalScoreRepo.GetListAsync(x => x.SubmitId == approvalInfo.SubmitId);
+        //        if (kpiTotalList != null && kpiTotalList.Any())
+        //        {
+        //            foreach (var kpiTotal in kpiTotalList)
+        //            {
+        //                kpiTotal.Status = StatusKPIRequestType.Approval;
+        //            }
+
+        //            await _kpiTotalScoreRepo.SaveChangesAsync();
+        //        }
+        //        var kpiRequest = await _kpiRequestRepo.FirstOrDefaultAsync(x => x.SubmitId == approvalInfo.SubmitId);
+        //        if (kpiRequest != null)
+        //        {
+        //            kpiRequest.RequestStatus = StatusKPIRequestType.Approval;
+        //            kpiRequest.ApprovalDate = DateTime.Now;
+        //            var lastStepTask = allTasks.OrderByDescending(x => x.Step).FirstOrDefault();
+        //            if (lastStepTask != null)
+        //            {
+        //                kpiRequest.ApprovalBy = lastStepTask.DecisionMaker;
+        //            }
+
+        //        }    
+
+        //        await _kpiRequestRepo.SaveChangesAsync();
+        //    }
+        //    return true;
+        //}
+        public async Task<bool> HandleKpiForApproval(ApprovalInfo approvalInfo)
+        {
+            var currentTask = await _requestApprovalTaskRepo
+                .FirstOrDefaultAsync(x => x.Id == approvalInfo.RequestTaskId && x.SubmitId == approvalInfo.SubmitId);
+
+            if (currentTask == null) return false;
+
+            await UpdateCurrentTask(currentTask, approvalInfo);
+
+            var allTasks = await _requestApprovalTaskRepo.GetListAsync(x => x.SubmitId == approvalInfo.SubmitId);
+            var kpiTotalList = await _kpiTotalScoreRepo.GetListAsync(x => x.SubmitId == approvalInfo.SubmitId);
+            var kpiRequest = await _kpiRequestRepo.FirstOrDefaultAsync(x => x.SubmitId == approvalInfo.SubmitId);
+
+            if (allTasks.Any(x => x.StatusType == EApprovalStatusType.Rejected))
+            {
+                await HandleRejectedTasks(allTasks, kpiTotalList, kpiRequest);
+                return true;
+            }
+
+            if (approvalInfo.IsApproved)
+            {
+                await MoveNextStep(allTasks, currentTask);
+            }
+
+            if (allTasks.All(x => x.StatusType == EApprovalStatusType.Approval))
+            {
+                await HandleApprovedTasks(allTasks, kpiTotalList, kpiRequest);
+            }
+
+            return true;
+        }
+
+        private async Task UpdateCurrentTask(RequestApprovalTask task, ApprovalInfo approvalInfo)
+        {
+            if (approvalInfo.IsApproved)
+            {
+                task.StatusType = EApprovalStatusType.Approval;
+                task.ApprovedBy = approvalInfo.DecisionMaker;
+                task.ApprovalDate = DateTime.Now;
+            }
+            else
+            {
+                task.StatusType = EApprovalStatusType.Rejected;
+                task.RejectBy = approvalInfo.DecisionMaker;
+                task.RejectDate = DateTime.Now;
+            }
+            task.Comment = approvalInfo.Comments;
+            await _requestApprovalTaskRepo.SaveChangesAsync();
+        }
+
+        private async Task HandleRejectedTasks(List<RequestApprovalTask> allTasks, List<KPITotalScore> kpiTotalList, KPIRequest kpiRequest)
+        {
+            foreach (var kpiTotal in kpiTotalList)
+            {
+                kpiTotal.Status = StatusKPIRequestType.Rejected;
+            }
+            await _kpiTotalScoreRepo.SaveChangesAsync();
+
+            if (kpiRequest != null)
+            {
+                kpiRequest.RequestStatus = StatusKPIRequestType.Rejected;
+                kpiRequest.RejectDate = DateTime.Now;
+                var lastRejectedTask = allTasks
+                    .Where(x => x.StatusType == EApprovalStatusType.Rejected)
+                    .OrderByDescending(x => x.Step)
+                    .FirstOrDefault();
+                if (lastRejectedTask != null)
+                    kpiRequest.RejectBy = lastRejectedTask.DecisionMaker;
+
+                await _kpiRequestRepo.SaveChangesAsync();
+            }
+        }
+
+        private async Task MoveNextStep(List<RequestApprovalTask> allTasks, RequestApprovalTask currentTask)
+        {
+            var nextTask = allTasks
+                .FirstOrDefault(x => x.Step == currentTask.Step + 1 && x.StatusType == EApprovalStatusType.Pending);
+
+            if (nextTask != null)
+            {
+                nextTask.StatusType = EApprovalStatusType.InReview;
+                await _requestApprovalTaskRepo.SaveChangesAsync();
+            }
+        }
+
+        private async Task HandleApprovedTasks(List<RequestApprovalTask> allTasks, List<KPITotalScore> kpiTotalList, KPIRequest kpiRequest)
+        {
+            foreach (var kpiTotal in kpiTotalList)
+            {
+                kpiTotal.Status = StatusKPIRequestType.Approval;
+            }
+            await _kpiTotalScoreRepo.SaveChangesAsync();
+
+            if (kpiRequest != null)
+            {
+                kpiRequest.RequestStatus = StatusKPIRequestType.Approval;
+                kpiRequest.ApprovalDate = DateTime.Now;
+                var lastApprovedTask = allTasks.OrderByDescending(x => x.Step).FirstOrDefault();
+                if (lastApprovedTask != null)
+                    kpiRequest.ApprovalBy = lastApprovedTask.DecisionMaker;
+
+                await _kpiRequestRepo.SaveChangesAsync();
+            }
+        }
+
+        #endregion
+        #region Result KPI
+        public async Task<List<ViewResultKpiDto>> ResultAllKpi()
+        {
+            var query = from request in await _kpiRequestRepo.GetQueryableAsync()
+                        join totalScore in await _kpiTotalScoreRepo.GetQueryableAsync()
+                        on request.SubmitId equals totalScore.SubmitId
+                        join user in await _userRepo.GetQueryableAsync()
+                        on request.CreatedBy equals user.Id
+                        join approval in await _userRepo.GetQueryableAsync()
+                        on request.ApprovalBy equals approval.Id
+                        select new ViewResultKpiDto
+                        {
+                            SubmitId = request.SubmitId,
+                            UserName = user.FullName,
+                            Approver = approval.FullName,
+                            Status = totalScore.Status,
+                            ApprovalDate = request.ApprovalDate ?? DateTime.Now,
+                            Month = totalScore.Month,
+                            Quarter = totalScore.Quarter,
+                            HalfYear = totalScore.HalfYear,
+                            Year = totalScore.Year,
+                            KPIScore = totalScore.KPIScore,
+                            KeyTaskScore = totalScore.KeyTaskScore,
+                            OMGScore = totalScore.OMGScore,
+                            TotalScroe = totalScore.TotaleScore,
+                            WorkDayId = user.WorkDayId
+                        };
+            var result = query.ToList();
+            if(result.Count > 0)
+            {
+                return result;
+            }
+            return new List<ViewResultKpiDto>();
         }
         #endregion
 

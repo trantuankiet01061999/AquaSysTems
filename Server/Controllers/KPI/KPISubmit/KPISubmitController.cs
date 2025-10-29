@@ -1,8 +1,11 @@
 ﻿using AquaSolution.Server.Services.KPI.KPISubmit;
+using AquaSolution.Server.SignalR;
 using AquaSolution.Shared.Enum;
 using AquaSolution.Shared.Enum.KPIType;
 using AquaSolution.Shared.KPI.KPISubmit;
+using AquaSolution.Shared.KPI.KPITasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace AquaSolution.Server.Controllers.KPI.KPISubmit
 {
@@ -11,10 +14,11 @@ namespace AquaSolution.Server.Controllers.KPI.KPISubmit
     public class KPISubmitController : ControllerBase
     {
         private readonly IKPISubmitService _kPISubmitService;
-
-        public KPISubmitController(IKPISubmitService kPISubmitService)
+        private readonly IHubContext<SignalrHub> _hubContext;
+        public KPISubmitController(IKPISubmitService kPISubmitService, IHubContext<SignalrHub> hubContext)
         {
             _kPISubmitService = kPISubmitService;
+            _hubContext = hubContext;
         }
         [HttpGet("get-kpi-submit/{userId}/{year}/{month}")]
         public async Task<IActionResult> GetAsync(Guid userId, int year, int? month)
@@ -26,6 +30,7 @@ namespace AquaSolution.Server.Controllers.KPI.KPISubmit
         public async Task<IActionResult> CreateAsync([FromBody] HandleKPISubmitDto submitKPIDto)
         {
             var result = await _kPISubmitService.SubmitKPIAsync(submitKPIDto);
+            await _hubContext.Clients.All.SendAsync("ReloadKPIForUserApproval");
             return result ? Ok(true) : BadRequest("New creation failed");
         }
         [HttpGet("get-result-kpi/{userId}/{year}/{month}")]
@@ -76,7 +81,21 @@ namespace AquaSolution.Server.Controllers.KPI.KPISubmit
 
             var result2 = await _kPISubmitService.GetDetailKPIBySubmitId(submitid);
             return Ok(result2);
-
+        }
+        //Update-Status
+        [HttpPut("update-status-request-kpi")]
+        public async Task<IActionResult> UpdateAsync([FromBody] ApprovalInfo dto)
+        {
+            var result = await _kPISubmitService.HandleKpiForApproval(dto);
+            await _hubContext.Clients.All.SendAsync("ReloadKPIForUserApproval");
+            return result ? Ok(true) : BadRequest("Update KPI Task failed.");
+        }
+        //Get Result
+        [HttpGet("get-result-kpi")]
+        public async Task<IActionResult> ResultAllKpi()
+        {
+            var result = await _kPISubmitService.ResultAllKpi();
+            return Ok(result);
         }
     }
 }
