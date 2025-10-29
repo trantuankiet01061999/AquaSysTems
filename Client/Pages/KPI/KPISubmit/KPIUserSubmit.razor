@@ -47,7 +47,7 @@
 
     </style>
     <div style="display: flex;  align-items: center; margin-bottom: 10px; ">
-        <button @onclick="SelectedKPI" class="btn btn-primary custom-button-type">
+        <button @onclick="SelectedKpi" class="btn btn-primary custom-button-type">
             <Icon Type="plus" />Selected KPI
         </button>
 
@@ -87,4 +87,5 @@
         </ColumnDefinitions>
     </Table>
 </div>
-<SelectedKPISubmitModalrazor @ref="SelectedKPISubmitModalrazor"></SelectedKPISubmitModalrazor>
+<SelectedKPISubmitModalrazor @ref="_selectedKpiSubmitModalrazor"></SelectedKPISubmitModalrazor>
+<ApprovalTaskModal @ref="ApprovalTaskModalRef"></ApprovalTaskModal>

@@ -14,5 +14,6 @@ namespace AquaSolution.Shared.KPI.KPISubmit
         public string Position { get; set; }
         public Guid PositionId { get; set; }
         public Guid? DecisionMaker { get; set; }
+        public int Month { get; set; }
     }
 }

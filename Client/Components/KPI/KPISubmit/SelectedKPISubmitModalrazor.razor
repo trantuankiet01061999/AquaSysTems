@@ -41,7 +41,7 @@
         margin-left: 10px;
     }
 </style>
-<Modal @bind-Visible="IsModalVisible" Style="z-index: 9999;width:1000px ;height:78vh !important ;top:3px" Footer="@footer">
+<Modal @bind-Visible="IsModalVisible" Style="z-index: 9999;width:1000px ;height:78vh !important ;top:3px" Draggable="true" Footer="@footer">
     <Select TItem="DealineManagementDto"
             TItemValue="DealineManagementDto"
             DataSource="@DealineManagement"
@@ -62,9 +62,9 @@
                                Class="customTable fix-table-header"
                                DataSource="HandleKPISubmitDto.HandleActual.Where(x=>x.Month !=null)">
                             <ColumnDefinitions Context="row">
-                                <PropertyColumn Width="320px" Title="TaskName" Property="c => c.TaskName"></PropertyColumn>
-                                <PropertyColumn Width="100px" Title="Category" Property="c => c.KPICategory"></PropertyColumn>
                                 <PropertyColumn Width="100px" Title="Index" Property="c => c.KPIIndexType"></PropertyColumn>
+                                <PropertyColumn Width="100px" Title="Category" Property="c => c.KPICategory"></PropertyColumn>
+                                <PropertyColumn Width="320px" Title="TaskName" Property="c => c.TaskName"></PropertyColumn>
                                 <PropertyColumn Width="90px" Title="Unit" Property="c => c.Unit"></PropertyColumn>
                                 <PropertyColumn Width="100px" Title="Target" Property="c => c.TargetValue" Format="0.00"></PropertyColumn>
                                 <Column Title="Actual" Width="100px" TData="HandleActualDto">
@@ -113,12 +113,13 @@
                                        DataSource="HandleKPISubmitDto.HandleActual.Where(x=>x.Month !=null)">
 
                                     <ColumnDefinitions Context="rowTarget">
-                                        <PropertyColumn Width="250px" Title="TaskName" Property="c => c.TaskName"></PropertyColumn>
                                         <PropertyColumn Width="100px" Title="Index" Property="c => c.KPIIndexType"></PropertyColumn>
+                                        <PropertyColumn Width="100px" Title="Categories" Property="c => c.KPICategory"></PropertyColumn>
+                                        <PropertyColumn Width="250px" Title="TaskName" Property="c => c.TaskName"></PropertyColumn>
                                         <PropertyColumn Width="100px" Title="Description" Property="c => c.Description"></PropertyColumn>
-                                        <PropertyColumn Width="90px" Title="Unit" Property="c => c.Unit"></PropertyColumn>
                                         <PropertyColumn Width="90px" Title="CalculateMethod" Property="c => c.CalculateMethod"></PropertyColumn>
                                         <PropertyColumn Width="150px" Title="Formula" Property="c => c.Formula"></PropertyColumn>
+                                        <PropertyColumn Width="90px" Title="Unit" Property="c => c.Unit"></PropertyColumn>
                                         <PropertyColumn Width="90px" Title="DataSource" Property="c => c.DataSource"></PropertyColumn>
                                         <PropertyColumn Width="200px" Title="PIC" Property="c => c.OwnerName"></PropertyColumn>
                                         <PropertyColumn Width="100px" Title="Weight" Property="c => c.Weight" Format="0.00"></PropertyColumn>

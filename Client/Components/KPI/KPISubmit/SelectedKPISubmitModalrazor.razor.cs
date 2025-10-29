@@ -34,6 +34,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         public async Task ShowModal(UserDto currenUser)
         {
             HandleKPISubmitDto = new HandleKPISubmitDto();
+            DealineManagement = new List<DealineManagementDto>();
             CurrenUser = currenUser;
             await GetDeadline();
             await GetIndexWeight();
@@ -111,6 +112,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
             }
             activeTabKey = "1";
             TitleButton = "Next";
+            IsModalVisible = false;
         }
         private async Task SelectedChange()
         {
@@ -294,6 +296,8 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         }
         #endregion
         #region HandleQuarterlyScore
+
+
         private async Task CalculateQuarterScores(HandleKPISubmitDto handleKPISubmit, int? month)
         {
             try

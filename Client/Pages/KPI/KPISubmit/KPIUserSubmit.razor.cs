@@ -2,9 +2,9 @@
 using AquaSolution.Client.Common;
 using AquaSolution.Client.Components.KPI.KPISubmit;
 using AquaSolution.Shared.KPI.KPISubmit;
-using AquaSolution.Shared.KPI.KPITasks;
 using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
 using System.Net.Http.Json;
 
 namespace AquaSolution.Client.Pages.KPI.KPISubmit
@@ -14,15 +14,31 @@ namespace AquaSolution.Client.Pages.KPI.KPISubmit
         #region Declaration
         private UserDto? CurrenUser { get; set; }
         [Inject] private HttpClient? Http { get; set; }
-        private SelectedKPISubmitModalrazor SelectedKPISubmitModalrazor = new();
+        private SelectedKPISubmitModalrazor _selectedKpiSubmitModalrazor = new();
         private List<ViewKPITotalScoreDto> DataSource { get; set; } = new();
         Table<ViewKPITotalScoreDto>? TableRef;
+        private ApprovalTaskModal ApprovalTaskModalRef = new();
+        private HubConnection? _hubConnection;
         #endregion
         #region Init    
         protected override async Task OnInitializedAsync()
         {
             await LoadCurrenUser();
             await LoadData();
+            await InitSignalRAsync();
+        }
+        private async Task InitSignalRAsync()
+        {
+            _hubConnection = new HubConnectionBuilder()
+                   .WithUrl(Navigation.ToAbsoluteUri(Navigation.BaseUri + "signalrhub"))
+                   .Build();
+            _hubConnection.On("ReloadKPIForUserApproval", async () =>
+            {
+                await LoadData();
+                StateHasChanged();
+            });
+
+            await _hubConnection.StartAsync();
         }
         private async Task LoadCurrenUser()
         {
@@ -49,13 +65,15 @@ namespace AquaSolution.Client.Pages.KPI.KPISubmit
         }
         #endregion
         #region Action
-        private async Task SelectedKPI()
+        private async Task SelectedKpi()
         {
-          await  SelectedKPISubmitModalrazor.ShowModal(CurrenUser!);
+          await  _selectedKpiSubmitModalrazor.ShowModal(CurrenUser!);
         }
-        private async Task ViewAsync(ViewKPITotalScoreDto kPITotalScoreDto )
+        private async Task ViewAsync(ViewKPITotalScoreDto kPiTotalScoreDto )
         {
-            //await LoadData();
+            var approvalInfo = new ApprovalInfo();
+            approvalInfo.SubmitId = kPiTotalScoreDto.SubmitId;
+            await ApprovalTaskModalRef.ShowModalAsync(approvalInfo, true);
         }
         #endregion
     }

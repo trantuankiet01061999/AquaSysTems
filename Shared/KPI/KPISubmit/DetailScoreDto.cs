@@ -30,7 +30,7 @@ namespace AquaSolution.Shared.KPI.KPISubmit
             {
                 if (Max.HasValue)
                 {
-                    return $"{Max.Value * 100:0.##} %";
+                    return $"{Max.Value * 100:0.##}%";
                 }
                 return string.Empty;
             }
@@ -38,7 +38,7 @@ namespace AquaSolution.Shared.KPI.KPISubmit
             {
                 if (Max.HasValue)
                 {
-                    value = $"{Max.Value * 100:0.##} %";
+                    value = $"{Max.Value * 100:0.##}%";
                 }
             }
         }
@@ -49,7 +49,7 @@ namespace AquaSolution.Shared.KPI.KPISubmit
             {
                 if (Bottom.HasValue)
                 {
-                    return $"{Bottom.Value * 100:0.##} %";
+                    return $"{Bottom.Value * 100:0.##}%";
                 }
                 return string.Empty;
             }
@@ -57,7 +57,7 @@ namespace AquaSolution.Shared.KPI.KPISubmit
             {
                 if (Bottom.HasValue)
                 {
-                    value = $"{Bottom.Value * 100:0.##} %";
+                    value = $"{Bottom.Value * 100:0.##}%";
                 }
             }
         }
@@ -68,7 +68,7 @@ namespace AquaSolution.Shared.KPI.KPISubmit
             {
                 if (Weight.HasValue)
                 {
-                    return $"{Weight.Value * 100:0.##} %";
+                    return $"{Weight.Value * 100:0.##}%";
                 }
                 return string.Empty;
             }
@@ -76,7 +76,7 @@ namespace AquaSolution.Shared.KPI.KPISubmit
             {
                 if (Weight.HasValue)
                 {
-                    value = $"{Weight.Value * 100:0.##} %";
+                    value = $"{Weight.Value * 100:0.##}%";
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace AquaSolution.Shared.KPI.KPISubmit
             {
                 if (Achiement.HasValue)
                 {
-                    return $"{Achiement.Value * 100:0.##} %";
+                    return $"{Achiement.Value * 100:0.##}%";
                 }
                 return string.Empty;
             }
@@ -100,7 +100,7 @@ namespace AquaSolution.Shared.KPI.KPISubmit
             {
                 if (Achiement.HasValue)
                 {
-                    value = $"{Achiement.Value * 100:0.##} %";
+                    value = $"{Achiement.Value * 100:0.##}%";
                 }
             }
         }

@@ -26,17 +26,18 @@
             @foreach (var group in _groupedList)
             {
                 <Panel Header="@($"{group.StatusName} ({group.Items.Count})")">
-                    <Table PaginationPosition="false" DataSource="@group.Items">
+                    <Table Bordered PaginationPosition="false" DataSource="@group.Items">
                         <ColumnDefinitions Context="rowItem">
-                            <PropertyColumn Title="Position" Property="c => c.Position" Width="60" />
-                            <PropertyColumn Title="Title" Property="c => c.Title" Width="200" />
+                            <PropertyColumn Title="Step" Property="c => c.Step" Width="50" />
+                            <PropertyColumn Title="Position" Property="c => c.Position" Width="50" />
+                            <PropertyColumn Title="Title" Property="c => c.Title" />
+                            <PropertyColumn Width="60" Title="Month" Property="c => c.Month" />
+                            <PropertyColumn Width="60" Title="Status" Property="c => c.EApprovalStatusType">
                             <PropertyColumn Title="Requester" Property="c => c.CreatedByName" Width="120" />
-
-                            <PropertyColumn Width="100" Title="Status" Property="c => c.EApprovalStatusType">
                                 <Tag Color="@GetTagColor.GetTagColorCss(rowItem.EApprovalStatusType.ToString())">@rowItem.EApprovalStatusType</Tag>
                             </PropertyColumn>
-                            <PropertyColumn Title="CreatedDate" Property="c => c.CreatedDate" Format="dd/MM/yyyy HH:mm:ss" Width="120" />
-                            <Column Fixed="ColumnFixPlacement.Right" TData="ViewKPIForApprovalDto" Width="60px" Context="row">
+                            <PropertyColumn Title="CreatedDate" Property="c => c.CreatedDate" Format="dd/MM/yyyy HH:mm:ss" Width="180" />
+                            <Column Fixed="ColumnFixPlacement.Right" TData="ViewKPIForApprovalDto" Width="50px" Context="row">
                                 <Template>
                                     <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">
                                         <ChildContent>
@@ -49,13 +50,14 @@
                                                 </Button>
                                                 @if (rowItem.EApprovalStatusType == EApprovalStatusType.InReview)
                                                 {
-                                                    <Button Type="ButtonType.Link" OnClick="@(async () => await ApprovalAsync(rowItem))" Style="text-align: left;">
-                                                        <Icon Type="check" /> Approval
+                                                    <Button Type="ButtonType.Link" OnClick="@(async () => await ApprovalAsync(rowItem.SubmitId,                                                                                                                                                                               rowItem.Id, rowItem.DecisionMaker))" Style="text-align: left;">
+                                                         <Icon Type="check" /> Approval
                                                     </Button>
-                                                    <Button Type="ButtonType.Text" OnClick="@(async () => await RejectedAsync(rowItem))" Style="text-align: left;color:red">
+                                                    <Button Type="ButtonType.Text" OnClick="@(async () => await RejectedAsync(rowItem.SubmitId,
+                                                                rowItem.Id, rowItem.DecisionMaker))" Style="text-align: left;color:red">
                                                         <Icon Type="delete" /> Rejected
                                                     </Button>
-                                                }
+                                                 }
                                             </div>
                                         </ContentTemplate>
                                     </Popover>
@@ -66,8 +68,7 @@
                 </Panel>
             }
         </Collapse>
-
     </div>
-
 </div>
-<ApprovalTaskModal @ref="ApprovalTaskModalRef"></ApprovalTaskModal>
+<ApprovalTaskModal IsApprovalEvent="EvenCallback" IsRejectEvent="EvenCallback" @ref="ApprovalTaskModalRef"></ApprovalTaskModal>
+<HandleApprovalTask @ref="HandleApproval"></HandleApprovalTask>

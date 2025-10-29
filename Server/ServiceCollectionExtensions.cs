@@ -10,6 +10,7 @@ using AquaSolution.Server.Services.Administration.RolePermissionService;
 using AquaSolution.Server.Services.Administration.RoleService;
 using AquaSolution.Server.Services.Administration.UserService;
 using AquaSolution.Server.Services.Common.HandleInventories;
+using AquaSolution.Server.Services.Common.UserConnectionManager;
 using AquaSolution.Server.Services.ITSuport.RequestSuportCategories;
 using AquaSolution.Server.Services.KPi.FormulaService;
 using AquaSolution.Server.Services.KPi.KPITaskService;
@@ -67,7 +68,9 @@ namespace AquaSolution.Server
             services.AddScoped<IKPIMonthlyTargetService, KPIMonthlyTargetService>();
             services.AddScoped<IKPISubmitService, KPISubmitService>();
             services.AddScoped<IDealineManagementService, DealineManagementService>();
-
+            #endregion
+            #region Common
+            services.AddScoped<IUserConnectionManager, UserConnectionManager>();
             #endregion
             return services;
         }

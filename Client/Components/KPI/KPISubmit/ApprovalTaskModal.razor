@@ -17,8 +17,6 @@
     RenderFragment footer = @<Template>
     @if (!IsView)
     {
-
-
             <Button OnClick="@ApprovalAsync" @key="@( "submit" )"
                     Type="ButtonType.Primary">
                 Approval
@@ -28,11 +26,8 @@
                     Style="color:red">
                 Rejected
             </Button>
-
-
     }
-
-       <Button Style="color:#808080" OnClick="@CloseModal" @key="@("back")">Close</Button>
+    <Button Style="color:#808080" OnClick="@CloseModal" @key="@("back")">Close</Button>
     </Template>;
 }
 <style>
@@ -51,12 +46,12 @@
 
                 <div>
                     @{
-                        var step1 = ProcessApprovalList.FirstOrDefault(x => x.StepNumber == 1);
                         int FinishStep = ProcessApprovalList
-                        .FirstOrDefault(x => x.ApprovalStatusType == EApprovalStatusType.Approval
+                        .Where(x => x.ApprovalStatusType == EApprovalStatusType.Approval
                         || x.ApprovalStatusType == EApprovalStatusType.Rejected)
-                        ?.StepNumber ?? 0; // 0 là giá trị mặc định nếu null
-
+                        .OrderByDescending(x => x.StepNumber)
+                        .Select(x => x.StepNumber)
+                        .FirstOrDefault();
 
                         <Steps Direction="StepsDirection.Vertical" Size="StepsSize.Small" Current="@FinishStep">
                             @foreach (var step in ProcessApprovalList.OrderBy(x => x.StepNumber))
@@ -176,9 +171,9 @@
                             <PropertyColumn Width="100px" Title="Category" Property="c => c.KPICategory"></PropertyColumn>
                             <PropertyColumn Width="250px" Title="TaskName" Property="c => c.TaskName"></PropertyColumn>
                             <PropertyColumn Width="300px" Title="Description" Property="c => c.Description"></PropertyColumn>
-                            <PropertyColumn Width="50px" Title="Unit" Property="c => c.Unit"></PropertyColumn>
                             <PropertyColumn Width="250px" Title="CalculateMethod" Property="c => c.CalculateMethod"></PropertyColumn>
                             <PropertyColumn Width="150px" Title="Formula" Property="c => c.Formula"></PropertyColumn>
+                            <PropertyColumn Width="50px" Title="Unit" Property="c => c.Unit"></PropertyColumn>
                             <PropertyColumn Width="90px" Title="DataSource" Property="c => c.DataSource"></PropertyColumn>
                             <PropertyColumn Width="200px" Title="PIC" Property="c => c.OwnerName"></PropertyColumn>
                             <PropertyColumn Width="100px" Title="Weight" Property="c => c.WeightString"></PropertyColumn>

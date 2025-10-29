@@ -11,23 +11,22 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         [Inject] private HttpClient Http { get; set; }
         private bool IsVisibleModal { get; set; } = false;
         private bool IsView { get; set; }
-        [Parameter] public EventCallback<Guid> IsApprovalEvent { get; set; }
-        [Parameter] public EventCallback<Guid> IsRejectEvent { get; set; }
-        private ViewKPIForApprovalDto RowItem { get; set; } 
+        [Parameter]
+        public EventCallback<ApprovalInfo> IsApprovalEvent { get; set; }
+
+        [Parameter] public EventCallback<ApprovalInfo> IsRejectEvent { get; set; }
         private string ModalTitle { get; set; } = string.Empty;
         private List<ProcessApprovalDto> ProcessApprovalList { get; set; } = new();
         private ViewDetailApprovalKPI ViewDetailApprovalKPI { get; set; } = new();
+        private ApprovalInfo ApprovalInfo { get; set; } = new();
         #endregion
         #region Innit
-        public async Task ShowModalAsync(ViewKPIForApprovalDto rowItem, bool isView)
+        public async Task ShowModalAsync(ApprovalInfo approvalInfo , bool isView)
         {
-            RowItem = new ViewKPIForApprovalDto();
             ViewDetailApprovalKPI = new();
             IsView = isView;
-            RowItem = rowItem;
-            ModalTitle = RowItem.Title;
+            ApprovalInfo = approvalInfo;
             await LoadDataDetail();
-
             IsVisibleModal = true;
             await InvokeAsync(StateHasChanged);
         }
@@ -35,10 +34,17 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         #region Action
         private async Task ApprovalAsync()
         {
-          
+            ApprovalInfo.IsApproved = true;
+            await IsApprovalEvent.InvokeAsync(ApprovalInfo);
+            IsVisibleModal = false;
+            StateHasChanged();
         }
         private async Task RejectedAsync()
         {
+            ApprovalInfo.IsApproved = false;
+            await IsApprovalEvent.InvokeAsync(ApprovalInfo);
+            IsVisibleModal = false;
+            StateHasChanged();
 
         }
         private void CloseModal()
@@ -56,7 +62,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         private async Task LoadProcess()
         {
             var result = await Http.GetFromJsonAsync<List<ProcessApprovalDto>>(
-                                $"api/kpiSubmit/get-process-by-submitid/{RowItem.SubmitId}");
+                                $"api/kpiSubmit/get-process-by-submitid/{ApprovalInfo.SubmitId}");
             if (result != null)
             {
                 ProcessApprovalList = result;
@@ -65,10 +71,11 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         private async  Task LoadDetailScore()
         {
             var result = await Http.GetFromJsonAsync<ViewDetailApprovalKPI>(
-                   $"api/kpiSubmit/get-detail-by-submitid/{RowItem.SubmitId}");
+                   $"api/kpiSubmit/get-detail-by-submitid/{ApprovalInfo.SubmitId}");
             if (result != null)
             {
                 ViewDetailApprovalKPI = result;
+                ModalTitle = ViewDetailApprovalKPI?.TotalScore?.FirstOrDefault(x => x.Month != null)?.Title;
             }
         }
         #endregion

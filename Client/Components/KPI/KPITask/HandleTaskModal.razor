@@ -18,7 +18,7 @@
 
     </Template>;
 }
-<Modal @bind-Visible="IsModalVisible" Style="z-index: 9999;width:1000px;margin-top:-75px" Footer="@footer">
+<Modal @bind-Visible="IsModalVisible" Style="z-index: 9999;width:1000px;margin-top:-75px" Draggable="true" Footer="@footer">
     <Form @ref="@formRef"
           Model="@HandleTaskDto"
           Layout="FormLayout.Vertical"

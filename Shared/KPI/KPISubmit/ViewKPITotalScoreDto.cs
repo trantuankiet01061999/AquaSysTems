@@ -10,6 +10,7 @@ namespace AquaSolution.Shared.KPI.KPISubmit
     public class ViewKPITotalScoreDto
     {
         public Guid Id { get; set; }
+        public Guid SubmitId { get; set; }
         public string Title { get; set; }
         public decimal KPIScore { get; set; }
         public decimal KeyTaskScore { get; set; }
