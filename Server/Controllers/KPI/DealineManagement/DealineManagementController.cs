@@ -13,10 +13,10 @@ namespace AquaSolution.Server.Controllers.KPI.DealineManagement
         {
             _kPISubmitService = kPISubmitService;
         }
-        [HttpGet("get-deadline")]
-        public async Task<IActionResult> GetAsync()
+        [HttpGet("get-deadline/{userId}")]
+        public async Task<IActionResult> GetAsync(Guid userId)
         {
-            var result = await _kPISubmitService.GetDealineManagement();
+            var result = await _kPISubmitService.GetDealineManagement(userId);
             return Ok(result);
         }
     }

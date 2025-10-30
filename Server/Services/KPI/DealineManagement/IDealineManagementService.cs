@@ -6,7 +6,7 @@ namespace AquaSolution.Server.Services.KPi.FormulaService
 {
     public interface IDealineManagementService
     {
-        Task<List<DealineManagementDto>> GetDealineManagement();
+        Task<List<DealineManagementDto>> GetDealineManagement(Guid userId);
 
     }
 }

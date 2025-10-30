@@ -40,7 +40,6 @@ namespace AquaSolution.Client.Pages.Administration
             await CheckPermission();
             await LoadData();
             await LoadDataFilterAsync();
-            _isLoading = false;
         }
         private async Task GetPage()
         {
@@ -52,9 +51,9 @@ namespace AquaSolution.Client.Pages.Administration
             try
             {
                 Loading = true;
+                StateHasChanged();
                 if (Http != null) _users = await Http.GetFromJsonAsync<List<UserDto>>("api/user/get-all");
                 _userFilter = _users;
-                await Search();
                 Loading = false;
             }
             catch (Exception ex)

@@ -610,12 +610,9 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
         //}
         private async Task CreatedRequest(Guid submitId, List<KPITotalScore> totalScores)
         {
-            // 1️⃣ Lấy KPI của tháng (chỉ Month != null)
             var kpi = totalScores.FirstOrDefault(x => x.Month != null);
             if (kpi == null)
                 throw new Exception("Không tìm thấy KPI tương ứng.");
-
-            // 2️⃣ Lấy thông tin người tạo KPI
             var user = await _userRepo.FirstOrDefaultAsync(u => u.Id == kpi.CreatedBy);
             if (user == null)
                 throw new Exception("Không tìm thấy thông tin người tạo KPI.");
@@ -624,8 +621,6 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                 throw new Exception("Người tạo KPI chưa được gán vị trí (Position).");
 
             var positionId = user.PositionId.Value;
-
-            // 3️⃣ Lấy toàn bộ flow theo Position
             var approvalFlows = await _approvalFlowRepo.GetAllAsync();
             var filteredFlows = approvalFlows
                 .Where(f => f.PositionId == positionId)
@@ -636,13 +631,10 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                 throw new Exception("Không tìm thấy flow phê duyệt cho vị trí này.");
 
             var requestTasks = new List<RequestApprovalTask>();
-
-            // 4️⃣ Xác định loại Flow
             var flowType = filteredFlows.First().ApprovalSettingType;
 
             if (flowType == ApprovalSettingType.Assignee)
             {
-                // 🔹 Trường hợp Assignee: tạo theo từng step trong flow
                 foreach (var flow in filteredFlows)
                 {
                     var task = new RequestApprovalTask
@@ -670,7 +662,6 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
             }
             else if (flowType == ApprovalSettingType.DirectManagement)
             {
-                // 🔹 Trường hợp DirectManagement: chỉ tạo 1 request duy nhất cho Manager trực tiếp
                 if (user.ManagerId == null)
                     throw new Exception("Người tạo KPI chưa có Manager được gán.");
 
@@ -687,15 +678,12 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                     RejectDate = null,
                     Comment = null,
                     Step = 1,
-                    DecisionMaker = user.ManagerId, // Manager trực tiếp
+                    DecisionMaker = user.ManagerId, 
                     Month = kpi.Month ?? 0,
                     CreatedDate = DateTime.Now
                 };
-
                 requestTasks.Add(directRequest);
             }
-
-            // 5️⃣ Lưu vào DB
             await _requestApprovalTaskRepo.InsertRangeAsync(requestTasks);
             await _requestApprovalTaskRepo.SaveChangesAsync();
         }
