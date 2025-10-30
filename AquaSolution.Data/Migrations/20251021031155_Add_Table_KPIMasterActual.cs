@@ -12,11 +12,11 @@ namespace AquaSolution.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "HalfYear",
+                name: "HaftYear",
                 table: "tbl_KPIMonthlyTargets");
 
             migrationBuilder.DropColumn(
-                name: "Quarter",
+                name: "Quater",
                 table: "tbl_KPIMonthlyTargets");
 
             migrationBuilder.DropColumn(
@@ -34,8 +34,8 @@ namespace AquaSolution.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Quarter = table.Column<int>(type: "int", nullable: true),
-                    HaflYear = table.Column<int>(type: "int", nullable: true),
+                    //Quarter = table.Column<int>(type: "int", nullable: true),
+                    //HaflYear = table.Column<int>(type: "int", nullable: true),
                     Year = table.Column<int>(type: "int", nullable: false),
                     KPIScore = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     KeyTaskScore = table.Column<decimal>(type: "decimal(18,2)", nullable: true),

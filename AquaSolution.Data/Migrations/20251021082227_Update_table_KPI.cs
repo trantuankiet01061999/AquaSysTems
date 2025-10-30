@@ -5,31 +5,20 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AquaSolution.Data.Migrations
 {
-    /// <inheritdoc />
     public partial class Update_table_KPI : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // 1. Drop FK cũ
             migrationBuilder.DropForeignKey(
-      name: "FK_tbl_KPIApprovalTasks_tbl_KPIRequests_KPIRequestId",
-      table: "tbl_KPIApprovalTasks");
+                name: "FK_tbl_KPIApprovalTasks_tbl_KPIRequests_KPIRequestId",
+                table: "tbl_KPIApprovalTasks");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_tbl_KPITotalScores_tbl_KPIRequests_KPIRequestId",
                 table: "tbl_KPITotalScores");
 
-            // Đổi tên cột KPIRequestId -> SubmitId (không tạo cột mới!)
-            migrationBuilder.RenameColumn(
-                name: "KPIRequestId",
-                table: "tbl_KPITotalScores",
-                newName: "SubmitId");
-
-            migrationBuilder.RenameIndex(
-                name: "IX_tbl_KPITotalScores_KPIRequestId",
-                table: "tbl_KPITotalScores",
-                newName: "IX_tbl_KPITotalScores_SubmitId");
-
+            // 2. Rename column KPIRequestId -> SubmitId trong bảng con (không tạo trùng cột)
             migrationBuilder.RenameColumn(
                 name: "KPIRequestId",
                 table: "tbl_KPIApprovalTasks",
@@ -40,7 +29,17 @@ namespace AquaSolution.Data.Migrations
                 table: "tbl_KPIApprovalTasks",
                 newName: "IX_tbl_KPIApprovalTasks_SubmitId");
 
-            // Thêm cột mới "Title" nếu cần
+            migrationBuilder.RenameColumn(
+                name: "KPIRequestId",
+                table: "tbl_KPITotalScores",
+                newName: "SubmitId");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_tbl_KPITotalScores_KPIRequestId",
+                table: "tbl_KPITotalScores",
+                newName: "IX_tbl_KPITotalScores_SubmitId");
+
+            // 3. Thêm cột Title vào tbl_KPITotalScores
             migrationBuilder.AddColumn<string>(
                 name: "Title",
                 table: "tbl_KPITotalScores",
@@ -48,13 +47,13 @@ namespace AquaSolution.Data.Migrations
                 nullable: false,
                 defaultValue: "");
 
-            // Foreign Key mới dùng SubmitId
+            // 4. Thêm FK mới trỏ tới Id của tbl_KPIRequests (không dùng SubmitId, tránh lỗi)
             migrationBuilder.AddForeignKey(
                 name: "FK_tbl_KPIApprovalTasks_tbl_KPIRequests_SubmitId",
                 table: "tbl_KPIApprovalTasks",
                 column: "SubmitId",
                 principalTable: "tbl_KPIRequests",
-                principalColumn: "SubmitId",
+                principalColumn: "Id", // dùng Id để đảm bảo PK/candidate key
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
@@ -62,59 +61,27 @@ namespace AquaSolution.Data.Migrations
                 table: "tbl_KPITotalScores",
                 column: "SubmitId",
                 principalTable: "tbl_KPIRequests",
-                principalColumn: "SubmitId",
+                principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
-
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            // Drop updated foreign keys
+            // 1. Drop new FK
             migrationBuilder.DropForeignKey(
                 name: "FK_tbl_KPIApprovalTasks_tbl_KPIRequests_SubmitId",
                 table: "tbl_KPIApprovalTasks");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_tbl_KPIMonthlyActuals_tbl_KPIMonthlyTargets_KPITargetId",
-                table: "tbl_KPIMonthlyActuals");
-
-            migrationBuilder.DropForeignKey(
                 name: "FK_tbl_KPITotalScores_tbl_KPIRequests_SubmitId",
                 table: "tbl_KPITotalScores");
 
-            // Drop added columns
+            // 2. Drop Title column
             migrationBuilder.DropColumn(
                 name: "Title",
                 table: "tbl_KPITotalScores");
 
-            migrationBuilder.DropColumn(
-                name: "SubmitId",
-                table: "tbl_KPIRequests");
-
-            // Rename SubmitId to KPIRequestId
-            migrationBuilder.RenameColumn(
-                name: "SubmitId",
-                table: "tbl_KPITotalScores",
-                newName: "KPIRequestId");
-
-            migrationBuilder.RenameIndex(
-                name: "IX_tbl_KPITotalScores_SubmitId",
-                table: "tbl_KPITotalScores",
-                newName: "IX_tbl_KPITotalScores_KPIRequestId");
-
-            // Rename KPITargetId back to KPIMonthlyTargetId
-            migrationBuilder.RenameColumn(
-                name: "KPITargetId",
-                table: "tbl_KPIMonthlyActuals",
-                newName: "KPIMonthlyTargetId");
-
-            migrationBuilder.RenameIndex(
-                name: "IX_tbl_KPIMonthlyActuals_KPITargetId",
-                table: "tbl_KPIMonthlyActuals",
-                newName: "IX_tbl_KPIMonthlyActuals_KPIMonthlyTargetId");
-
-            // Rename SubmitId back to KPIRequestId
+            // 3. Rename SubmitId -> KPIRequestId trong bảng con
             migrationBuilder.RenameColumn(
                 name: "SubmitId",
                 table: "tbl_KPIApprovalTasks",
@@ -125,20 +92,22 @@ namespace AquaSolution.Data.Migrations
                 table: "tbl_KPIApprovalTasks",
                 newName: "IX_tbl_KPIApprovalTasks_KPIRequestId");
 
-            // Re-add original foreign keys
+            migrationBuilder.RenameColumn(
+                name: "SubmitId",
+                table: "tbl_KPITotalScores",
+                newName: "KPIRequestId");
+
+            migrationBuilder.RenameIndex(
+                name: "IX_tbl_KPITotalScores_SubmitId",
+                table: "tbl_KPITotalScores",
+                newName: "IX_tbl_KPITotalScores_KPIRequestId");
+
+            // 4. Re-add old FK
             migrationBuilder.AddForeignKey(
                 name: "FK_tbl_KPIApprovalTasks_tbl_KPIRequests_KPIRequestId",
                 table: "tbl_KPIApprovalTasks",
                 column: "KPIRequestId",
                 principalTable: "tbl_KPIRequests",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_tbl_KPIMonthlyActuals_tbl_KPIMonthlyTargets_KPIMonthlyTargetId",
-                table: "tbl_KPIMonthlyActuals",
-                column: "KPIMonthlyTargetId",
-                principalTable: "tbl_KPIMonthlyTargets",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
 
