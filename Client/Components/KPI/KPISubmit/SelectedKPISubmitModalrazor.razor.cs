@@ -58,7 +58,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         {
             try
             {
-                var result = await Http.GetFromJsonAsync<List<DealineManagementDto>>("api/DealineManagement/get-deadline");
+                var result = await Http.GetFromJsonAsync<List<DealineManagementDto>>($"api/DealineManagement/get-deadline/{CurrenUser.Id}");
                 if (result.Any())
                 {
                     DealineManagement = result;

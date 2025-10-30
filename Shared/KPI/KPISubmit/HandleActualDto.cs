@@ -23,7 +23,61 @@ namespace AquaSolution.Shared.KPI.KPISubmit
         public KPICategoryType KPICategory { get; set; }
         public decimal? Max { get; set; }
         public decimal? Bottom { get; set; }
+        public string MaxString
+        {
+            get
+            {
+                if (Max.HasValue)
+                {
+                    return $"{Max.Value * 100:0.##}%";
+                }
+                return string.Empty;
+            }
+            set
+            {
+                if (Max.HasValue)
+                {
+                    value = $"{Max.Value * 100:0.##}%";
+                }
+            }
+        }
+        public string? BottomString
+        {
+            get
+            {
+                if (Bottom.HasValue)
+                {
+                    return $"{Bottom.Value * 100:0.##}%";
+                }
+                return string.Empty;
+            }
+            set
+            {
+                if (Bottom.HasValue)
+                {
+                    value = $"{Bottom.Value * 100:0.##}%";
+                }
+            }
+        }
         public decimal? Weight { get; set; }
+        public string? WeightString
+        {
+            get
+            {
+                if (Weight.HasValue)
+                {
+                    return $"{Weight.Value * 100:0.##}%";
+                }
+                return string.Empty;
+            }
+            set
+            {
+                if (Weight.HasValue)
+                {
+                    value = $"{Weight.Value * 100:0.##}%";
+                }
+            }
+        }
         public string? Unit { get; set; }
         public string? OwnerName { get; set; }
         public string? DataSource { get; set; }
