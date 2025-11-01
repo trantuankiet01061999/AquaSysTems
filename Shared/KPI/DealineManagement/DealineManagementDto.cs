@@ -18,7 +18,7 @@ namespace AquaSolution.Shared.KPI.DealineManagement
                 if (Month.HasValue)
                 {
                     var s = new DateTime(Year, Month.Value, 1)
-                            .ToString("MMMM - yyyy", CultureInfo.InvariantCulture);
+                            .ToString($"MMMM({Month.Value}) - yyyy", CultureInfo.InvariantCulture);
                     return s.ToUpperInvariant();
                 }
                 return string.Empty;

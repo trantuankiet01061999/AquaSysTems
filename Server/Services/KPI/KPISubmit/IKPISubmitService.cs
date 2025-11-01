@@ -3,6 +3,7 @@ using AquaSolution.Shared.Enum.KPIType;
 using AquaSolution.Shared.KPI.KPIActual;
 using AquaSolution.Shared.KPI.KPISubmit;
 using AquaSolution.Shared.KPI.Result;
+using AquaSolution.Shared.KPI.UserTask;
 
 namespace AquaSolution.Server.Services.KPI.KPISubmit
 {
@@ -21,6 +22,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
         Task<ViewDetailApprovalKPI> GetDetailKPIBySubmitId(Guid submitId);
         Task<bool> HandleKpiForApproval(ApprovalInfo approvalInfo);
         Task<List<ViewResultKpiDto>> ResultAllKpi();
+        Task<bool> CalculateQuarterPoint(List<CalculateQuarterPointDto> calculateQuarterPoint);
 
     }
 }

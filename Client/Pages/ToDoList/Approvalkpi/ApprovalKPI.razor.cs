@@ -72,7 +72,7 @@ namespace AquaSolution.Client.Pages.ToDoList.Approvalkpi
             _groupedList = new List<GroupViewKPIForApproval>
                 {
                     new() { ApprovalStatusType = EApprovalStatusType.InReview, StatusName = "Pending" },
-                    new() { ApprovalStatusType = EApprovalStatusType.Approval, StatusName = "Approval" },
+                    new() { ApprovalStatusType = EApprovalStatusType.Approved, StatusName = "Approved" },
                     new() { ApprovalStatusType = EApprovalStatusType.Rejected, StatusName = "Rejected" }
                 };
             if (data != null)
@@ -106,6 +106,9 @@ namespace AquaSolution.Client.Pages.ToDoList.Approvalkpi
             var approvalInfo = new ApprovalInfo();
             approvalInfo.SubmitId = submitId;
             approvalInfo.RequestTaskId = requestTaskId;
+            approvalInfo.IsApproved = true;
+            var Confirm = await MessageBox.Confirm(modal, "Are you sure you want to be approved?");
+            if (!Confirm) return;
             if (CurrenUser.Roles.Any(x => x.Name == "Admin"))
             {
                 approvalInfo.DecisionMaker = CurrenUser.Id;
@@ -114,8 +117,20 @@ namespace AquaSolution.Client.Pages.ToDoList.Approvalkpi
             {
                 approvalInfo.DecisionMaker = decisionMaker;
             }
-            approvalInfo.IsApproved = true;
-            await HandleApproval.ShowModal(approvalInfo);
+            var response = await Http.PutAsJsonAsync("api/kpiSubmit/update-status-request-kpi", approvalInfo);
+
+            if (response.IsSuccessStatusCode)
+            {
+
+                await Message.Success("Update successfully !");
+
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                await Message.Error($"Update failed");
+
+            }
         }
         private async Task RejectedAsync(Guid submitId, Guid requestTaskId, Guid? decisionMaker)
         {

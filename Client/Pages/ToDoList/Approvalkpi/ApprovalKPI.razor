@@ -51,7 +51,7 @@
                                                 @if (rowItem.EApprovalStatusType == EApprovalStatusType.InReview)
                                                 {
                                                     <Button Type="ButtonType.Link" OnClick="@(async () => await ApprovalAsync(rowItem.SubmitId,                                                                                                                                                                               rowItem.Id, rowItem.DecisionMaker))" Style="text-align: left;">
-                                                         <Icon Type="check" /> Approval
+                                                         <Icon Type="check" /> Approved
                                                     </Button>
                                                     <Button Type="ButtonType.Text" OnClick="@(async () => await RejectedAsync(rowItem.SubmitId,
                                                                 rowItem.Id, rowItem.DecisionMaker))" Style="text-align: left;color:red">

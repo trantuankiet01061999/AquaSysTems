@@ -29,6 +29,8 @@
     }
     <Button Style="color:#808080" OnClick="@CloseModal" @key="@("back")">Close</Button>
     </Template>;
+    //--------------------
+
 }
 <style>
     .customTable-score {
@@ -47,13 +49,13 @@
                 <div>
                     @{
                         int FinishStep = ProcessApprovalList
-                        .Where(x => x.ApprovalStatusType == EApprovalStatusType.Approval
+                        .Where(x => x.ApprovalStatusType == EApprovalStatusType.Approved
                         || x.ApprovalStatusType == EApprovalStatusType.Rejected)
                         .OrderByDescending(x => x.StepNumber)
                         .Select(x => x.StepNumber)
                         .FirstOrDefault();
 
-                        <Steps Direction="StepsDirection.Vertical" Size="StepsSize.Small" Current="@FinishStep">
+                        <Steps  Direction="StepsDirection.Vertical" Size="StepsSize.Default" Current="@FinishStep">
                             @foreach (var step in ProcessApprovalList.OrderBy(x => x.StepNumber))
                             {
 
@@ -61,11 +63,11 @@
                                 {
                                     int seq = 0;
 
-                                    if (step.ApprovalStatusType == EApprovalStatusType.Approval || step.ApprovalStatusType == EApprovalStatusType.InReview)
+                                    if (step.ApprovalStatusType == EApprovalStatusType.Approved || step.ApprovalStatusType == EApprovalStatusType.InReview)
                                     {
-                                        __builder.AddContent(seq++, $"ApprovalName: {step.ApprovalName}");
+                                        __builder.AddContent(seq++, $"Approval: {step.ApprovalName}");
                                         __builder.AddMarkupContent(seq++, "<br/>");
-                                        __builder.AddContent(seq++, $"ApprovalEmail: {step.ApprovalEmail}");
+                                        __builder.AddContent(seq++, $"Email: {step.ApprovalEmail}");
                                         __builder.AddMarkupContent(seq++, "<br/>");
                                         __builder.AddContent(seq++, $"Comment: {step.Comment}");
                                         __builder.AddMarkupContent(seq++, "<br/>");
@@ -73,9 +75,9 @@
                                     }
                                     else if (step.ApprovalStatusType == EApprovalStatusType.Rejected)
                                     {
-                                        __builder.AddContent(seq++, $"RejectedName: {step.RejectedName}");
+                                        __builder.AddContent(seq++, $"Rejected: {step.RejectedName}");
                                         __builder.AddMarkupContent(seq++, "<br/>");
-                                        __builder.AddContent(seq++, $"RejectedEmail: {step.RejectedEmail}");
+                                        __builder.AddContent(seq++, $"Email: {step.RejectedEmail}");
                                         __builder.AddMarkupContent(seq++, "<br/>");
                                         __builder.AddContent(seq++, $"Comment: {step.Comment}");
                                         __builder.AddMarkupContent(seq++, "<br/>");
@@ -83,19 +85,18 @@
                                     }
                                     else if (step.ApprovalStatusType == EApprovalStatusType.Pending)
                                     {
-                                        __builder.AddContent(seq++, $"ApprovalName: {step.PendingEmail}");
+                                        __builder.AddContent(seq++, $"Approval: {step.PendingEmail}");
                                         __builder.AddMarkupContent(seq++, "<br/>");
-                                        __builder.AddContent(seq++, $"ApprovalEmail: {step.PendingName}");
+                                        __builder.AddContent(seq++, $"Email: {step.PendingName}");
                                         __builder.AddMarkupContent(seq++, "<br/>");
                                     }
                                     else
                                     {
-                                        // Trạng thái Waiting hoặc khác
                                         __builder.AddContent(seq++, $"Status: Waiting");
                                     }
                                 };
 
-                                <Step>
+                                <Step Class="custom-step"  >
                                     <TitleTemplate>
                                         <span style="color:@GetTagColor.GetTagColorCss(step.ApprovalStatusType.ToString())">
                                             @($"Level {step.StepNumber} : {step.ApprovalStatusType}")

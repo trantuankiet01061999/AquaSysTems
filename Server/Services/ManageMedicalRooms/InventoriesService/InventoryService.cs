@@ -232,7 +232,7 @@ public class InventoryService : IInventoryService
           {
               ProductId = g.Key,
               TotalQuantity = g.Sum(x => x.Quantity),
-              LatestDateManfacture = g.Max(x => x.ManufacturingDate)
+              LatestExpirationDate = g.Max(x => x.ExpirationDate)
           })
           .ToList();
         baseInventory = result.ToList();
@@ -249,7 +249,7 @@ public class InventoryService : IInventoryService
                 var reportInventory = new LoadReportInventoryDetailDto();
 
                 reportInventory.ProductId = item.ProductId;
-                reportInventory.ExpirationDate = item.LatestDateManfacture;
+                reportInventory.ExpirationDate = item.LatestExpirationDate;
 
               //  reportInventory.BeginningInventory = item.TotalQuantity;
                 reportInventory.ProductName = product.First(x => x.Id == item.ProductId).Name;
@@ -357,7 +357,7 @@ public class InventoryService : IInventoryService
     {
         public Guid ProductId { get; set; }
         public decimal TotalQuantity { get; set; }
-        public DateTime? LatestDateManfacture { get; set; }
+        public DateTime? LatestExpirationDate { get; set; }
 
     }
 }

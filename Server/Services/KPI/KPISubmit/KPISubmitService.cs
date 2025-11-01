@@ -9,6 +9,7 @@ using AquaSolution.Shared.Enum.KPIType;
 using AquaSolution.Shared.KPI.KPIActual;
 using AquaSolution.Shared.KPI.KPISubmit;
 using AquaSolution.Shared.KPI.Result;
+using AquaSolution.Shared.KPI.UserTask;
 using Microsoft.EntityFrameworkCore;
 
 namespace AquaSolution.Server.Services.KPI.KPISubmit
@@ -29,6 +30,9 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
         private readonly IRepository<KPIDetailScore> _kpiDetailScoreRepo;
         private readonly IRepository<RequestApprovalTask> _requestApprovalTaskRepo;
         private readonly IRepository<ApprovalFlow> _approvalFlowRepo;
+        private readonly IRepository<Department> _departmentRepo;
+        private readonly IRepository<Factory> _factoryRepo;
+
         private readonly AquaDbContext _context;
         public KPISubmitService(IRepository<UserTask> userTaskepo,
             IRepository<KPITask> kpiTaskepo,
@@ -44,7 +48,9 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
             IRepository<KPIDetailScore> kpiDetailScoreRepo,
             IRepository<RequestApprovalTask> requestApprovalTaskRepo,
             IRepository<ApprovalFlow> approvalFlowRepo,
-            AquaDbContext context)
+            IRepository<Department>departmentRepo,
+            IRepository<Factory> factoryRepo,
+        AquaDbContext context)
         {
             _userTaskepo = userTaskepo;
             _kpiTaskRepo = kpiTaskepo;
@@ -61,6 +67,8 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
             _context = context;
             _requestApprovalTaskRepo = requestApprovalTaskRepo;
             _approvalFlowRepo = approvalFlowRepo;
+            _departmentRepo = departmentRepo;
+            _factoryRepo = factoryRepo;
         }
         public async Task<List<HandleActualDto>> GetHandleKPISubmitByUserId(Guid userId, int year, int? month)
         {
@@ -84,11 +92,9 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                     && t.Month.HasValue
                     && t.Month.Value == month.Value
                 );
-
                 var targetIds = targets.Select(t => t.Id).ToList();
-                var actuals = await _KPIMonthlyActualRepo.GetListAsync(a => targetIds.Contains(a.KPIMonthlyTargetId));
-                var actualTargetIds = actuals.Select(a => a.KPIMonthlyTargetId).ToHashSet();
-
+                //var actuals = await _KPIMonthlyActualRepo.GetListAsync(a => targetIds.Contains(a.KPIMonthlyTargetId));
+                //var actualTargetIds = actuals.Select(a => a.KPIMonthlyTargetId).ToHashSet();
                 var users = await _userRepo.GetAllAsync();
                 var formulas = await _formulaRepo.GetAllAsync();
                 var distinctIndexWeights = kpiIndexWeights
@@ -108,7 +114,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                                      posType = indexWeight.PositionType,
                                      idxType = indexWeight.KPIIndexType
                                  }
-                              where !actualTargetIds.Contains(target.Id)
+                              //where !actualTargetIds.Contains(target.Id)
                               select new HandleActualDto
                               {
                                   TaskId = userTask.KPITaskId,
@@ -187,7 +193,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                                   equals new { posType = indexWeight.PositionType, idxType = indexWeight.KPIIndexType }
                               join actual in actuals on target.Id equals actual.KPIMonthlyTargetId
                               join totalScore in totalScores on actual.KPITotalScoreId equals totalScore.Id
-                              where totalScore.Status == StatusKPIRequestType.Approval
+                              where totalScore.Status == StatusKPIRequestType.Approved
                               select new HandleActualDto
                               {
                                   TaskId = userTask.Id,
@@ -283,7 +289,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
             var query = from totalScore in await _kpiTotalScoreRepo.GetQueryableAsync()
                         join request in await _kpiRequestRepo.GetQueryableAsync()
                         on totalScore.SubmitId equals request.SubmitId
-                        where request.RequestStatus == StatusKPIRequestType.Approval
+                        where request.RequestStatus == StatusKPIRequestType.Approved
                         && totalScore.CreatedBy == userId
                         && totalScore.Year == year
                         && (month == null || totalScore.Month == month)
@@ -310,7 +316,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
             var requests = await _kpiRequestRepo.GetQueryableAsync();
             var query = from totalScore in totalScores
                         join request in requests on totalScore.SubmitId equals request.SubmitId
-                        where request.RequestStatus == StatusKPIRequestType.Approval
+                        where request.RequestStatus == StatusKPIRequestType.Approved
                               && totalScore.CreatedBy == userId
                               && totalScore.Year == year
                               && (quarter == null || totalScore.Quarter == quarter)
@@ -791,7 +797,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                     StepNumber = task.Step ?? 0
                 };
 
-                if (task.StatusType == EApprovalStatusType.Approval && task.ApprovedBy.HasValue)
+                if (task.StatusType == EApprovalStatusType.Approved && task.ApprovedBy.HasValue)
                 {
                     var user = await _userRepo.FirstOrDefaultAsync(u => u.Id == task.ApprovedBy.Value);
                     process.ApprovalName = user?.FullName ?? "Unknown";
@@ -1037,7 +1043,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                 await MoveNextStep(allTasks, currentTask);
             }
 
-            if (allTasks.All(x => x.StatusType == EApprovalStatusType.Approval))
+            if (allTasks.All(x => x.StatusType == EApprovalStatusType.Approved))
             {
                 await HandleApprovedTasks(allTasks, kpiTotalList, kpiRequest);
             }
@@ -1049,7 +1055,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
         {
             if (approvalInfo.IsApproved)
             {
-                task.StatusType = EApprovalStatusType.Approval;
+                task.StatusType = EApprovalStatusType.Approved;
                 task.ApprovedBy = approvalInfo.DecisionMaker;
                 task.ApprovalDate = DateTime.Now;
             }
@@ -1102,13 +1108,13 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
         {
             foreach (var kpiTotal in kpiTotalList)
             {
-                kpiTotal.Status = StatusKPIRequestType.Approval;
+                kpiTotal.Status = StatusKPIRequestType.Approved;
             }
             await _kpiTotalScoreRepo.SaveChangesAsync();
 
             if (kpiRequest != null)
             {
-                kpiRequest.RequestStatus = StatusKPIRequestType.Approval;
+                kpiRequest.RequestStatus = StatusKPIRequestType.Approved;
                 kpiRequest.ApprovalDate = DateTime.Now;
                 var lastApprovedTask = allTasks.OrderByDescending(x => x.Step).FirstOrDefault();
                 if (lastApprovedTask != null)
@@ -1117,7 +1123,6 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                 await _kpiRequestRepo.SaveChangesAsync();
             }
         }
-
         #endregion
         #region Result KPI
         public async Task<List<ViewResultKpiDto>> ResultAllKpi()
@@ -1125,10 +1130,20 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
             var query = from request in await _kpiRequestRepo.GetQueryableAsync()
                         join totalScore in await _kpiTotalScoreRepo.GetQueryableAsync()
                         on request.SubmitId equals totalScore.SubmitId
+
                         join user in await _userRepo.GetQueryableAsync()
                         on request.CreatedBy equals user.Id
+
+                        join department in await _departmentRepo.GetQueryableAsync()
+                        on user.DepartmentId equals department.Id
+
+                        join factory in await _factoryRepo.GetQueryableAsync()
+                        on user.FactoryId equals factory.Id
+
                         join approval in await _userRepo.GetQueryableAsync()
                         on request.ApprovalBy equals approval.Id
+                        where totalScore.Status == StatusKPIRequestType.Approved 
+                        && request.RequestStatus == StatusKPIRequestType.Approved
                         select new ViewResultKpiDto
                         {
                             SubmitId = request.SubmitId,
@@ -1144,7 +1159,12 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                             KeyTaskScore = totalScore.KeyTaskScore,
                             OMGScore = totalScore.OMGScore,
                             TotalScroe = totalScore.TotaleScore,
-                            WorkDayId = user.WorkDayId
+                            WorkDayId = user.WorkDayId,
+                            Description =request.Description,
+                            DepartmentId =user.DepartmentId,
+                            FactoryId = user.FactoryId,
+                            Department =department.Name,
+                            Factory = factory.Name
                         };
             var result = query.ToList();
             if(result.Count > 0)
@@ -1152,6 +1172,96 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                 return result;
             }
             return new List<ViewResultKpiDto>();
+        }
+        #endregion
+        #region CalculateQuarterPoints
+        public  async Task<bool> CalculateQuarterPoint(List<CalculateQuarterPointDto> calculateQuarterPoint)
+        {
+            var returnSave = 0;
+            var totalScoresInserted = new List<KPITotalScore>();
+            var SubmitId = Guid.NewGuid();
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    await CalculatePointQuarterAsync(SubmitId, calculateQuarterPoint);
+                    await CalculateQuarterPointHalfYearAsync(SubmitId, calculateQuarterPoint);
+    
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+
+            return true; // 
+
+        }
+        private async Task CalculatePointQuarterAsync( Guid submitId, List<CalculateQuarterPointDto> calculateQuarterPoint)
+        {
+            var dto = calculateQuarterPoint.FirstOrDefault(x => x.Quarter.HasValue && x.Quarter > 0);
+            if (dto == null) return;
+
+            var kpiScore = dto.KPIScore;
+            var keyTaskScore = dto.KeyTaskScore;
+            var omgScore = dto.OMGScore;
+            var request = new KPIRequest
+            {
+                Id = Guid.NewGuid(),
+                SubmitId = submitId,
+                Title = dto.Title + "-(HR Calculate Point Quarter)" ?? "",
+                RequestStatus = StatusKPIRequestType.Approved,
+                CreatedBy = dto.CreatedBy,
+                CreatedDate = DateTime.Now,
+                ApprovalBy = dto.ApprovedBy,
+                ApprovalDate = DateTime.Now,
+                Note = "HR Calculate Point Quarter",
+                Description = "HR Calculate Point Quarter"
+            };
+            await _kpiRequestRepo.InsertAsync(request);
+            var score = new KPITotalScore
+            {
+                Id = Guid.NewGuid(),
+                SubmitId = submitId,
+                KeyTaskScore = keyTaskScore,
+                KPIScore = kpiScore,
+                OMGScore = omgScore,
+                TotaleScore = dto.TotaleScore,
+                Status = StatusKPIRequestType.Approved,
+                Quarter = dto.Quarter.Value,
+                Year = dto.Year,
+                CreatedBy = dto.CreatedBy,
+                CreatedDate = DateTime.Now,
+                IsActive = true,
+                Title = dto.Title+"-(HR Calculate Point Quarter)" ?? "",
+            };
+            await _kpiTotalScoreRepo.InsertAsync(score);
+            await _kpiTotalScoreRepo.SaveChangesAsync();
+        }
+        private async Task CalculateQuarterPointHalfYearAsync(Guid submitId, List<CalculateQuarterPointDto> calculateQuarterPoint)
+        {
+            var dto = calculateQuarterPoint.FirstOrDefault(x => x.HalfYear.HasValue && x.HalfYear > 0);
+            if (dto == null) return;
+            var score = new KPITotalScore
+            {
+                Id = Guid.NewGuid(),
+                SubmitId = submitId,
+                KeyTaskScore = dto.KeyTaskScore,
+                KPIScore = dto.KPIScore,
+                OMGScore = dto.OMGScore,
+                TotaleScore = dto.TotaleScore,
+                Status = StatusKPIRequestType.Approved,
+                HalfYear = dto.HalfYear.Value,
+                Year = dto.Year,
+                CreatedBy = dto.CreatedBy,
+                CreatedDate = DateTime.Now,
+                IsActive = true,
+                Title = dto.Title + "-(HR Calculate Point HalfYear)" ?? "",
+            };
+            await _kpiTotalScoreRepo.InsertAsync(score);
+            await _kpiTotalScoreRepo.SaveChangesAsync();
         }
         #endregion
 

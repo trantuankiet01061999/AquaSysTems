@@ -15,10 +15,22 @@
 @inject IMessageService Message
 @{
     RenderFragment footer = @<Template>
-        <Button OnClick="@SaveAsync" @key="@( "submit" )"
-                Type="ButtonType.Primary">
-            Approval
-        </Button>
+    @if (ApprovalInfo.IsApproved)
+    {
+            <Button OnClick="@SaveAsync" @key="@( "submit" )"
+                    Type="ButtonType.Primary">
+                Approved
+            </Button>
+
+    }
+    else
+    {
+            <Button OnClick="@SaveAsync" @key="@( "Rejected" )"
+                    Style="color:red">
+                Rejected
+            </Button>
+
+    }
 
         <Button OnClick="@CancelAsync" @key="@( "Cancel" )"
                 Style="color:red">

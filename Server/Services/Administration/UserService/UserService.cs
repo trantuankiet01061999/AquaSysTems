@@ -169,7 +169,7 @@ public class UserService : IUserService
                 PositionName = position?.Name,
                 IsActive = user.IsActive,
                 ManagerWorkDay = manager?.WorkDayId,
-                PositionType = position.Type
+                PositionType = position?.Type
             };
 
             var userRoles = await _userRoleRepo.WhereAsync(ur => ur.UserId == user.Id);
@@ -299,7 +299,8 @@ public class UserService : IUserService
                        PositionName = position.Name,
                        ManagerName = manager.FullName,
                        IsActive = queryableUser.IsActive,
-                       ManagerWorkDay = manager.WorkDayId
+                       ManagerWorkDay = manager.WorkDayId,
+                       PositionType = position.Type
                    };
         var userlist = user.ToList();
         var userIds = userlist.Select(u => u.Id).ToList();

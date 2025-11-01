@@ -12,7 +12,7 @@
                 "InProgress" => "#096dd9", 
                 "Cancel" => "#cf1322",     
                 "New" => "#13c2c2",        
-                "Approval" => "#389e0d",
+                "Approved" => "#389e0d",
                 "Done" => "#2f54eb",       
                 "Rejected" => "#F44336",
                 "WaitingForApproval" => "#FFC107",

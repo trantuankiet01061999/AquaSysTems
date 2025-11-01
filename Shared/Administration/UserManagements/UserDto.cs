@@ -36,7 +36,7 @@ namespace AquaSolution.Shared.UserManagements
         public string? PositionName { get; set; }
         public string? FactoryName { get; set; }
         public bool IsActive { get; set; }
-        public PositionType PositionType { get; set; }
+        public PositionType? PositionType { get; set; }
         public List<RoleDto> Roles { get; set; } = new(); 
     }
 

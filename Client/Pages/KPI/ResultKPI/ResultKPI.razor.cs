@@ -1,11 +1,13 @@
 ﻿using AntDesign;
 using AntDesign.TableModels;
+using AquaSolution.Client.Common;
 using AquaSolution.Client.Common.ExcelHelper;
 using AquaSolution.Client.Components.KPI.KPISubmit;
 using AquaSolution.Shared.ITSuport.RequestSuport;
 using AquaSolution.Shared.KPI.KPISubmit;
 using AquaSolution.Shared.KPI.KPITasks;
 using AquaSolution.Shared.KPI.Result;
+using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
@@ -21,20 +23,50 @@ namespace AquaSolution.Client.Pages.KPI.ResultKPI
         [Inject] private HttpClient Http { get; set; }
         private List<ViewResultKpiDto> DataSource { get; set; }
         private List<ViewResultKpiDto> DataFilter { get; set; }
-        private ApprovalTaskModal ApprovalTaskModal =new ApprovalTaskModal();
+        private ApprovalTaskModal ApprovalTaskModal = new ApprovalTaskModal();
+        private UserDto? CurrenUser { get; set; }
         #endregion
         #region Init
         protected override async Task OnInitializedAsync()
         {
+            await LoadCurrenUser();
             await LoadData();
+        }
+        private async Task LoadCurrenUser()
+        {
+            if (Http != null)
+            {
+                var currenUserClass = new CurrenUser(Http, AuthStateProvider);
+                CurrenUser = await currenUserClass.LoadCurrenUser();
+            }
         }
         private async Task LoadData()
         {
             var result = await Http.GetFromJsonAsync<List<ViewResultKpiDto>>("api/KPISubmit/get-result-kpi");
-
+            var filtered = new List<ViewResultKpiDto>();
             if (result is not null)
             {
-                DataSource = result.OrderBy(x=>x.Year).ThenBy(x=> GetSortPriority(x)).ToList();
+                if (CurrenUser.Roles.Any(x => x.Name == "Admin") || CurrenUser.Roles.Any(x => x.Name == "HR"))
+                {
+                    filtered = result;
+                }
+                else
+                {
+                    if (CurrenUser.DepartmentId != null && CurrenUser.FactoryId != null)
+                    {
+                        filtered = result
+                            .Where(x => x.FactoryId == CurrenUser.FactoryId
+                                     && x.DepartmentId == CurrenUser.DepartmentId)
+                            .ToList();
+                    }
+                    else if (CurrenUser.FactoryId != null)
+                    {
+                        filtered = result
+                            .Where(x => x.FactoryId == CurrenUser.FactoryId)
+                            .ToList();
+                    }
+                }
+                DataSource = filtered.OrderBy(x => x.Year).ThenBy(x => GetSortPriority(x)).ToList();
             }
             else
             {
@@ -165,7 +197,7 @@ namespace AquaSolution.Client.Pages.KPI.ResultKPI
             _tableRef?.ReloadData();
             await InvokeAsync(StateHasChanged);
         }
-        
+
         private string? WorkDayId { get; set; }
         private string? FullName { get; set; }
         private async Task HandleKeyDown(KeyboardEventArgs e)

@@ -23,5 +23,11 @@ namespace AquaSolution.Shared.KPI.Result
         public decimal?KeyTaskScore { get; set; }
         public decimal?OMGScore { get; set; }
         public decimal?TotalScroe { get; set; }
+        public string? Description { get; set; }
+        public Guid? DepartmentId { get; set; }
+        public Guid? FactoryId { get; set; }
+        public string? Department{ get; set; }
+        public string? Factory { get; set; }
+
     }
 }

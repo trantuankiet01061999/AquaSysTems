@@ -21,13 +21,13 @@
         }
         else if (activeTabKey == "2")
         {
-                <Button OnClick="@SaveAsync" @key="@( "submit" )"
+                <Button Disabled="@HandleButtonClicked" OnClick="@SaveAsync" @key="@( "submit" )"
                         Type="ButtonType.Primary">
                     Submit
                 </Button>
         }
     }
-        <Button Style="color:#808080" OnClick="@CloseModal" @key="@("back")">Close</Button>
+        <Button Style="color:red" OnClick="@CloseModal" @key="@("back")">Cancel</Button>
 
     </Template>;
 }

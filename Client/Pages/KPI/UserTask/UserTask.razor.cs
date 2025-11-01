@@ -1,9 +1,14 @@
 ﻿using AntDesign;
 using AquaSolution.Client.Common;
+using AquaSolution.Client.Common.ConvertNumber;
 using AquaSolution.Client.Components.Administration.Users;
 using AquaSolution.Client.Components.KPI.UserTask;
 using AquaSolution.Shared.Departments;
+using AquaSolution.Shared.Enum;
+using AquaSolution.Shared.Enum.KPIType;
 using AquaSolution.Shared.Factory;
+using AquaSolution.Shared.KPI.KPISubmit;
+using AquaSolution.Shared.KPI.UserTask;
 using AquaSolution.Shared.Position;
 using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
@@ -21,15 +26,31 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
         private List<UserDto> users = new();
         private List<UserDto> userFilter = new();
         private UserTaskModal _userTaskModal = new();
+        private int Month { get; set; }
+        private int Year { get; set; }
+        private List<CalculateQuarterPointDto> CalculateQuarterPoint = new();
+        private UserDto? CurrenUser { get; set; }
         public bool Loading { get; set; }
         #endregion
         #region Innit
         protected override async Task OnInitializedAsync()
         {
+            await LoadCurrenUser();
             //await GetPage();
             //await CheckPermission();
+            //Month = DateTime.Now.Month;
+            Month = 6;
+            Year = DateTime.Now.Year;
             await LoadData();
             await LoadDataFilterAsync();
+        }
+        private async Task LoadCurrenUser()
+        {
+            if (Http != null)
+            {
+                var currenUserClass = new CurrenUser(Http, AuthStateProvider);
+                CurrenUser = await currenUserClass.LoadCurrenUser();
+            }
         }
         private async Task LoadData()
         {
@@ -51,13 +72,36 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
 
         private async Task EditTask(UserDto user)
         {
-          await _userTaskModal.ShowModal(user.Id);
+            await _userTaskModal.ShowModal(user.Id);
         }
-        private async Task ViewAsync(UserDto user)
+        private async Task CalculateQuarterPoints(UserDto user)
         {
-          //  await KPITaskDetailModal.ShowModal(kPITaskDto);
+            CalculateQuarterPoint = new List<CalculateQuarterPointDto>();
+            var Confirm = await MessageBox.Confirm(modal, "Are you sure you want calculate Quarter score this user?");
+            if (!Confirm) return;
+            await GetIndexWeight(user.PositionType);
+            if (Month == 3 || Month == 6 || Month == 9 || Month == 12)
+            {
+                await CalculateQuarterScores(Month, user);
+                if (Month == 6 || Month == 12)
+                {
+                    await CalculateHalfYearScoresFromQuarters(CalculateQuarterPoint, Month, user);
+                }
+                var response = await Http.PostAsJsonAsync($"api/kpisubmit/calculate-point-quarter", CalculateQuarterPoint);
+                if (response.IsSuccessStatusCode)
+                {
+                    await Message.Success("calculate point quarter successfully.");
+                }
+                else
+                {
+                    await Message.Error($"Lỗi: calculate point quarter faile");
+                }
+            }
+            else
+            {
+                await MessageBox.Warning(modal, "Quarterly points cannot be calculated.");
+            }
         }
-
         #endregion
         #region Search
         private string? WorkDayId { get; set; }
@@ -120,7 +164,6 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
         TableFilter<string>[] _departmentFilter = Array.Empty<TableFilter<string>>();
         TableFilter<string>[] _factoryFilter = Array.Empty<TableFilter<string>>();
         TableFilter<string>[] _positionFilter = Array.Empty<TableFilter<string>>();
-
         private async Task LoadDataFilterAsync()
         {
             ListDepartment = await Http.GetFromJsonAsync<List<DepartmentDto>>("api/department/get-all") ?? new List<DepartmentDto>();
@@ -163,6 +206,174 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
             }
         }
         #endregion
+        #region CalculateQuarterPoints
+        private List<IndexWeightDto> IndexWeight = new();
+        private async Task GetIndexWeight(PositionType? positionType)
+        {
+            try
+            {
+                var result = await Http.GetFromJsonAsync<List<IndexWeightDto>>($"api/kpisubmit/get-indexweight/{positionType}/{PeriodType.Quarter}");
+                if (result.Any())
+                {
+                    IndexWeight = result;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[CLIENT ERROR] API Call Failed: {ex.Message}");
 
+            }
+        }
+        private List<int> GetMonthsInQuarter(int month)
+        {
+            if (month == 3) return new List<int> { 1, 2, 3 };
+            if (month == 6) return new List<int> { 4, 5, 6 };
+            if (month == 9) return new List<int> { 7, 8, 9 };
+            if (month == 12) return new List<int> { 10, 11, 12 };
+            return new List<int>();
+        }
+        private async Task CalculateQuarterScores(int month, UserDto user)
+        {
+            try
+            {
+                var listMonths = GetMonthsInQuarter(month);
+                var actuals = new List<KPITotalScoreDto>();
+                var listResultDetail = new List<HandleActualDto>();
+                foreach (var m in listMonths)
+                {  // lấy Total để validate đủ 2 tahngs trở lên không
+                    var result = await Http.GetFromJsonAsync<List<KPITotalScoreDto>>(
+                            $"api/kpiSubmit/get-result-kpi/{user.Id}/{Year}/{m}");
+
+                    if (result != null && result.Any())
+                    {
+                        actuals.AddRange(result);
+                    }
+                    // lấy Total để validate đủ 2 tahngs trở lên không
+                    var result2 = await Http.GetFromJsonAsync<List<HandleActualDto>>(
+                          $"api/kpiSubmit/get-result-omg/{user.Id}/{Year}/{m}");
+                    if (result2 != null && result2.Any())
+                    {
+                        listResultDetail.AddRange(result2);
+                    }
+                }
+                if (actuals.Count < 2)
+                    return;
+
+                decimal kpiScore = 0;
+                decimal omgscore = 0;
+                decimal keytaskscore = 0;
+
+                var indexWeights = IndexWeight?.Where(x => x.PeriodType == PeriodType.Quarter).ToList() ?? new List<IndexWeightDto>();
+
+                decimal omgWeight = indexWeights?.FirstOrDefault(x => x.KPIIndexType == KPIIndexType.OMG)?.Weight ?? 0;
+                decimal kpiWeight = indexWeights?.FirstOrDefault(x => x.KPIIndexType == KPIIndexType.KPI)?.Weight ?? 0;
+                decimal keyTaskWeight = indexWeights?.FirstOrDefault(x => x.KPIIndexType == KPIIndexType.KeyTask)?.Weight ?? 0;
+                if (listResultDetail != null && listResultDetail.Any())
+                {
+                    // OMG
+                    var listOMGDetails = listResultDetail.Where(x => x.KPIIndexType == KPIIndexType.OMG).ToList();
+                    decimal sumOMG = listOMGDetails.Sum(x => x.Score ?? 0);
+                    var avgOMG = listOMGDetails.Count > 0 ? sumOMG / listOMGDetails.Count : 0;
+                    omgscore = avgOMG * omgWeight;
+
+                    // KPI
+                    var listKPIDetails = listResultDetail.Where(x => x.KPIIndexType == KPIIndexType.KPI).ToList();
+                    decimal sumKPI = listKPIDetails.Sum(x => x.Score ?? 0);
+                    var avgKPI = listKPIDetails.Count > 0 ? sumKPI / listKPIDetails.Count : 0;
+                    kpiScore = avgKPI * kpiWeight;
+
+                    // KeyTask
+                    var listKeyTaskDetails = listResultDetail.Where(x => x.KPIIndexType == KPIIndexType.KeyTask).ToList();
+                    decimal sumKeyTask = listKeyTaskDetails.Sum(x => x.Score ?? 0);
+                    var avgKeyTask = listKeyTaskDetails.Count > 0 ? sumKeyTask / listKeyTaskDetails.Count : 0;
+                    keytaskscore = avgKeyTask * keyTaskWeight;
+                }
+
+                decimal totalScore = kpiScore + keytaskscore + omgscore;
+
+                int quarter = (month + 2) / 3;
+
+                // Kiểm tra đã có chưa
+                bool alreadyExists = CalculateQuarterPoint.Any(x => x.Quarter == quarter && x.Month == null && x.HalfYear == null);
+                if (!alreadyExists)
+                {
+                    var quarterScore = new CalculateQuarterPointDto
+                    {
+                        KPIScore = ConvertNumberCommon.ConvertNumber(kpiScore),
+                        KeyTaskScore = ConvertNumberCommon.ConvertNumber(keytaskscore),
+                        OMGScore = ConvertNumberCommon.ConvertNumber(omgscore),
+                        TotaleScore = ConvertNumberCommon.ConvertNumber(totalScore),
+                        Title = $"EMC - {Year} - Q{quarter} - {user.FullName} ",
+                        Year = Year,
+                        Month = null,
+                        Quarter = quarter,
+                        CreatedBy = user.Id,
+                        ApprovedBy =CurrenUser.Id,
+                    };
+
+                    CalculateQuarterPoint.Add(quarterScore);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[CLIENT ERROR] CalculateQuarterScores Failed: {ex.Message}");
+            }
+        }
+        private async Task CalculateHalfYearScoresFromQuarters(List<CalculateQuarterPointDto>  calculateQuarterPoint, int? month, UserDto user)
+        {
+            if (calculateQuarterPoint == null)
+                return;
+            int halfYear = (month.Value <= 6) ? 1 : 2;
+            var quarterNumbers = month == 6 ? 1 : 3;
+            var quarterScores = new List<KPITotalScoreDto>();
+
+            var result = await Http.GetFromJsonAsync<KPITotalScoreDto>(
+                $"api/kpisubmit/get-result-quarter/{user.Id}/{Year}/{quarterNumbers}");
+            if (result != null)
+            {
+                quarterScores.Add(result);
+            }
+            if (calculateQuarterPoint.Any())
+            {
+                var currenQuarter = calculateQuarterPoint.First(x => x.Quarter == (quarterNumbers + 1));
+                quarterScores.Add(new KPITotalScoreDto
+                {
+                    Title = currenQuarter.Title,
+                    KPIScore = currenQuarter.KPIScore,
+                    KeyTaskScore = currenQuarter.KeyTaskScore,
+                    OMGScore = currenQuarter.OMGScore,
+                    CreatedBy = CurrenUser.Id,
+                    Month = currenQuarter.Month,
+                    Quarter = currenQuarter.Quarter,
+                    HalfYear = currenQuarter.HalfYear,
+                    Year = currenQuarter.Year,
+                    TotaleScore = currenQuarter.TotaleScore,
+                });
+            }
+            if (quarterScores.Count != 2)
+                return;
+
+            // Trung bình cộng
+            decimal avgKPI = quarterScores.Average(x => x.KPIScore);
+            decimal avgKeyTask = quarterScores.Average(x => x.KeyTaskScore);
+            decimal avgOMG = quarterScores.Average(x => x.OMGScore);
+            decimal avgTotal = quarterScores.Average(x => x.TotaleScore);
+
+            var halfYearScore = new CalculateQuarterPointDto
+            {
+                KPIScore = Math.Round(avgKPI, 2),
+                KeyTaskScore = Math.Round(avgKeyTask, 2),
+                OMGScore = Math.Round(avgOMG, 2),
+                TotaleScore = Math.Round(avgTotal, 2),
+                Title = $"EMC - {Year} - H{halfYear} - {CurrenUser.FullName} ",
+                Year =Year,
+                HalfYear = halfYear,
+                CreatedBy = user.Id,
+                ApprovedBy = CurrenUser.Id
+            };
+            calculateQuarterPoint.Add(halfYearScore);
+        }
     }
+    #endregion
+
 }

@@ -16,6 +16,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         private string ModalTitle {  get; set; }
         private ApprovalInfo ApprovalInfo { get; set; } = new ApprovalInfo();
         private Form<ApprovalInfo> formRef = new();
+  
         #endregion
         #region Init
         public async Task ShowModal(ApprovalInfo approvalInfo)
@@ -33,6 +34,11 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         #endregion
         private async Task SaveAsync()
         {
+            if (string.IsNullOrEmpty(ApprovalInfo.Comments)||string.IsNullOrWhiteSpace(ApprovalInfo.Comments)) 
+            {
+                await Message.Error("Comments is not blank !");
+                return;
+            }
             var response = await Http.PutAsJsonAsync("api/kpiSubmit/update-status-request-kpi", ApprovalInfo);
 
             if (response.IsSuccessStatusCode)

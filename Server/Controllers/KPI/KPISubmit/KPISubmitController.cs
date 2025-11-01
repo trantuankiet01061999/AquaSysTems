@@ -4,6 +4,7 @@ using AquaSolution.Shared.Enum;
 using AquaSolution.Shared.Enum.KPIType;
 using AquaSolution.Shared.KPI.KPISubmit;
 using AquaSolution.Shared.KPI.KPITasks;
+using AquaSolution.Shared.KPI.UserTask;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -96,6 +97,13 @@ namespace AquaSolution.Server.Controllers.KPI.KPISubmit
         {
             var result = await _kPISubmitService.ResultAllKpi();
             return Ok(result);
+        }
+        //CalculatePointQuarter
+        [HttpPost("calculate-point-quarter")]
+        public async Task<IActionResult> CalculatePointQuarter([FromBody] List<CalculateQuarterPointDto> calculateQuarterPoint)
+        {
+            var result = await _kPISubmitService.CalculateQuarterPoint(calculateQuarterPoint);
+            return result ? Ok(true) : BadRequest("New creation failed");
         }
     }
 }

@@ -29,12 +29,14 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         private bool IsInputActual { get; set; } = false;
         private string HeaderLine { get; set; } = string.Empty;
         private string PlaceholderSelected { get; set; } = "select month";
+        private bool HandleButtonClicked { get; set; }
         #endregion
         #region Init  
         public async Task ShowModal(UserDto currenUser)
         {
             HandleKPISubmitDto = new HandleKPISubmitDto();
             DealineManagement = new List<DealineManagementDto>();
+            HandleButtonClicked = false;
             CurrenUser = currenUser;
             await GetDeadline();
             await GetIndexWeight();
@@ -100,6 +102,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         }
         private async Task SaveAsync()
         {
+            HandleButtonClicked=true;
             var response = await Http.PostAsJsonAsync($"api/kpisubmit/create", HandleKPISubmitDto);
             if (response.IsSuccessStatusCode)
             {
