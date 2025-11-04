@@ -18,5 +18,6 @@ namespace AquaSolution.Shared.Enum
         OnHold,
         EditRole,
         Detail,
+        CalculateQuarterPoints
     }
 }

@@ -101,12 +101,12 @@
                         </ChildContent>
                         <ContentTemplate>
                             <div style="display: flex; flex-direction: column; gap: 4px; padding: 8px;">
-                             @*    @if (Month == 3 || Month == 6 || Month == 9 || Month == 12)
-                                { *@
+                                @if ((Month == 3 || Month == 6 || Month == 9 || Month == 12) && CalculateQuarterPointsPermission)
+                                { 
                                     <Button Type="ButtonType.Text" OnClick="@(async () => await CalculateQuarterPoints(row))" Style="text-align: left;">
                                         <Icon Type="plus" /> Calculate Quarter Points
                                     </Button>
-                                @* } *@
+                                 }
                                 <Button Type="ButtonType.Text" OnClick="@(async () => await EditTask(row))" Style="text-align: left;">
                                     <Icon Type="plus" /> Task Management
                                 </Button>

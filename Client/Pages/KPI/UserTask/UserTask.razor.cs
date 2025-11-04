@@ -28,16 +28,18 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
         private UserTaskModal _userTaskModal = new();
         private int Month { get; set; }
         private int Year { get; set; }
+        private Guid PageId { get; set; }
         private List<CalculateQuarterPointDto> CalculateQuarterPoint = new();
         private UserDto? CurrenUser { get; set; }
         public bool Loading { get; set; }
+        private bool CalculateQuarterPointsPermission { get; set; } = false;
         #endregion
         #region Innit
         protected override async Task OnInitializedAsync()
         {
             await LoadCurrenUser();
             //await GetPage();
-            //await CheckPermission();
+            await CheckPermission();
             //Month = DateTime.Now.Month;
             Month = 6;
             Year = DateTime.Now.Year;
@@ -51,6 +53,11 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
                 var currenUserClass = new CurrenUser(Http, AuthStateProvider);
                 CurrenUser = await currenUserClass.LoadCurrenUser();
             }
+        }
+        private async Task CheckPermission()
+        {
+            CalculateQuarterPointsPermission = await permissionService.HasPermissionAsync(PageId, PermissionActionType.EditRole);
+
         }
         private async Task LoadData()
         {
