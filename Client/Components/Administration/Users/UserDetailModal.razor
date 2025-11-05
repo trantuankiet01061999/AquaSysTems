@@ -120,7 +120,7 @@
                     </Descriptions>
                 </Panel>
                 <Panel Header="Roles" Key="2">
-                    @if (User.Roles != null && User.Roles.Any())
+                 @*    @if (User.Roles != null && User.Roles.Any())
                     {
                         <ul class="role-list">
                             @foreach (var role in User.Roles)
@@ -132,7 +132,58 @@
                     else
                     {
                         <i class="text-gray-500 text-sm">No roles assigned</i>
+                    } *@
+                    @if (User.Roles != null && User.Roles.Any())
+                    {
+                        <Collapse Accordion="true">
+                            @foreach (var role in User.Roles)
+                            {
+                                <Panel Header="@role.Name" Key="@role.Id.ToString()">
+                                    @if (role.Permissions != null && role.Permissions.Any())
+                                    {
+                                        <ul class="role-list">
+                                            @foreach (var menu in role.Permissions)
+                                            {
+                                                <li>
+                                                    <b>@menu.Key</b> <!-- Menu Name -->
+                                                    <ul style="margin-left: 15px;">
+                                                        @foreach (var page in menu.Value)
+                                                        {
+                                                            var pageParts = page.Key.Split(';');
+                                                            var pageName = pageParts[0];
+                                                            var pageId = pageParts.Length > 1 ? pageParts[1] : "";
+
+                                                            <li>
+                                                                <span style="color:#1890ff;">📄 @pageName</span>
+                                                                @if (page.Value != null && page.Value.Any())
+                                                                {
+                                                                    <ul style="margin-left: 20px;">
+                                                                        @foreach (var action in page.Value)
+                                                                        {
+                                                                            <li style="color:#52c41a;">⚙️ @action</li>
+                                                                        }
+                                                                    </ul>
+                                                                }
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <i class="text-gray-500 text-sm">No permissions found</i>
+                                    }
+                                </Panel>
+                            }
+                        </Collapse>
                     }
+                    else
+                    {
+                        <i class="text-gray-500 text-sm">No roles assigned</i>
+                    }
+
                 </Panel>
             </Collapse>
         </div>
