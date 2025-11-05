@@ -249,89 +249,211 @@ public class UserService : IUserService
 
     }
 
+    //public async Task<List<UserDto>> GetAllUser()
+    //{
+    //    var request = _httpContextAccessor.HttpContext.Request;
+    //    var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
+    //    var ListUser = new List<UserDto>();
+    //    //-------------------------
+    //    var user = from queryableUser in await _userRepo.GetQueryableAsync()
+    //               join department in await _departmentRepo.GetQueryableAsync()
+    //               on queryableUser.DepartmentId equals department.Id
+    //                    into d1
+    //               from department in d1.DefaultIfEmpty()
+    //               join factory in await _factoryRepo.GetQueryableAsync()
+    //               on queryableUser.FactoryId equals factory.Id
+    //                into f1
+    //               from factory in f1.DefaultIfEmpty()
+    //               join position in await _positionRepo.GetQueryableAsync()
+    //               on queryableUser.PositionId equals position.Id
+    //                into p1
+    //               from position in p1.DefaultIfEmpty()
+    //               join manager in await _userRepo.GetQueryableAsync()
+    //               on queryableUser.ManagerId equals manager.Id
+    //               into m1
+    //               from manager in m1.DefaultIfEmpty()
+    //               orderby queryableUser.CreatedTime descending
+    //               select new UserDto
+    //               {
+    //                   Id = queryableUser.Id,
+    //                   WorkDayId = queryableUser.WorkDayId,
+    //                   FirstName = queryableUser.FirstName,
+    //                   LastName = queryableUser.LastName,
+    //                   FullName = queryableUser.FullName,
+    //                   Email = queryableUser.Email,
+    //                   NormalizedEmail = queryableUser.NormalizedEmail,
+    //                   PhoneNumber = queryableUser.PhoneNumber,
+    //                   ManagerId = queryableUser.ManagerId == null ? Guid.Empty : queryableUser.ManagerId.Value,
+    //                   CreatedTime = queryableUser.CreatedTime,
+    //                   UpdatedTime = queryableUser.UpdatedTime,
+    //                   CreatedBy = queryableUser.CreatedBy,
+    //                   UpdateBy = queryableUser.UpdateBy,
+    //                   Avatar = string.IsNullOrEmpty(queryableUser.Avatar)
+    //                        ? $"{baseUrl}/uploads/avatars/default.jpg"
+    //                        : $"{baseUrl}/{queryableUser.Avatar.TrimStart('/')}",
+    //                   DepartmentId = queryableUser.DepartmentId,
+    //                   DepartmentName = department.Name,
+    //                   FactoryId = queryableUser.FactoryId,
+    //                   FactoryName = factory.Name,
+    //                   PositionId = queryableUser.PositionId,
+    //                   PositionName = position.Name,
+    //                   ManagerName = manager.FullName,
+    //                   IsActive = queryableUser.IsActive,
+    //                   ManagerWorkDay = manager.WorkDayId,
+    //                   PositionType = position.Type
+    //               };
+    //    var userlist = user.ToList();
+    //    var userIds = userlist.Select(u => u.Id).ToList();
+    //    var userRoles =
+    //                from ur in await _userRoleRepo.GetQueryableAsync()
+    //                join r in await _roleRepo.GetQueryableAsync()
+    //                on ur.RoleId equals r.Id
+    //                where userIds.Contains(ur.UserId)
+    //                select new
+    //                {
+    //                    ur.UserId,
+    //                    Role = new RoleDto
+    //                    {
+    //                        Id = r.Id,
+    //                        Name = r.Name
+    //                    }
+    //                };
+    //    var listRole = userRoles.ToList();
+    //    foreach (var userItem in userlist)
+    //    {
+    //        userItem.Roles = userRoles
+    //            .Where(ur => ur.UserId == userItem.Id)
+    //            .Select(ur => ur.Role)
+    //            .ToList();
+    //    }
+    //    if (userlist.Count > 0)
+    //    {
+    //        return userlist;
+    //    }
+    //    return new List<UserDto>();
+    //}
     public async Task<List<UserDto>> GetAllUser()
     {
-        var request = _httpContextAccessor.HttpContext.Request;
-        var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
-        var ListUser = new List<UserDto>();
-        //-------------------------
-        var user = from queryableUser in await _userRepo.GetQueryableAsync()
-                   join department in await _departmentRepo.GetQueryableAsync()
-                   on queryableUser.DepartmentId equals department.Id
-                        into d1
-                   from department in d1.DefaultIfEmpty()
-                   join factory in await _factoryRepo.GetQueryableAsync()
-                   on queryableUser.FactoryId equals factory.Id
-                    into f1
-                   from factory in f1.DefaultIfEmpty()
-                   join position in await _positionRepo.GetQueryableAsync()
-                   on queryableUser.PositionId equals position.Id
-                    into p1
-                   from position in p1.DefaultIfEmpty()
-                   join manager in await _userRepo.GetQueryableAsync()
-                   on queryableUser.ManagerId equals manager.Id
-                   into m1
-                   from manager in m1.DefaultIfEmpty()
-                   orderby queryableUser.CreatedTime descending
-                   select new UserDto
-                   {
-                       Id = queryableUser.Id,
-                       WorkDayId = queryableUser.WorkDayId,
-                       FirstName = queryableUser.FirstName,
-                       LastName = queryableUser.LastName,
-                       FullName = queryableUser.FullName,
-                       Email = queryableUser.Email,
-                       NormalizedEmail = queryableUser.NormalizedEmail,
-                       PhoneNumber = queryableUser.PhoneNumber,
-                       ManagerId = queryableUser.ManagerId == null ? Guid.Empty : queryableUser.ManagerId.Value,
-                       CreatedTime = queryableUser.CreatedTime,
-                       UpdatedTime = queryableUser.UpdatedTime,
-                       CreatedBy = queryableUser.CreatedBy,
-                       UpdateBy = queryableUser.UpdateBy,
-                       Avatar = string.IsNullOrEmpty(queryableUser.Avatar)
-                            ? $"{baseUrl}/uploads/avatars/default.jpg"
-                            : $"{baseUrl}/{queryableUser.Avatar.TrimStart('/')}",
-                       DepartmentId = queryableUser.DepartmentId,
-                       DepartmentName = department.Name,
-                       FactoryId = queryableUser.FactoryId,
-                       FactoryName = factory.Name,
-                       PositionId = queryableUser.PositionId,
-                       PositionName = position.Name,
-                       ManagerName = manager.FullName,
-                       IsActive = queryableUser.IsActive,
-                       ManagerWorkDay = manager.WorkDayId,
-                       PositionType = position.Type
-                   };
-        var userlist = user.ToList();
-        var userIds = userlist.Select(u => u.Id).ToList();
-        var userRoles =
-                    from ur in await _userRoleRepo.GetQueryableAsync()
-                    join r in await _roleRepo.GetQueryableAsync()
-                    on ur.RoleId equals r.Id
-                    where userIds.Contains(ur.UserId)
-                    select new
-                    {
-                        ur.UserId,
-                        Role = new RoleDto
+        try
+        {
+            var request = _httpContextAccessor.HttpContext.Request;
+            var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
+            var userList = new List<UserDto>();
+
+            // Lấy tất cả user với join các bảng liên quan
+            var users = from u in await _userRepo.GetQueryableAsync()
+                        join d in await _departmentRepo.GetQueryableAsync() on u.DepartmentId equals d.Id into d1
+                        from department in d1.DefaultIfEmpty()
+                        join f in await _factoryRepo.GetQueryableAsync() on u.FactoryId equals f.Id into f1
+                        from factory in f1.DefaultIfEmpty()
+                        join p in await _positionRepo.GetQueryableAsync() on u.PositionId equals p.Id into p1
+                        from position in p1.DefaultIfEmpty()
+                        join m in await _userRepo.GetQueryableAsync() on u.ManagerId equals m.Id into m1
+                        from manager in m1.DefaultIfEmpty()
+                        orderby u.CreatedTime descending
+                        select new UserDto
                         {
-                            Id = r.Id,
-                            Name = r.Name
-                        }
+                            Id = u.Id,
+                            WorkDayId = u.WorkDayId,
+                            FirstName = u.FirstName,
+                            LastName = u.LastName,
+                            FullName = u.FullName,
+                            Email = u.Email,
+                            PhoneNumber = u.PhoneNumber,
+                            ManagerId = u.ManagerId == null ? Guid.Empty : u.ManagerId.Value,
+                            CreatedTime = u.CreatedTime,
+                            UpdatedTime = u.UpdatedTime,
+                            Avatar = string.IsNullOrEmpty(u.Avatar)
+                                ? $"{baseUrl}/uploads/avatars/default.jpg"
+                                : $"{baseUrl}/{u.Avatar.TrimStart('/')}",
+                            DepartmentId = u.DepartmentId,
+                            DepartmentName = department.Name,
+                            FactoryId = u.FactoryId,
+                            FactoryName = factory.Name,
+                            PositionId = u.PositionId,
+                            PositionName = position.Name,
+                            ManagerName = manager.FullName,
+                            IsActive = u.IsActive,
+                            ManagerWorkDay = manager.WorkDayId,
+                            PositionType = position.Type,
+                            Roles = new List<RoleDto>()
+                        };
+
+            var userListData = users.ToList();
+
+            // Lấy tất cả userRole và Role
+            var userIds = userListData.Select(u => u.Id).ToList();
+            var userRoles = await _userRoleRepo.WhereAsync(ur => userIds.Contains(ur.UserId));
+            var roleIds = userRoles.Select(ur => ur.RoleId).Distinct().ToList();
+            var roles = await _roleRepo.WhereAsync(r => roleIds.Contains(r.Id));
+
+            // Lấy tất cả rolePermission + Permission
+            var rolePermissions = await _rolePermissionRepo.WhereAsync(rp => roleIds.Contains(rp.RoleId));
+            var permissionIds = rolePermissions.Select(rp => rp.PermissionId).Distinct().ToList();
+            var permissions = await _permissionRepo.WhereAsync(p => permissionIds.Contains(p.Id));
+            var menuIds = permissions.Where(p => p.MenuId.HasValue).Select(p => p.MenuId!.Value).Distinct().ToList();
+            var pageIds = permissions.Where(p => p.PageId.HasValue).Select(p => p.PageId!.Value).Distinct().ToList();
+
+            var menus = await _menuRepo.WhereAsync(m => menuIds.Contains(m.Id));
+            var pages = await _pageRepo.WhereAsync(p => pageIds.Contains(p.Id));
+
+            var menuDict = menus.ToDictionary(m => m.Id, m => m.Name);
+            var pageDict = pages.ToDictionary(p => p.Id, p => p.Name);
+
+            foreach (var user in userListData)
+            {
+                var userRoleIds = userRoles.Where(ur => ur.UserId == user.Id).Select(ur => ur.RoleId).Distinct().ToList();
+                var userRolesData = roles.Where(r => userRoleIds.Contains(r.Id)).ToList();
+
+                foreach (var role in userRolesData)
+                {
+                    var roleDto = new RoleDto
+                    {
+                        Id = role.Id,
+                        Name = role.Name,
+                        IsSelected = true
                     };
-        var listRole = userRoles.ToList();
-        foreach (var userItem in userlist)
-        {
-            userItem.Roles = userRoles
-                .Where(ur => ur.UserId == userItem.Id)
-                .Select(ur => ur.Role)
-                .ToList();
+
+                    var rolePerms = rolePermissions.Where(rp => rp.RoleId == role.Id).ToList();
+                    var permIds = rolePerms.Select(rp => rp.PermissionId).Distinct().ToList();
+                    var perms = permissions.Where(p => permIds.Contains(p.Id)).ToList();
+
+                    // PageIds
+                    roleDto.PageId = perms.Where(p => p.PageId.HasValue).Select(p => p.PageId!.Value).Distinct().ToList();
+
+                    // Permissions theo menu/page/action
+                    foreach (var perm in perms)
+                    {
+                        if (!perm.MenuId.HasValue || !perm.PageId.HasValue) continue;
+                        if (!menuDict.TryGetValue(perm.MenuId.Value, out var menuName)) continue;
+                        if (!pageDict.TryGetValue(perm.PageId.Value, out var pageName)) continue;
+
+                        var pageKey = $"{pageName};{perm.PageId.Value}";
+                        var action = perm.Action.ToString();
+
+                        if (!roleDto.Permissions.ContainsKey(menuName))
+                            roleDto.Permissions[menuName] = new Dictionary<string, List<string>>();
+
+                        if (!roleDto.Permissions[menuName].ContainsKey(pageKey))
+                            roleDto.Permissions[menuName][pageKey] = new List<string>();
+
+                        if (!roleDto.Permissions[menuName][pageKey].Contains(action))
+                            roleDto.Permissions[menuName][pageKey].Add(action);
+                    }
+
+                    user.Roles.Add(roleDto);
+                }
+            }
+
+            return userListData;
         }
-        if (userlist.Count > 0)
+        catch (Exception ex)
         {
-            return userlist;
+            throw ex;
         }
-        return new List<UserDto>();
     }
+
+    //------------------
     public async Task LogoutAsync()
     {
         var context = _httpContextAccessor.HttpContext;
