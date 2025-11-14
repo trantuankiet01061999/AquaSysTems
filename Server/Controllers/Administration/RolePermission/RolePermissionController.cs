@@ -29,5 +29,15 @@ namespace AquaSolution.Server.Controllers.Administration.RolePermission
             await _hubContext.Clients.All.SendAsync("ReloadMenu");
             return Ok(new { affectedRows = result });
         }
+        [HttpGet("get-permission-by-id/{id}")]
+        public async Task<IActionResult> GetRoleById(Guid id)
+        {
+            var role = await _rolePermissionService.GetRoleWithPermissions(id);
+            if (role == null)
+            {
+                return NotFound();
+            }
+            return Ok(role);
+        }
     }
 }

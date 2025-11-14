@@ -2,6 +2,7 @@
 using AquaSolution.Client.Common;
 using AquaSolution.Client.Components.KPI.KPISubmit;
 using AquaSolution.Shared.Enum.KPIType;
+using AquaSolution.Shared.ITSuport.RequestSuport;
 using AquaSolution.Shared.KPI.KPISubmit;
 using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
@@ -22,6 +23,7 @@ namespace AquaSolution.Client.Pages.ToDoList.Approvalkpi
         private ApprovalTaskModal ApprovalTaskModalRef = new();
         private HubConnection? _hubConnection;
         private HandleApprovalTask HandleApproval = new();
+        private Table<ViewKPIForApprovalDto>? _tableRef;
         #endregion
         #region Init
         protected override async Task OnInitializedAsync()
@@ -32,16 +34,25 @@ namespace AquaSolution.Client.Pages.ToDoList.Approvalkpi
         }
         private async Task InitSignalRAsync()
         {
-            _hubConnection = new HubConnectionBuilder()
-                   .WithUrl(Navigation.ToAbsoluteUri(Navigation.BaseUri + "signalrhub"))
-                   .Build();
-            _hubConnection.On("ReloadKPIForUserApproval", async () =>
+            try
             {
-                await LoadData();
-                StateHasChanged();
-            });
-
-            await _hubConnection.StartAsync();
+                _hubConnection = new HubConnectionBuilder()
+                    .WithUrl(Navigation.ToAbsoluteUri("signalrhub"))
+                    .Build();
+                _hubConnection.On("ReloadKPIForUserApproval", async () =>
+                {
+                    await InvokeAsync(async () =>
+                    {
+                        await LoadData();
+                        StateHasChanged();
+                    });
+                });
+                await _hubConnection.StartAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"SignalR error: {ex.Message}");
+            }
         }
         private async Task LoadCurrenUser()
         {
@@ -54,39 +65,46 @@ namespace AquaSolution.Client.Pages.ToDoList.Approvalkpi
 
         private async Task LoadData()
         {
-            if (Http == null || CurrenUser == null) return;
-            var data = new List<ViewKPIForApprovalDto>();
-            var result = await Http.GetFromJsonAsync<List<ViewKPIForApprovalDto>>
-                ($"api/KPISubmit/get-kpi-approval");
-            if (CurrenUser.Roles.Any(x => x.Name == "Admin"))
+            try
             {
-                data = result;
+                if (Http == null || CurrenUser == null)
+                    return;
 
-            }
-            else
-            {
-                data = result.Where(x => x.DecisionMaker == CurrenUser.Id &&
-               x.EApprovalStatusType != EApprovalStatusType.Pending).ToList();
-            }
-            // var data = result;
-            _groupedList = new List<GroupViewKPIForApproval>
+                var data = await Http.GetFromJsonAsync<List<ViewKPIForApprovalDto>>("api/KPISubmit/get-kpi-approval");
+
+                if (CurrenUser.Roles.Any(x => x.Name == "Admin"))
+                    data = data.ToList();
+                else
+                    data = data.Where(x => x.DecisionMaker == CurrenUser.Id &&
+                                           x.EApprovalStatusType != EApprovalStatusType.Pending).ToList();
+
+                _groupedList.Clear();
+                _groupedList.AddRange(new[]
                 {
-                    new() { ApprovalStatusType = EApprovalStatusType.InReview, StatusName = "Pending" },
-                    new() { ApprovalStatusType = EApprovalStatusType.Approved, StatusName = "Approved" },
-                    new() { ApprovalStatusType = EApprovalStatusType.Rejected, StatusName = "Rejected" }
-                };
-            if (data != null)
-            {
+                    new GroupViewKPIForApproval { ApprovalStatusType = EApprovalStatusType.InReview, StatusName = "Pending" },
+                    new GroupViewKPIForApproval { ApprovalStatusType = EApprovalStatusType.Approved, StatusName = "Approved" },
+                    new GroupViewKPIForApproval { ApprovalStatusType = EApprovalStatusType.Rejected, StatusName = "Rejected" }
+                });
+
                 foreach (var group in _groupedList)
                 {
                     group.Items = data
-                         .Where(x => x.EApprovalStatusType == group.ApprovalStatusType)
-                         .OrderByDescending(x => x.Month)
-                         .ThenBy(x => x.Step)
-                         .ToList();
+                        .Where(x => x.EApprovalStatusType == group.ApprovalStatusType)
+                        .OrderByDescending(x => x.Month)
+                        .ThenBy(x => x.Step)
+                        .ToList();
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            finally
+            {
+                await InvokeAsync(StateHasChanged);
+            }
         }
+
         #endregion
         #region Actions
         private async Task EvenCallback(ApprovalInfo approvalInfo)

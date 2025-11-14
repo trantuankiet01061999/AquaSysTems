@@ -639,11 +639,62 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                 throw new Exception("Không tìm thấy flow phê duyệt cho vị trí này.");
 
             var requestTasks = new List<RequestApprovalTask>();
-            var flowType = filteredFlows.First().ApprovalSettingType;
+            //var flowType = filteredFlows.First().ApprovalSettingType;
 
-            if (flowType == ApprovalSettingType.Assignee)
+            //if (flowType == ApprovalSettingType.Assignee)
+            //{
+            //    foreach (var flow in filteredFlows)
+            //    {
+            //        var task = new RequestApprovalTask
+            //        {
+            //            Id = Guid.NewGuid(),
+            //            SubmitId = submitId,
+            //            Title = kpi.Title,
+            //            RequesterId = kpi.CreatedBy,
+            //            StatusType = flow.CurrentStep == 1
+            //                ? EApprovalStatusType.InReview
+            //                : EApprovalStatusType.Pending,
+            //            ApprovedBy = null,
+            //            ApprovalDate = null,
+            //            RejectBy = null,
+            //            RejectDate = null,
+            //            Comment = null,
+            //            Step = flow.CurrentStep ?? 1,
+            //            DecisionMaker = flow.DecisionMaker,
+            //            Month = kpi.Month ?? 0,
+            //            CreatedDate = DateTime.Now
+            //        };
+
+            //        requestTasks.Add(task);
+            //    }
+            //}
+            //else if (flowType == ApprovalSettingType.DirectManagement)
+            //{
+            //    if (user.ManagerId == null)
+            //        throw new Exception("Người tạo KPI chưa có Manager được gán.");
+
+            //    var directRequest = new RequestApprovalTask
+            //    {
+            //        Id = Guid.NewGuid(),
+            //        SubmitId = submitId,
+            //        Title = kpi.Title,
+            //        RequesterId = kpi.CreatedBy,
+            //        StatusType = EApprovalStatusType.InReview,
+            //        ApprovedBy = null,
+            //        ApprovalDate = null,
+            //        RejectBy = null,
+            //        RejectDate = null,
+            //        Comment = null,
+            //        Step = 1,
+            //        DecisionMaker = user.ManagerId, 
+            //        Month = kpi.Month ?? 0,
+            //        CreatedDate = DateTime.Now
+            //    };
+            //    requestTasks.Add(directRequest);
+            //}
+            foreach (var flow in filteredFlows)
             {
-                foreach (var flow in filteredFlows)
+                if (flow.ApprovalSettingType == ApprovalSettingType.Assignee)
                 {
                     var task = new RequestApprovalTask
                     {
@@ -667,31 +718,32 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
 
                     requestTasks.Add(task);
                 }
-            }
-            else if (flowType == ApprovalSettingType.DirectManagement)
-            {
-                if (user.ManagerId == null)
-                    throw new Exception("Người tạo KPI chưa có Manager được gán.");
-
-                var directRequest = new RequestApprovalTask
+                else if (flow.ApprovalSettingType == ApprovalSettingType.DirectManagement)
                 {
-                    Id = Guid.NewGuid(),
-                    SubmitId = submitId,
-                    Title = kpi.Title,
-                    RequesterId = kpi.CreatedBy,
-                    StatusType = EApprovalStatusType.InReview,
-                    ApprovedBy = null,
-                    ApprovalDate = null,
-                    RejectBy = null,
-                    RejectDate = null,
-                    Comment = null,
-                    Step = 1,
-                    DecisionMaker = user.ManagerId, 
-                    Month = kpi.Month ?? 0,
-                    CreatedDate = DateTime.Now
-                };
-                requestTasks.Add(directRequest);
+                    if (user.ManagerId == null)
+                        throw new Exception("Người tạo KPI chưa có Manager được gán.");
+
+                    var directRequest = new RequestApprovalTask
+                    {
+                        Id = Guid.NewGuid(),
+                        SubmitId = submitId,
+                        Title = kpi.Title,
+                        RequesterId = kpi.CreatedBy,
+                        StatusType = EApprovalStatusType.InReview,
+                        ApprovedBy = null,
+                        ApprovalDate = null,
+                        RejectBy = null,
+                        RejectDate = null,
+                        Comment = null,
+                        Step = 1,
+                        DecisionMaker = user.ManagerId,
+                        Month = kpi.Month ?? 0,
+                        CreatedDate = DateTime.Now
+                    };
+                    requestTasks.Add(directRequest);
+                }
             }
+
             await _requestApprovalTaskRepo.InsertRangeAsync(requestTasks);
             await _requestApprovalTaskRepo.SaveChangesAsync();
         }

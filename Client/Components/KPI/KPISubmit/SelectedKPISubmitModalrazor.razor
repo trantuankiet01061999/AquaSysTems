@@ -12,20 +12,34 @@
     RenderFragment footer = @<Template>
     @if (IsInputActual)
     {
-        @if (activeTabKey == "1")
-        {
+        // @if (activeTabKey == "1")
+        // {
+        //     <Button OnClick="@ActionTab" @key="@( "action" )" Style="color:#f0f0f0"
+        //             Type="ButtonType.Primary">
+        //        Next
+        //     </Button>
+        // }
+        // else if (activeTabKey == "2")
+        // {
+        //         <Button Disabled="@HandleButtonClicked" OnClick="@SaveAsync" @key="@( "submit" )"
+        //                 Type="ButtonType.Primary">
+        //             Submit
+        //         </Button>
+        // }
+        
+
             <Button OnClick="@ActionTab" @key="@( "action" )" Style="color:#f0f0f0"
                     Type="ButtonType.Primary">
-               Next
+                @TitleButton
             </Button>
-        }
-        else if (activeTabKey == "2")
+         if (activeTabKey == "2")
         {
                 <Button Disabled="@HandleButtonClicked" OnClick="@SaveAsync" @key="@( "submit" )"
                         Type="ButtonType.Primary">
                     Submit
                 </Button>
         }
+
     }
         <Button Style="color:red" OnClick="@CloseModal" @key="@("back")">Cancel</Button>
 

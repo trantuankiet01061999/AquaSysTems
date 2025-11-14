@@ -57,12 +57,15 @@ namespace AquaSolution.Client.Pages.Administration
 
             
         }
-
-       private async Task  ShowPermissionModal(RoleDto role)
+        private RolePermissionDetailModal rolePermissionDetailModal = new();
+        private async Task  ShowPermissionModal(RoleDto role)
         {
           await  _permissionModal?.Show(role)!;
         }
-
+        private async Task DetailPermissionRole(RoleDto role)
+        {
+            await rolePermissionDetailModal.ShowModal(role);
+        }
         #region Modal Add Role
         public bool IsVisible { get; set; }
         private HandleRoleDto CreatedRoleDto { get; set; } = new HandleRoleDto();

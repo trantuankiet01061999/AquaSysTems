@@ -1,0 +1,210 @@
+﻿@using AntDesign
+@using AquaSolution.Shared.UserManagements
+@inject IMessageService Message
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<style>
+    .user-modal-content {
+        display: flex;
+        flex-direction: row;
+        gap: 24px;
+        padding: 0 12px;
+    }
+
+    .upload-avatar-container {
+        width: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding-top: 16px;
+    }
+
+    .user-info-container {
+        flex: 1;
+        overflow-y: auto;
+        max-height: 65vh;
+    }
+
+    .avatar-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .avatar-buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        margin-top: -10px;
+        gap: 2px;
+    }
+
+    .role-list {
+        font-size: 13px;
+        width: 125vh !important;
+        height: 60vh !important;
+    }
+
+    .customModal .ant-modal-content {
+        max-height: 95vh !important;
+    }
+
+    /* ==============================
+           PHẦN QUYỀN HIỂN THỊ GỌN HƠN
+           ============================== */
+
+    /* Gộp và thu nhỏ spacing tổng thể */
+    .role-collapse {
+        width: 100%;
+        max-height: 65vh !important;
+        overflow: auto;
+    }
+
+    /* Mỗi nhóm page (1 dòng) hiển thị gọn */
+    .page-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px 10px;
+        margin: 1px 0 !important;
+        line-height: 1.3;
+        padding: 0 !important;
+    }
+
+    /* Tên Page */
+    .page-name {
+        font-weight: 500;
+        color: #1890ff;
+        min-width: 160px;
+        margin-right: 4px;
+        line-height: 1.2;
+    }
+
+    /* Giảm khoảng trắng giữa Divider */
+    .ant-divider-horizontal {
+        margin: 2px 0 !important;
+    }
+
+    /* Nút action nhỏ gọn hơn */
+    .action-tag {
+        background-color: #f6ffed;
+        border: 1px solid #b7eb8f;
+        color: #389e0d;
+        border-radius: 4px;
+        padding: 0 6px;
+        font-size: 12.5px;
+        line-height: 1.3;
+    }
+
+        /* Các màu action */
+        .action-tag.edit {
+            background-color: #fff7e6;
+            border-color: #ffd591;
+            color: #d46b08;
+        }
+
+        .action-tag.delete {
+            background-color: #fff1f0;
+            border-color: #ffa39e;
+            color: #cf1322;
+        }
+
+    /* Giảm khoảng trắng mặc định của Collapse nội dung */
+    .ant-collapse-content-box {
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+    }
+
+    /* Loại bỏ margin mặc định của list */
+    .role-list ul,
+    .role-list li {
+        margin: 0 !important;
+        padding: 0 !important;
+        list-style: none;
+    }
+
+    /* Giảm chiều cao dòng giữa các item */
+    .role-list li {
+        line-height: 1.3 !important;
+        margin-bottom: 2px !important;
+    }
+
+    .no-permission {
+        font-style: italic;
+        color: gray;
+        font-size: 13px;
+        margin: 2px 0;
+    }
+</style>
+
+@{
+    RenderFragment footer = @<Template>
+        <Button Style="color:#808080" OnClick="@HandleCancel">Close</Button>
+    </Template>;
+}
+
+<Modal @bind-Visible="IsModalVisible"
+       Title="User Information"
+       Style="z-index: 8888;width:1000px;height:78vh !important;margin-top:-75px"
+       Class="customModal"
+       Footer="@footer">
+
+    <div class="user-modal-content">
+        <Collapse Accordion="true" Class="role-collapse">
+            @if (_role?.Permissions != null && _role.Permissions.Any())
+            {
+                @foreach (var menu in _role.Permissions)
+                {
+                    <Panel Key="@menu.Key" Header="@menu.Key">
+                        @if (menu.Value != null && menu.Value.Any())
+                        {
+                            @foreach (var page in menu.Value)
+                            {
+                                var pageParts = page.Key.Split(';');
+                                var pageName = pageParts[0];
+                                var pageId = pageParts.Length > 1 ? pageParts[1] : "";
+
+                                <div class="page-actions">
+                                    <span class="page-name">📄 @pageName:</span>
+
+                                    @if (page.Value != null && page.Value.Any())
+                                    {
+                                        @foreach (var action in page.Value)
+                                        {
+                                            var actionClass = action.ToLower() switch
+                                            {
+                                                "delete" => "action-tag delete",
+                                                "edit" => "action-tag edit",
+                                                _ => "action-tag"
+                                            };
+
+                                            <span class="@actionClass">⚙️ @action</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="no-permission">No actions</span>
+                                    }
+                                </div>
+
+                                <Divider />
+                            }
+                        }
+                        else
+                        {
+                            <div class="no-permission">No pages found in this menu</div>
+                        }
+                    </Panel>
+                }
+            }
+            else
+            {
+                <div class="no-permission">No permissions found</div>
+            }
+        </Collapse>
+    </div>
+</Modal>

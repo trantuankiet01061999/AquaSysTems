@@ -102,7 +102,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         }
         private async Task SaveAsync()
         {
-            HandleButtonClicked=true;
+            HandleButtonClicked = true;
             var response = await Http.PostAsJsonAsync($"api/kpisubmit/create", HandleKPISubmitDto);
             if (response.IsSuccessStatusCode)
             {
@@ -114,7 +114,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
                 await Message.Error($"Lỗi: {error}");
             }
             activeTabKey = "1";
-            TitleButton = "Next";
+            TitleButton = "Next ⟶";
             IsModalVisible = false;
         }
         private async Task SelectedChange()
@@ -129,16 +129,16 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
             }
 
             activeTabKey = "1";
-            TitleButton = "Next";
+            TitleButton = "Next ⟶";
         }
         private async Task ActionTab()
         {
-
+            HandleKPISubmitDto.KPITotalScore = new();
             if (activeTabKey == "1")
             {
 
                 activeTabKey = "2";
-                TitleButton = "Back";
+                TitleButton = "⟵ Back";
                 foreach (var item in HandleKPISubmitDto.HandleActual)
                 {
                     await CalculatedScore(item);
@@ -177,7 +177,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
             else if (activeTabKey == "2")
             {
                 activeTabKey = "1";
-                TitleButton = "Next";
+                TitleButton = "Next ⟶";
             }
         }
         private Task AddCurrenTask(HandleKPISubmitDto handleKPISubmit)
@@ -242,7 +242,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
                         }
                         break;
                     case KPIFormulaType.KF4:
-                        if(actual > target)
+                        if (actual > target)
                         {
                             achievement = 0;
                         }
@@ -339,7 +339,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
                         listResultDetail.AddRange(resultOMG);
                     }
                 }
-                listResultDetail.AddRange(handleKPISubmit.HandleActual.Where(x=>x.Month == month));
+                listResultDetail.AddRange(handleKPISubmit.HandleActual.Where(x => x.Month == month));
 
                 //validate
                 var currentMonth = handleKPISubmit.HandleActual.First().Month;
@@ -389,9 +389,9 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
                 int quarter = (month.Value + 2) / 3;
 
                 // Kiểm tra đã có chưa
-                bool alreadyExists = handleKPISubmit.KPITotalScore.Any(x => x.Quarter == quarter && x.Month == null && x.HalfYear == null);
-                if (!alreadyExists)
-                {
+                //bool alreadyExists = handleKPISubmit.KPITotalScore.Any(x => x.Quarter == quarter && x.Month == null && x.HalfYear == null);
+                //if (!alreadyExists)
+                //{
                     var quarterScore = new KPITotalScoreDto
                     {
                         KPIScore = ConvertNumberCommon.ConvertNumber(kpiScore),
@@ -406,7 +406,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
                     };
 
                     handleKPISubmit.KPITotalScore.Add(quarterScore);
-                }
+                //}
 
             }
             catch (Exception ex)
@@ -431,10 +431,10 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
             {
                 quarterScores.Add(result);
             }
-            if(handleKPISubmit.KPITotalScore.Any())
+            if (handleKPISubmit.KPITotalScore.Any())
             {
-                 quarterScores.Add(handleKPISubmit.KPITotalScore.First(x=>x.Quarter == (quarterNumbers+1)));
-            }    
+                quarterScores.Add(handleKPISubmit.KPITotalScore.First(x => x.Quarter == (quarterNumbers + 1)));
+            }
             if (quarterScores.Count != 2)
                 return;
 
@@ -443,20 +443,23 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
             decimal avgKeyTask = quarterScores.Average(x => x.KeyTaskScore);
             decimal avgOMG = quarterScores.Average(x => x.OMGScore);
             decimal avgTotal = quarterScores.Average(x => x.TotaleScore);
+            //bool alreadyExists = handleKPISubmit.KPITotalScore.Any(x => x.HalfYear == halfYear && x.Month == null && x.Quarter == null);
+            //if (!alreadyExists)
+            //{
+                var halfYearScore = new KPITotalScoreDto
+                {
+                    KPIScore = Math.Round(avgKPI, 2),
+                    KeyTaskScore = Math.Round(avgKeyTask, 2),
+                    OMGScore = Math.Round(avgOMG, 2),
+                    TotaleScore = Math.Round(avgTotal, 2),
+                    Title = $"EMC - {handleKPISubmit.HandleActual.First().Year} - H{halfYear} - {CurrenUser.FullName} ",
+                    Year = handleKPISubmit.HandleActual.First().Year,
+                    HalfYear = halfYear,
+                    CreatedBy = CurrenUser.Id
+                };
 
-            var halfYearScore = new KPITotalScoreDto
-            {
-                KPIScore = Math.Round(avgKPI, 2),
-                KeyTaskScore = Math.Round(avgKeyTask, 2),
-                OMGScore = Math.Round(avgOMG, 2),
-                TotaleScore = Math.Round(avgTotal, 2),
-                Title = $"EMC - {handleKPISubmit.HandleActual.First().Year} - H{halfYear} - {CurrenUser.FullName} ",
-                Year = handleKPISubmit.HandleActual.First().Year,
-                HalfYear = halfYear,
-                CreatedBy = CurrenUser.Id
-            };
-
-            handleKPISubmit.KPITotalScore.Add(halfYearScore);
+                handleKPISubmit.KPITotalScore.Add(halfYearScore);
+            //}
         }
         #endregion
 
