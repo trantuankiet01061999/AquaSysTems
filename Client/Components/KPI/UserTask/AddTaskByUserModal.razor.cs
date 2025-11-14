@@ -34,7 +34,7 @@ namespace AquaSolution.Client.Components.KPI.UserTask
             await LoadDataFilter();
             Selected = null;
             activeTabKey = "1";
-            TitleButton = "Next";
+            TitleButton = "Next ⟶";
             HandleUserTaskDto = new();
             UserId = userId;
             await AddTaskByUser();
@@ -286,7 +286,7 @@ namespace AquaSolution.Client.Components.KPI.UserTask
             {
                 CreatedTarget = new List<CreatedTargetDto>();
                 activeTabKey = "2";
-                TitleButton = "Back";
+                TitleButton = "⟵ Back";
                 foreach (var item in Selected)
                 {
                     CreatedTarget.Add(new CreatedTargetDto
@@ -312,7 +312,7 @@ namespace AquaSolution.Client.Components.KPI.UserTask
             else if (activeTabKey == "2")
             {
                 activeTabKey = "1";
-                TitleButton = "Next";
+                TitleButton = "Next ⟶";
             }
         }
         private string TitleButton =string.Empty;

@@ -21,23 +21,26 @@
             }
         </style>
     </div>
+    <Button OnClick="InitSignalRAsync">Reload</Button>
     <div style="width:100%;overflow-x:scroll ;max-height:70vh; ">
         <Collapse>
             @foreach (var group in _groupedList)
             {
                 <Panel Header="@($"{group.StatusName} ({group.Items.Count})")">
-                    <Table Bordered PaginationPosition="false" DataSource="@group.Items">
+                    <Table TItem="ViewKPIForApprovalDto" @ref="_tableRef"
+                           Bordered PaginationPosition="false"
+                           DataSource="@group.Items">
                         <ColumnDefinitions Context="rowItem">
                             <PropertyColumn Title="Step" Property="c => c.Step" Width="50" />
                             <PropertyColumn Title="Position" Property="c => c.Position" Width="50" />
                             <PropertyColumn Title="Title" Property="c => c.Title" />
                             <PropertyColumn Width="60" Title="Month" Property="c => c.Month" />
-                            <PropertyColumn Width="60" Title="Status" Property="c => c.EApprovalStatusType">
                             <PropertyColumn Title="Requester" Property="c => c.CreatedByName" Width="120" />
+                            <PropertyColumn Width="60" Title="Status" Property="c => c.EApprovalStatusType">
                                 <Tag Color="@GetTagColor.GetTagColorCss(rowItem.EApprovalStatusType.ToString())">@rowItem.EApprovalStatusType</Tag>
                             </PropertyColumn>
                             <PropertyColumn Title="CreatedDate" Property="c => c.CreatedDate" Format="dd/MM/yyyy HH:mm:ss" Width="180" />
-                            <Column Fixed="ColumnFixPlacement.Right" TData="ViewKPIForApprovalDto" Width="70px" Context="row">
+                            <Column Width="70" Fixed="ColumnFixPlacement.Right" TData="ViewKPIForApprovalDto" Context="row">
                                 <Template>
                                     <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">
                                         <ChildContent>
@@ -45,24 +48,24 @@
                                         </ChildContent>
                                         <ContentTemplate>
                                             <div style="display: flex; flex-direction: column; gap: 4px; padding: 8px;">
-                                                <Button Type="ButtonType.Text" OnClick="@(async () => await ViewDetail(rowItem))" Style="text-align: left;">
+                                                <Button Class="btn" Type="ButtonType.Text" OnClick="@(async () => await ViewDetail(rowItem))" Style="text-align: left;">
                                                     <Icon Type="profile" /> Detail
                                                 </Button>
                                                 @if (rowItem.EApprovalStatusType == EApprovalStatusType.InReview)
                                                 {
-                                                    <Button Type="ButtonType.Link" OnClick="@(async () => await ApprovalAsync(rowItem.SubmitId,                                                                                                                                                                               rowItem.Id, rowItem.DecisionMaker))" Style="text-align: left;">
-                                                         <Icon Type="check" /> Approved
+                                                    <Button Class="btn" Type="ButtonType.Link" OnClick="@(async () => await ApprovalAsync(rowItem.SubmitId, rowItem.Id, rowItem.DecisionMaker))" Style="text-align: left;">
+                                                        <Icon Type="check" /> Approved
                                                     </Button>
-                                                    <Button Type="ButtonType.Text" OnClick="@(async () => await RejectedAsync(rowItem.SubmitId,
-                                                                rowItem.Id, rowItem.DecisionMaker))" Style="text-align: left;color:red">
+                                                    <Button Class="btn" Type="ButtonType.Text" OnClick="@(async () => await RejectedAsync(rowItem.SubmitId, rowItem.Id, rowItem.DecisionMaker))" Style="text-align: left;color:red">
                                                         <Icon Type="delete" /> Rejected
                                                     </Button>
-                                                 }
+                                                }
                                             </div>
                                         </ContentTemplate>
                                     </Popover>
                                 </Template>
                             </Column>
+
                         </ColumnDefinitions>
                     </Table>
                 </Panel>

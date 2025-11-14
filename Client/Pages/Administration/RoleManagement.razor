@@ -36,7 +36,7 @@
             padding: 8px;
             text-align: center;
             box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
-             background: transparent !important; 
+            background: transparent !important;
         }
 
     </style>
@@ -50,20 +50,32 @@
        Class="customTable fix-table-header"
        DataSource="_roles">
     <ColumnDefinitions Context="row">
-        <PropertyColumn Title="RoleName" Property="c => c.Name"></PropertyColumn>
-        <Column Fixed="ColumnFixPlacement.Right" TData="UserDto"  Context="row">
+        <PropertyColumn  Title="RoleName" Property="c => c.Name"></PropertyColumn>
+        <Column Width="50" Fixed="ColumnFixPlacement.Right" TData="RoleDto" Context="row">
             <Template>
-                <div style="display:flex; justify-content:flex-end; gap: 6px;">
-                    <button class="btn btn-secondary btn-sm custom-button-type"
-                            @onclick="@(async () => await ShowPermissionModal(row))">
-                        <Icon Type="edit" /> Permission
-                    </button>
+                <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">
+                    <ChildContent>
+                        <Button Icon="menu" />
+                    </ChildContent>
+                    <ContentTemplate>
+                        <div style="display: flex; flex-direction: column; gap: 4px; padding: 8px;">
+                            <Button class="btn btn-secondary btn-sm custom-button-type"
+                                    @onclick="@(async () => await ShowPermissionModal(row))">
+                                <Icon Type="edit" /> Permission
+                            </Button>
 
-                    <button class="btn btn-danger btn-sm custom-button-type"
-                            @onclick="@(async () => await DeleteRoleAsync(row))">
-                        <Icon Type="delete" /> Delete
-                    </button>
-                </div>
+                            <Button class="btn btn-danger btn-sm custom-button-type"
+                                    @onclick="@(async () => await DeleteRoleAsync(row))">
+                                <Icon Type="delete" /> Delete
+                            </Button>
+                            <Button class="btn btn-danger btn-sm custom-button-type"
+                                    @onclick="@(async () => await DetailPermissionRole(row))">
+                                <Icon Type="plus" /> Detail
+                            </Button>
+
+                        </div>
+                    </ContentTemplate>
+                </Popover>
             </Template>
         </Column>
     </ColumnDefinitions>
@@ -98,5 +110,5 @@
         </Row>
     </Form>
 </Modal>
-
+<RolePermissionDetailModal @ref="rolePermissionDetailModal"></RolePermissionDetailModal>
 <!-- #endregion -->

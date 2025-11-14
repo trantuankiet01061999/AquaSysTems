@@ -8,6 +8,7 @@ using AquaSolution.Shared.Enum;
 using AquaSolution.Shared.Enum.KPIType;
 using AquaSolution.Shared.Factory;
 using AquaSolution.Shared.KPI.KPISubmit;
+using AquaSolution.Shared.KPI.Result;
 using AquaSolution.Shared.KPI.UserTask;
 using AquaSolution.Shared.Position;
 using AquaSolution.Shared.UserManagements;
@@ -33,18 +34,24 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
         private UserDto? CurrenUser { get; set; }
         public bool Loading { get; set; }
         private bool CalculateQuarterPointsPermission { get; set; } = false;
+        private bool TaskManagement { get; set; } = false;
+
         #endregion
         #region Innit
         protected override async Task OnInitializedAsync()
         {
             await LoadCurrenUser();
-            //await GetPage();
+            await GetPage();
             await CheckPermission();
-            //Month = DateTime.Now.Month;
-            Month = 6;
+            Month = DateTime.Now.Month;
             Year = DateTime.Now.Year;
             await LoadData();
             await LoadDataFilterAsync();
+        }
+        private async Task GetPage()
+        {
+            var url = "task-user-management";
+            if (Http != null) PageId = await Http.GetFromJsonAsync<Guid>($"api/Page/GetPageIdByUrl/{url}");
         }
         private async Task LoadCurrenUser()
         {
@@ -56,7 +63,9 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
         }
         private async Task CheckPermission()
         {
-            CalculateQuarterPointsPermission = await permissionService.HasPermissionAsync(PageId, PermissionActionType.EditRole);
+
+            CalculateQuarterPointsPermission = await permissionService.HasPermissionAsync(PageId, PermissionActionType.CalculateQuarterPoints);
+            TaskManagement = await permissionService.HasPermissionAsync(PageId, PermissionActionType.TaskManagement);
 
         }
         private async Task LoadData()
@@ -64,7 +73,32 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
             try
             {
                 Loading = true;
-                users = await Http.GetFromJsonAsync<List<UserDto>>("api/user/get-all");
+                var result = await Http.GetFromJsonAsync<List<UserDto>>("api/user/get-all");
+                var filtered = new List<UserDto>();
+                if (result is not null)
+                {
+                    if(CurrenUser.Roles.Any(x => x.Name == "Admin") || CurrenUser.Roles.Any(x => x.Name == "HR"))
+                    {
+                        filtered = result;
+                    }
+                    else
+                    {
+                        if (CurrenUser.DepartmentId != null && CurrenUser.FactoryId != null)
+                        {
+                            filtered = result
+                                .Where(x => x.FactoryId == CurrenUser.FactoryId
+                                         && x.DepartmentId == CurrenUser.DepartmentId)
+                                .ToList();
+                        }
+                        else if (CurrenUser.FactoryId != null)
+                        {
+                            filtered = result
+                                .Where(x => x.FactoryId == CurrenUser.FactoryId)
+                                .ToList();
+                        }
+                    }
+                    users = filtered;
+                }
                 userFilter = users;
                 await Search();
                 Loading = false;
