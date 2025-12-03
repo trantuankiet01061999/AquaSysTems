@@ -16,7 +16,10 @@ namespace AquaSolution.Data.Data.MappingConfigurations
             builder.HasOne<Product>()
             .WithMany()
             .HasForeignKey(u => u.ProductId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Restrict); 
+            builder.Property(x => x.IsActive)
+                .HasDefaultValue(true)
+                .IsRequired();
         }
     }
 }

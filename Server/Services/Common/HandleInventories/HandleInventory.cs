@@ -97,7 +97,9 @@ namespace AquaSolution.Server.Services.Common.HandleInventories
                     {
                         if (item.Quantity == 0)
                         {
-                            await _inventoryRepo.DeleteAsync(item);
+                            //await _inventoryRepo.DeleteAsync(item);
+                            item.IsActive = false;
+                            await _inventoryRepo.UpdateAsync(item);
                         }
                     }    
                 }

@@ -99,7 +99,10 @@ public class InventoryService : IInventoryService
         try
         {
             var productQuery = await _productRepo.GetQueryableAsync();
-            var inventoryQuery = await _inventoryRepo.GetQueryableAsync();
+
+            var inventoryQuery = (await _inventoryRepo.GetQueryableAsync())
+                                  .Where(x => x.IsActive == true);
+
             var inventoryList = await (from inventory in inventoryQuery
                                        join product in productQuery
                                            on inventory.ProductId equals product.Id
@@ -138,9 +141,6 @@ public class InventoryService : IInventoryService
         {
             throw;
         }
-
-
-
     }
 
     public async Task<LoadReportInventoryDto> LoadReportAsync(int month, int year)
