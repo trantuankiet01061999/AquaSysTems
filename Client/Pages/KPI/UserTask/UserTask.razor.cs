@@ -332,7 +332,7 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
 
                 decimal totalScore = kpiScore + keytaskscore + omgscore;
 
-                int quarter = (month + 2) / 3;
+                int quarter = ((month + 8) % 12) / 3 + 1;
 
                 // Kiểm tra đã có chưa
                 bool alreadyExists = CalculateQuarterPoint.Any(x => x.Quarter == quarter && x.Month == null && x.HalfYear == null);

@@ -77,7 +77,6 @@ namespace AquaSolution.Client.Pages.ToDoList.Approvalkpi
                 else
                     data = data.Where(x => x.DecisionMaker == CurrenUser.Id &&
                                            x.EApprovalStatusType != EApprovalStatusType.Pending).ToList();
-
                 _groupedList.Clear();
                 _groupedList.AddRange(new[]
                 {
