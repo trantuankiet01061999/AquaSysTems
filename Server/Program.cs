@@ -144,7 +144,7 @@ builder.Services.AddDbContext<AquaDbContext>(options =>
 builder.Services.AddDbContext<ePADContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ePAD")));
 
-// JWT Auth (không ảnh hưởng Swagger)
+// JWT Auth (GIỮ NHƯNG SWAGGER KHÔNG DÙNG)
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -174,7 +174,7 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1"
     });
 
-    // KHÔNG cấu hình Security => Swagger không cần đăng nhập
+    // ❌ KHÔNG add security → Swagger không cần login
 });
 
 // SignalR
@@ -185,22 +185,23 @@ var app = builder.Build();
 
 // ===================== MIDDLEWARE =====================
 
-// BasePath (GIỮ NGUYÊN)
+// BasePath
 app.UsePathBase("/AquaSolution");
 
-// Swagger PHẢI nằm NGOÀI IsDevelopment
+// ===================== SWAGGER =====================
+// ⚠️ QUAN TRỌNG: SwaggerEndpoint PHẢI LÀ RELATIVE PATH
 app.UseSwagger();
 
 app.UseSwaggerUI(c =>
 {
-    c.RoutePrefix = "swagger"; // => /AquaSolution/swagger
+    c.RoutePrefix = "swagger";          // /AquaSolution/swagger
     c.SwaggerEndpoint(
-        "/AquaSolution/swagger/v1/swagger.json",
+        "v1/swagger.json",              // ✅ RELATIVE
         "AquaSolution API v1"
     );
 });
 
-// Dev tools
+// ===================== ENV =====================
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
@@ -218,7 +219,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Auth
+// Auth (API vẫn dùng, Swagger thì không)
 app.UseAuthentication();
 app.UseAuthorization();
 
