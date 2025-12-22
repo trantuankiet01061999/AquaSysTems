@@ -66,7 +66,7 @@
             </Col>
             <Col Span="12">
             <FormItem Label="DecisionMaker">
-                <Select TItem="UserContributerDto" TItemValue="Guid?"
+                <Select TItem="UserContributerDto" TItemValue="Guid ?"
                         DataSource="@AllUser"
                         @bind-Value="@_modal.DecisionMaker"
                         AllowClear="true"
@@ -84,15 +84,19 @@
                 <Input @bind-Value="_modal.CurrentStep" />
             </FormItem>
             </Col>
+
             <Col Span="12">
             <FormItem Label="NextStep">
                 <Input @bind-Value="_modal.NextStep" />
             </FormItem>
             </Col>
+
         </Row>
         <Row Gutter="24">
             <Col Span="24">
-            <TextArea Rows="2" @bind-Value="_modal.DesCription" MaxRows="3"></TextArea>
+            <FormItem Label="CurrentStep">
+                <TextArea Rows="2" @bind-Value="_modal.DesCription" MaxRows="3"></TextArea>
+            </FormItem>
             </Col>
         </Row>
     </Form>

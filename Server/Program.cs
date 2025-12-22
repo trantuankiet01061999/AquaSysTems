@@ -195,6 +195,13 @@ builder.Services.AddRazorPages();
 builder.Services.AddDbContext<AquaDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+//-------------------------------------------------------------------------------------------
+
+builder.Services.AddDbContext<ePADContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ePAD")));
+
+//-------------------------------------------------------------------------------------------
+
 builder.Services.AddControllers();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -223,7 +230,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAppServices();
 builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "AquaSolution API",
+        Version = "v1"
+    });
+});
+
 builder.Services.AddSignalR();
 //--------------------------------------------------------------------
 
@@ -234,7 +251,7 @@ app.UsePathBase("/AquaSolution"); // giữ base path
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AquaDbContext>();
-    db.Database.Migrate();
+    //db.Database.Migrate();
     //DbSeeder.SeedData(db);
 }
 
@@ -259,6 +276,13 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+//app.UseSwagger();
+
+//app.UseSwaggerUI(c =>
+//{
+//    c.SwaggerEndpoint("v1/swagger.json", "AquaSolution API v1");
+//    c.RoutePrefix = "swagger";
+//});
 
 app.MapRazorPages();
 app.MapControllers();
