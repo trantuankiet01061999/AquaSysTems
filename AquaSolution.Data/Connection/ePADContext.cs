@@ -17,9 +17,7 @@ namespace AquaSolution.Data.Connection
         public DbSet<ePAD> ePAD { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ePAD>()
-             .HasKey(x => x.EmployeeATID);
-
+            modelBuilder.Entity<ePAD>().HasNoKey();
         }
     }
 }

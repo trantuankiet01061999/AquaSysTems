@@ -120,8 +120,10 @@
 using AquaSolution.Data.Connection;
 using AquaSolution.Data.Data;
 using AquaSolution.Server;
+using AquaSolution.Server.Services.Hangfire;
 using AquaSolution.Server.SignalR;
-
+using Hangfire;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -179,9 +181,38 @@ builder.Services.AddSwaggerGen(c =>
 
 // SignalR
 builder.Services.AddSignalR();
+// ===================== HANGFIRE =====================
+builder.Services.AddHangfire(config =>
+{
+    config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+          .UseSimpleAssemblyNameTypeSerializer()
+          .UseRecommendedSerializerSettings()
+          .UseSqlServerStorage(
+              builder.Configuration.GetConnectionString("DefaultConnection"),
+              new SqlServerStorageOptions
+              {
+                  CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                  SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                  QueuePollInterval = TimeSpan.FromSeconds(15),
+                  UseRecommendedIsolationLevel = true,
+                  DisableGlobalLocks = true
+              });
+});
+
+builder.Services.AddHangfireServer();
+
 
 // ===================== BUILD =====================
 var app = builder.Build();
+// 👉 HANGFIRE DASHBOARD
+app.UseHangfireDashboard("/hangfire");
+
+// 👉 REGISTER JOB (sau app.Build)
+RecurringJob.AddOrUpdate<DailyJobService>(
+    "daily-job-9am",
+    job => job.RunDailyAsync(),
+    Cron.Daily(9, 0) // 9:00 sáng
+);
 
 // ===================== MIDDLEWARE =====================
 
@@ -194,9 +225,9 @@ app.UseSwagger();
 
 app.UseSwaggerUI(c =>
 {
-    c.RoutePrefix = "swagger";          // /AquaSolution/swagger
+    c.RoutePrefix = "swagger";         
     c.SwaggerEndpoint(
-        "v1/swagger.json",              // ✅ RELATIVE
+        "v1/swagger.json",             
         "AquaSolution API v1"
     );
 });

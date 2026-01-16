@@ -12,6 +12,7 @@ using AquaSolution.Server.Services.Administration.UserService;
 using AquaSolution.Server.Services.Common.HandleInventories;
 using AquaSolution.Server.Services.Common.UserConnectionManager;
 using AquaSolution.Server.Services.ePAD;
+using AquaSolution.Server.Services.HRMS;
 using AquaSolution.Server.Services.ITSuport.RequestSuportCategories;
 using AquaSolution.Server.Services.KPi.FormulaService;
 using AquaSolution.Server.Services.KPi.KPITaskService;
@@ -75,6 +76,9 @@ namespace AquaSolution.Server
             #endregion
             #region ePAD
             services.AddScoped<IePADService, ePADService>();
+            #endregion
+            #region HRMS
+            services.AddScoped<IHRMSService, HRMSService>();
             #endregion
             return services;
         }
