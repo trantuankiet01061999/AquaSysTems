@@ -120,6 +120,7 @@
 using AquaSolution.Data.Connection;
 using AquaSolution.Data.Data;
 using AquaSolution.Server;
+using AquaSolution.Server.Services.Common.Hangfire;
 using AquaSolution.Server.Services.Hangfire;
 using AquaSolution.Server.SignalR;
 using Hangfire;
@@ -204,8 +205,15 @@ builder.Services.AddHangfireServer();
 
 // ===================== BUILD =====================
 var app = builder.Build();
+app.UsePathBase("/AquaSolution");
 // 👉 HANGFIRE DASHBOARD
-app.UseHangfireDashboard("/hangfire");
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[]
+    {
+        new HangfireAllowAllFilter()
+    }
+});
 
 // 👉 REGISTER JOB (sau app.Build)
 RecurringJob.AddOrUpdate<DailyJobService>(
@@ -215,9 +223,6 @@ RecurringJob.AddOrUpdate<DailyJobService>(
 );
 
 // ===================== MIDDLEWARE =====================
-
-// BasePath
-app.UsePathBase("/AquaSolution");
 
 // ===================== SWAGGER =====================
 // ⚠️ QUAN TRỌNG: SwaggerEndpoint PHẢI LÀ RELATIVE PATH
