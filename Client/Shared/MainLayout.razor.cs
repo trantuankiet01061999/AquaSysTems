@@ -158,7 +158,8 @@ namespace AquaSolution.Client.Shared
                     try
                     {
                         await LoadAuthenticationState();
-                        StateHasChanged();
+                        Home();
+                        await InvokeAsync(StateHasChanged);
                     }
                     catch { }
                 }

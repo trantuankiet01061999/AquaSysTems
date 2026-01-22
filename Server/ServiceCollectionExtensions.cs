@@ -25,6 +25,7 @@ using AquaSolution.Server.Services.ManageMedicalRooms.Products;
 using AquaSolution.Server.Services.ManageMedicalRooms.RequestClinicservice;
 using AquaSolution.Server.Services.ManageMedicalRooms.WarehouseExportService;
 using AquaSolution.Server.Services.ManageMedicalRooms.WarehouseImportService;
+using AquaSolution.Server.Services.SemiReport;
 
 
 namespace AquaSolution.Server
@@ -79,6 +80,9 @@ namespace AquaSolution.Server
             #endregion
             #region HRMS
             services.AddScoped<IHRMSService, HRMSService>();
+            #endregion
+            #region SemiReport
+            services.AddScoped<ISemiService, SemiService>();
             #endregion
             return services;
         }

@@ -1,0 +1,112 @@
+﻿@page "/report-scan"
+@using AntDesign
+@inject IJSRuntime JS
+@inject ModalService modal
+@inject NavigationManager Navigation
+@inject IMessageService Message
+@using AquaSolution.Shared.SemiReport
+<PageTitle>SemiReport</PageTitle>
+<div class="mb-3">
+    <style>
+        .custom-button-type {
+            height: 30px;
+            font-size: 12px;
+        }
+
+        .fix-table-header table {
+            border-collapse: collapse;
+        }
+
+            .fix-table-header table thead th {
+                position: sticky !important;
+                z-index: 8 !important;
+                top: 0;
+                background-color: #fff;
+            }
+
+        .ant-table-content {
+            min-height: 65vh !important;
+        }
+
+        .ant-table-pagination {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 999;
+            background: white;
+            padding: 8px;
+            text-align: center;
+            box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
+            background: transparent !important;
+        }
+
+
+
+        .custom-label {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
+        }
+
+            .custom-label:hover {
+                background-color: #0056b3;
+            }
+    </style>
+    <div style="display: flex;  align-items: center; margin-bottom: 10px;">
+        
+        <!-- #region Search -->
+        <Input Placeholder="InnerBarcode" Value="@InnerBarcode" style="margin-left:2px;width:190px;font-size:12px" @onkeydown="HandleKeyDown" @oninput="InnerBarcodeInputChanged" />
+        <Input Placeholder="OuterBarcode" Value="@OuterBarcode" style="margin-left:2px;width:190px;font-size:12px" @onkeydown="HandleKeyDown" @oninput="OuterBarcodeInputChanged" />
+        @* <Input Placeholder="MotorBarcode" Value="@MotorBarcode" style="margin-left:2px;width:190px;font-size:12px" @onkeydown="HandleKeyDown" @oninput="MotorBarcodeInputChanged" /> *@
+        <Input Placeholder="ScrapDescription" Value="@ScrapDescription" style="margin-left:2px;width:190px;font-size:12px" @onkeydown="HandleKeyDown" @oninput="ScrapInputChanged" />
+        <button @onclick="Search" style="margin-left:5px;border-color:#fff"><Icon Type="search" /> Search</button>
+        <button @onclick="Reset" style="margin-left:5px;border-color:#fff"><Icon Type="undo" /> Reset</button>
+        <button @onclick="ExportExcel" style="margin-left:5px;border-color:#fff"><Icon Type="file-excel" /> Export Excel</button>
+    </div>
+    <!-- #endregion -->
+
+</div>
+<script>
+    window.saveAsFileSemi = async function (filename, bytesBase64) {
+        const byteCharacters = atob(bytesBase64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], {
+            type: "application/vnd.ms-excel"
+        });
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+        URL.revokeObjectURL(link.href);
+    }
+
+</script>
+<div style="width:100%;overflow-x:scroll ;max-height:70vh; ">
+    <Table TItem="SemiReportDto"
+           @ref="_tableRef"
+           Size="TableSize.Small"
+           Bordered
+           Class="customTable fix-table-header"
+           DataSource="@_semiFilter">
+        <ColumnDefinitions Context="row">
+            <PropertyColumn Width="250px" Title="InnerBarcode" Property="c => c.InnerBarcode"></PropertyColumn>
+            <PropertyColumn Width="150px" Sortable Title="ScanTimeInner" Format="yyyy/MM/dd HH:mm:ss" Property="c => c.ScanTimeInner"></PropertyColumn>
+            <PropertyColumn Width="200px" Title="OuterBarcode" Property="c => c.OuterBarcode"></PropertyColumn>
+            <PropertyColumn Width="150px" Sortable Title="ScanTimeOuter" Format="yyyy/MM/dd HH:mm:ss" Property="c => c.ScanTimeOuter"></PropertyColumn>
+            <PropertyColumn Width="200px" Title="MotorBarcode" Property="c => c.MotorBarcode"></PropertyColumn>
+            <PropertyColumn Width="150px" Sortable Title="ScanTimeMotor" Format="yyyy/MM/dd HH:mm:ss" Property="c => c.ScanTimeMotor"></PropertyColumn>
+            <PropertyColumn Width="100px" Title="ScrapBarcode" Property="c => c.ScrapBarcode"></PropertyColumn>
+            <PropertyColumn Width="100px" Title="ScrapDescription" Property="c => c.ScrapDescription"></PropertyColumn>
+            <PropertyColumn Width="150px" Sortable Title="ScanTimeScrap" Format="yyyy/MM/dd HH:mm:ss" Property="c => c.ScanTimeScrap"></PropertyColumn>
+        </ColumnDefinitions>
+    </Table>
+</div> 
