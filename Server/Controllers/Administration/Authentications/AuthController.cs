@@ -1,6 +1,7 @@
 ﻿using AquaService.Shared.AuthModels;
 using AquaSolution.Server.Services.Administration.UserService;
 using AquaSolution.Shared.AuthModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -13,7 +14,7 @@ public class AuthController : ControllerBase
     {
         _userService = userService;
     }
-
+    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequest request)
     {

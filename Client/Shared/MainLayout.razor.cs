@@ -164,8 +164,6 @@ namespace AquaSolution.Client.Shared
                     catch { }
                 }
             });
-
-            await _hubConnection.StartAsync();
             await LoadAuthenticationState();
             Auth.AuthenticationStateChanged += OnAuthenticationStateChanged;
         }
@@ -239,6 +237,7 @@ namespace AquaSolution.Client.Shared
                         menu = await Http.GetFromJsonAsync<List<MenuDto>>($"api/Menu/GetAllMenu");
                     else
                         menu = await Http.GetFromJsonAsync<List<MenuDto>>($"api/Menu/GetMenu/{userId}");
+                     await _hubConnection.StartAsync();
                 }
                 catch { }
             }
