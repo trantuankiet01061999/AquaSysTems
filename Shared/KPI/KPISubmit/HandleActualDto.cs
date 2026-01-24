@@ -79,7 +79,7 @@ namespace AquaSolution.Shared.KPI.KPISubmit
             }
         }
         public string? Unit { get; set; }
-        public string? OwnerName { get; set; }
+        public string? PIC { get; set; }
         public string? DataSource { get; set; }
         public string? Formula { get; set; }
         public decimal? TargetValue { get; set; }

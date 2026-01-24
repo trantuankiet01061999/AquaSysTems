@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AquaSolution.Shared.Enum.KPIType;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,5 +19,6 @@ namespace AquaSolution.Shared.KPI.KPIMonthlyTarget
         public Guid UserId { get; set; }
         public int? Index { get; set; }
         public decimal Weight { get; set; }
+        public QuarterCalculateType  QuarterCalculateType { get; set; }
     }
 }

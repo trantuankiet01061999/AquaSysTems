@@ -11,9 +11,10 @@ namespace AquaSolution.Data.Data.Entities
         public string CalculatedMdethod { get; set; }
         public string DataSource { get; set; }
         public string Unit { get; set; }
-        public Guid OwnerId { get; set; }
+        public string PIC { get; set; }
         public KPIIndexType KPIIndexType { get; set; }
         public Guid FormulaId { get; set; }
+        public Guid CalculatedId { get; set; }
         public decimal Max { get; set; }
         public decimal Bottom { get; set; }
         public Guid FactoryId { get; set; }

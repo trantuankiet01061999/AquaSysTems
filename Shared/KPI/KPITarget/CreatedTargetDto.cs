@@ -41,5 +41,14 @@ namespace AquaSolution.Shared.KPI.KPIMonthlyTarget
         public decimal TargetValue10 { get; set; }
         public decimal TargetValue11 { get; set; }
         public decimal TargetValue12 { get; set; }
+        public decimal TargetQarter1 { get; set; }
+        public decimal TargetQarter2 { get; set; }
+        public decimal TargetQarter3 { get; set; }
+        public decimal TargetQarter4 { get; set; }
+        public decimal TargetHaftYear1 { get; set; }
+        public decimal TargetHaftYear2 { get; set; }
+        public decimal TargetYear { get; set; }
+
+        public QuarterCalculateType QuarterCalculateType { get; set; }
     }
 }

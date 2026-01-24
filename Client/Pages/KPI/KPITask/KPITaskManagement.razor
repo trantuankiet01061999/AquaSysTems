@@ -68,10 +68,13 @@
                 <Icon Type="plus" />Created
             </button>
         }
+        <InputFile OnChange="HandleKPITaskFile"
+                   accept=".xlsx,.xls" />
         <!-- #region Search -->
         <Input Placeholder="Task Name" Value="@TaskName" style="margin-left:2px;width:190px;font-size:12px" @onkeydown="HandleKeyDown" @oninput="TaskNameInputChanged" />
         <button @onclick="Search" style="margin-left:5px;border-color:#fff"><Icon Type="search" />Search</button>
         <button @onclick="Reset" style="margin-left:5px;border-color:#fff"><Icon Type="undo" />Reset</button>
+
     </div>
     <!-- #endregion -->
 
@@ -97,9 +100,11 @@
             <PropertyColumn Width="90px" Title="DataSource" Property="c => c.DataSource"></PropertyColumn>
             <PropertyColumn Width="200px" Title="PIC" Property="c => c.OwnerName"></PropertyColumn>
             <PropertyColumn Width="90px" Title="Unit" Property="c => c.Unit"></PropertyColumn>
-            <PropertyColumn Width="90px" Title="Unit" Property="c => c.Max"></PropertyColumn>
+            <PropertyColumn Width="90px" Title="Max" Property="c => c.Max"></PropertyColumn>
             <PropertyColumn Width="90px" Title="Bottom" Property="c => c.Bottom"></PropertyColumn>
             <PropertyColumn Width="150px" Title="Formula" Property="c => c.Formula"></PropertyColumn>
+            <PropertyColumn Width="150px" Title="QuarterCalculated" Property="c => c.Calculated"></PropertyColumn>
+
             <Column Fixed="ColumnFixPlacement.Right" TData="KPITaskDto" Width="50px" Context="row">
                 <Template>
                     <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AquaSolution.Data.Migrations
 {
     [DbContext(typeof(AquaDbContext))]
-    [Migration("20260123021428_add_table_Calculated")]
-    partial class add_table_Calculated
+    [Migration("20260124021840_add_colunm_table")]
+    partial class add_colunm_table
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -814,6 +814,9 @@ namespace AquaSolution.Data.Migrations
                     b.Property<decimal>("Bottom")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid>("CalculatedId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("CalculatedMdethod")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -852,11 +855,9 @@ namespace AquaSolution.Data.Migrations
                     b.Property<decimal>("Max")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    //b.Property<Guid>("QuarterCalculateId")
-                    //    .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PIC")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TaskDescription")
                         .IsRequired()
@@ -873,6 +874,8 @@ namespace AquaSolution.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CalculatedId");
+
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("DepartmentId");
@@ -880,10 +883,6 @@ namespace AquaSolution.Data.Migrations
                     b.HasIndex("FactoryId");
 
                     b.HasIndex("FormulaId");
-
-                    b.HasIndex("OwnerId");
-
-                    //b.HasIndex("QuarterCalculateId");
 
                     b.ToTable("tbl_KPITasks", "KPI");
                 });
@@ -2119,6 +2118,12 @@ namespace AquaSolution.Data.Migrations
 
             modelBuilder.Entity("AquaSolution.Data.Data.Entities.KPITask", b =>
                 {
+                    b.HasOne("AquaSolution.Data.Data.Entities.KPI.QuarterCalculate", null)
+                        .WithMany()
+                        .HasForeignKey("CalculatedId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("AquaSolution.Data.Data.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("CreatedById")
@@ -2142,18 +2147,6 @@ namespace AquaSolution.Data.Migrations
                         .HasForeignKey("FormulaId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("AquaSolution.Data.Data.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    //b.HasOne("AquaSolution.Data.Data.Entities.KPI.QuarterCalculate", null)
-                    //    .WithMany()
-                    //    .HasForeignKey("QuarterCalculateId")
-                    //    .OnDelete(DeleteBehavior.Restrict)
-                    //    .IsRequired();
                 });
 
             modelBuilder.Entity("AquaSolution.Data.Data.Entities.KPITotalScore", b =>

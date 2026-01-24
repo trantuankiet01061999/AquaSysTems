@@ -10,11 +10,18 @@
 @inject IMessageService Message
 @{
     RenderFragment footer = @<Template>
+    @if (activeTabKey == "2")
+    {
+            <Button OnClick="@ActionTab2" @key="@( "action2" )" Style="color:#f0f0f0"
+                    Type="ButtonType.Primary">
+                @TitleButton2
+            </Button>
+    }
         <Button OnClick="@ActionTab" @key="@( "action" )" Style="color:#f0f0f0"
                 Type="ButtonType.Primary">
             @TitleButton
         </Button>
-    @if (activeTabKey == "2")
+    @if (activeTabKey == "3")
     {
             <Button OnClick="@SaveAsync" @key="@( "submit" )"
                     Type="ButtonType.Primary">
@@ -104,7 +111,8 @@
                         <PropertyColumn Width="250px" Title="TaskName" Property="c => c.TaskName"></PropertyColumn>
                         <PropertyColumn Width="250px" Title="TaskDescription" Property="c => c.TaskDescription"></PropertyColumn>
                         <PropertyColumn Width="250px" Title="CalculatedMdethod" Property="c => c.CalculatedMdethod"></PropertyColumn>
-                        <PropertyColumn Width="150px" Title="CalculateType" Property="c => c.Formula" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="150px" Title="Formula" Property="c => c.Formula" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="150px" Title="Calculated" Property="c => c.Calculated" Format="0.00"></PropertyColumn>
                         <PropertyColumn Width="90px" Title="Unit" Property="c => c.Unit"></PropertyColumn>
                         <PropertyColumn Width="90px" Title="DataSource" Property="c => c.DataSource"></PropertyColumn>
                         <PropertyColumn Width="200px" Title="PIC" Property="c => c.OwnerName"></PropertyColumn>
@@ -174,6 +182,48 @@
                         <Column Title="Month 12" TData="UpdateTargetDto">
                             <AntDesign.InputNumber @bind-Value="rowTarget.TargetValue12" Format="0.00" DefaultValue="0" />
                         </Column>
+                    </ColumnDefinitions>
+                </Table>
+            </TabPane>
+            <TabPane Key="3">
+                <Table TItem="CreatedTargetDto"
+                       Size="TableSize.Small"
+                       Bordered
+                       HidePagination
+                       Class="customTable fix-table-header"
+                       DataSource="CreatedTarget">
+                    <ColumnDefinitions Context="rowTarget">
+                        <PropertyColumn Width="100px" Title="Category" Property="c => c.KPICategory" Filters="_kPICategoryFilter"></PropertyColumn>
+                        <PropertyColumn Width="100px" Title="Index" Property="c => c.KPIIndexType" Filters="_kPIIndexTypeFilter"></PropertyColumn>
+                        <PropertyColumn Width="250px" Title="TaskName" Property="c => c.TaskName"></PropertyColumn>
+                        <PropertyColumn Width="150px" Title="Department" Property="c => c.Department" Filters="_departmentFilter"></PropertyColumn>
+                        <PropertyColumn Width="150px" Title="CalculateType" Property="c => c.Formula"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Factory" Property="c => c.Factory" Filters="_factoryFilter"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="DataSource" Property="c => c.DataSource"></PropertyColumn>
+                        <PropertyColumn Width="200px" Title="PIC" Property="c => c.OwnerName"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Unit" Property="c => c.Unit" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Max" Property="c => c.Max" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Weight" Property="c => c.Weight" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Index" Property="c => c.Index" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Month 1" Property="c => c.TargetValue1" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Month 2" Property="c => c.TargetValue2" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Month 3" Property="c => c.TargetValue3" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Month 4" Property="c => c.TargetValue4" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Month 5" Property="c => c.TargetValue5" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Month 6" Property="c => c.TargetValue6" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Month 7" Property="c => c.TargetValue7" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Month 8" Property="c => c.TargetValue8" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Month 9" Property="c => c.TargetValue9" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Month 10" Property="c => c.TargetValue10" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Month 11" Property="c => c.TargetValue11" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Month 12" Property="c => c.TargetValue12" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Quarter 1" Property="c => c.TargetQarter1" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Quarter 2" Property="c => c.TargetQarter2" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Quarter 3" Property="c => c.TargetQarter3" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Quarter 4" Property="c => c.TargetQarter4" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Hafyear 1" Property="c => c.TargetHaftYear1" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Hafyear 2" Property="c => c.TargetHaftYear2" Format="0.00"></PropertyColumn>
+                        <PropertyColumn Width="90px" Title="Year" Property="c => c.TargetYear" Format="0.00"></PropertyColumn>
                     </ColumnDefinitions>
                 </Table>
             </TabPane>

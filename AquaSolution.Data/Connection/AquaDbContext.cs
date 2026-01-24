@@ -70,6 +70,7 @@ namespace AquaSolution.Data.Connection
         public DbSet<KPIIndexWeight> tbl_KPIIndexWeights { get; set; }
         public DbSet<KPIActualMaster> tbl_KPIActualMasters { get; set; }
         public DbSet<RequestApprovalTask> tbl_RequestApprovalTasks { get; set; }
+        public DbSet<QuarterCalculate> tbl_QuarterCalculates { get; set; }
 
 
         #endregion
@@ -130,6 +131,7 @@ namespace AquaSolution.Data.Connection
             modelBuilder.ApplyConfiguration(new KPIIndexWeightConfiguration());
             modelBuilder.ApplyConfiguration(new KPIActualMasterConfiguration());
             modelBuilder.ApplyConfiguration(new RequestApprovalTaskConfiguration());
+            modelBuilder.ApplyConfiguration(new QuarterCalculateConfiguration());
 
             #endregion
 

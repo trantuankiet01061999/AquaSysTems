@@ -15,12 +15,14 @@ namespace AquaSolution.Shared.KPI.KPITasks
         public string TaskDescription { get; set; }
         public string CalculatedMdethod { get; set; }
         public string DataSource { get; set; }
-        public Guid OwnerId { get; set; }
+        public string PIC { get; set; }
         public string OwnerName { get; set; }
         public KPIIndexType KPIIndexType { get; set; }
 
         public Guid FormulaId { get; set; }
         public string Formula { get; set; }
+        public Guid CalculatedId { get; set; }
+        public string Calculated { get; set; }
         public KPIFormulaType KPIFormulaType { get; set; }
         public decimal Max { get; set; }
         public decimal Bottom { get; set; }
@@ -29,8 +31,10 @@ namespace AquaSolution.Shared.KPI.KPITasks
         public Guid DepartmentId { get; set; }
         public string Department { get; set; }
         public string Unit { get; set; }
+        public decimal Weight { get; set; }
         public Guid CreatedById { get; set; }
         public string CreatedByName { get; set; }
         public DateTime CreatedDate { get; set; }
+        public QuarterCalculateType QuarterCalculateType { get; set; }
     }
 }

@@ -223,8 +223,6 @@ namespace AquaSolution.Server.Services.KPI.KPIUserTask
                     };
                     tasksToAdd.Add(newUserTask);
                 }
-
-                // Cập nhật UserTask
                 foreach (var userTaskToUpdate in tasksToUpdate)
                 {
                     var updateResult = await _userTaskRepo.UpdateAsync(userTaskToUpdate);
@@ -248,8 +246,6 @@ namespace AquaSolution.Server.Services.KPI.KPIUserTask
                         continue;
 
                     var firstDto = targetList.First();
-
-                    // Tìm UserTask tương ứng đang active
                     var userTask = await _userTaskRepo
                         .FirstOrDefaultAsync(x => x.IsActive && x.UserId == firstDto.UserId && x.KPITaskId == firstDto.TaskId);
 
@@ -259,11 +255,16 @@ namespace AquaSolution.Server.Services.KPI.KPIUserTask
                     foreach (var dto in targetList)
                     {
                         // Kiểm tra xem target đã tồn tại chưa
-                        var existingTarget = await _KPIMonthlyTargetRepo
-                            .FirstOrDefaultAsync(x => x.UserId == dto.UserId
-                                                    && x.UserTaskId == userTask.Id
-                                                    && x.Month == dto.Month
-                                                    && x.Year == dto.Year);
+                        var existingTarget = await _KPIMonthlyTargetRepo.FirstOrDefaultAsync(x =>
+                                     x.UserId == dto.UserId
+                                     && x.UserTaskId == userTask.Id
+                                     && x.Year == dto.Year
+
+                                     && x.Month == dto.Month
+                                     && x.Quarter == dto.Quarter
+                                     && x.HalfYear == dto.HalfYear
+                                 );
+
 
                         if (existingTarget != null)
                         {
@@ -283,9 +284,12 @@ namespace AquaSolution.Server.Services.KPI.KPIUserTask
                                 Year = dto.Year,
                                 TargetValue = dto.TargetValue,
                                 CreatedDate = dto.CreatedDate,
-                                UserId = dto.UserId
+                                UserId = dto.UserId,
+                                Quarter = dto.Quarter,
+                                HalfYear = dto.HalfYear,
                             };
                             await _KPIMonthlyTargetRepo.InsertAsync(newTarget);
+                            await _KPIMonthlyTargetRepo.SaveChangesAsync();
                         }
                     }
                 }

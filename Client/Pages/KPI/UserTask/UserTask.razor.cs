@@ -113,7 +113,7 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
 
         private async Task EditTask(UserDto user)
         {
-            await _userTaskModal.ShowModal(user.Id);
+            await _userTaskModal.ShowModal(user);
         }
         private async Task CalculateQuarterPoints(UserDto user)
         {
