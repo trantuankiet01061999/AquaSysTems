@@ -45,16 +45,20 @@
         </Row>
 
         <Row Gutter="16">
-
-            <Col Span="9">
+            <Col Span="3">
             <FormItem Required="true" Label="PIC">
-                <Select TItem="UserContributerDto" TItemValue="Guid"
-                        DataSource="@ListUser"
-                        @bind-Value="@HandleTaskDto.OwnerId"
+                <TextArea ShowCount MinRows="1" MaxRows="1" @bind-Value="@HandleTaskDto.PIC" AllowClear="true" />
+            </FormItem>
+            </Col>
+            <Col Span="5">
+            <FormItem Required="true" Label="Calculated">
+                <Select TItem="QuaterCalculatedDto" TItemValue="Guid"
+                        DataSource="@ListCalculated"
+                        @bind-Value="@HandleTaskDto.CalculatedId"
                         EnableSearch
                         AutoClearSearchValue="false"
-                        ItemValue="c => c.Id??Guid.Empty"
-                        ItemLabel="c => c.Name?? string.Empty">
+                        ItemValue="c => c.Id"
+                        ItemLabel="c => c.Calculated?? string.Empty">
                 </Select>
 
             </FormItem>

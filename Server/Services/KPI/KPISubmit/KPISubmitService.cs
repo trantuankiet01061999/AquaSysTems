@@ -133,7 +133,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                                   Unit = kpiTask.Unit,
                                   IndexWeight = indexWeight.Weight,
                                   KPIFormulaType = formula.KPIFormulaType,
-                                  OwnerName = users.FirstOrDefault(u => u.Id == kpiTask.OwnerId)?.FullName ?? string.Empty,
+                                  PIC = kpiTask.PIC,
                                   DataSource = kpiTask.DataSource,
                                   Formula = formulas.FirstOrDefault(f => f.Id == kpiTask.FormulaId)?.FormulaName ?? string.Empty,
                                   TargetValue = target.TargetValue,
@@ -212,7 +212,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                                   Unit = kpiTask.Unit,
                                   IndexWeight = indexWeight.Weight,
                                   KPIFormulaType = formula.KPIFormulaType,
-                                  OwnerName = users.FirstOrDefault(u => u.Id == kpiTask.OwnerId)?.FullName ?? string.Empty,
+                                  PIC =kpiTask.PIC,
                                   DataSource = kpiTask.DataSource,
                                   Formula = formula.FormulaName,
                                   TargetValue = target.TargetValue,
@@ -911,9 +911,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
             var taskIds = detailScores.Select(d => d.TaskId).Distinct().ToList();
             var tasks = (await _kpiTaskRepo.GetAllAsync()).Where(t => taskIds.Contains(t.Id)).ToList();
 
-            var ownerIds = tasks.Select(t => t.OwnerId).Distinct().ToList();
-            var owners = (await _userRepo.GetAllAsync()).Where(u => ownerIds.Contains(u.Id)).ToList();
-
+  
             var formulaIds = tasks.Select(t => t.FormulaId).Distinct().ToList();
             var formulas = (await _formulaRepo.GetAllAsync()).Where(f => formulaIds.Contains(f.Id)).ToList();
 
@@ -945,7 +943,6 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                 var task = tasks.FirstOrDefault(t => t.Id == d.TaskId);
                 if (task == null) continue;
 
-                var owner = owners.FirstOrDefault(u => u.Id == task.OwnerId);
                 var formula = formulas.First(f => f.Id == task.FormulaId);
 
                 result.DetailScore.Add(new DetailScoreDto
@@ -968,7 +965,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                     Bottom = task.Bottom,
                     Weight = d.Weight,
                     Unit = task.Unit,
-                    OwnerName = owner?.FullName,
+                    PIC = task.PIC,
                     DataSource = task.DataSource,
                     Formula = formula?.FormulaName,
                     TargetValue = d.Target,

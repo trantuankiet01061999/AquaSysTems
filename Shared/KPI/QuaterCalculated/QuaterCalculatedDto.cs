@@ -11,6 +11,8 @@ namespace AquaSolution.Shared.KPI.QuaterCalculated
     {
         public Guid Id { get; set; }
         public string Calculated { get; set; }
-        public KPIQuarterCalculateType KPIQuarterCalculateType { get; set; }
+        public string DesCription { get; set; }
+
+        public QuarterCalculateType QuarterCalculateType { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AquaSolution.Data.Data.Entities;
+using AquaSolution.Data.Data.Entities.KPI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -19,14 +20,15 @@ namespace AquaSolution.Data.Data.MappingConfigurations.KPI
                      .HasConversion<string>()
                      .IsRequired()
                      .HasMaxLength(100);
-            builder.HasOne<User>()
-                     .WithMany()
-                     .HasForeignKey(u => u.OwnerId)
-                     .OnDelete(DeleteBehavior.Restrict);
             builder.HasOne<Formula>()
                      .WithMany()
                      .HasForeignKey(u => u.FormulaId)
                      .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne<QuarterCalculate>()
+                     .WithMany()
+                     .HasForeignKey(u => u.CalculatedId)
+                     .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasOne<Factory>()
                      .WithMany()
                      .HasForeignKey(u => u.FactoryId)

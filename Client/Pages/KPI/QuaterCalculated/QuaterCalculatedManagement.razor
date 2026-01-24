@@ -1,4 +1,4 @@
-﻿@page "/quater-calculated-management"
+﻿@page "/quarter-calculated-management"
 @using AquaSolution.Client.Common
 @using AquaSolution.Client.Components.Administration.Users
 @using AntDesign
@@ -78,7 +78,9 @@
            DataSource="DataSource">
         <ColumnDefinitions Context="row">
             <PropertyColumn Width="250px" Title="Calculated" Property="c => c.Calculated"></PropertyColumn>
-            <PropertyColumn Width="100px" Title="KPIQuarterCalculateType" Property="c => c.KPIQuarterCalculateType"></PropertyColumn>
+            <PropertyColumn Width="100px" Title="QuarterCalculateType" Property="c => c.QuarterCalculateType"></PropertyColumn>
+            <PropertyColumn Width="100px" Title="DesCription" Property="c => c.DesCription"></PropertyColumn>
+
             <Column Fixed="ColumnFixPlacement.Right" TData="QuaterCalculatedDto" Width="50px" Context="row">
                 <Template>
                     <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">

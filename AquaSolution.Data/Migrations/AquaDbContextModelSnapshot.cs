@@ -467,6 +467,31 @@ namespace AquaSolution.Data.Migrations
                     b.ToTable("tbl_KPIApprovalTasks", "KPI");
                 });
 
+            modelBuilder.Entity("AquaSolution.Data.Data.Entities.KPI.QuarterCalculate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuarterCalculateType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("QuarterCalculated")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tbl_QuarterCalculates", "KPI");
+                });
+
             modelBuilder.Entity("AquaSolution.Data.Data.Entities.KPI.RequestApprovalTask", b =>
                 {
                     b.Property<Guid>("Id")
@@ -638,6 +663,9 @@ namespace AquaSolution.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
+                    b.Property<int?>("HalfYear")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("KPIMonthlyTargetId")
                         .HasColumnType("uniqueidentifier");
 
@@ -645,6 +673,9 @@ namespace AquaSolution.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Quarter")
                         .HasColumnType("int");
 
                     b.Property<Guid>("UpdatedBy")
@@ -678,7 +709,13 @@ namespace AquaSolution.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
+                    b.Property<int?>("HalfYear")
+                        .HasColumnType("int");
+
                     b.Property<int?>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Quarter")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TargetValue")
@@ -774,6 +811,9 @@ namespace AquaSolution.Data.Migrations
                     b.Property<decimal>("Bottom")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid>("CalculatedId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("CalculatedMdethod")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -812,8 +852,9 @@ namespace AquaSolution.Data.Migrations
                     b.Property<decimal>("Max")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PIC")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TaskDescription")
                         .IsRequired()
@@ -830,6 +871,8 @@ namespace AquaSolution.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CalculatedId");
+
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("DepartmentId");
@@ -837,8 +880,6 @@ namespace AquaSolution.Data.Migrations
                     b.HasIndex("FactoryId");
 
                     b.HasIndex("FormulaId");
-
-                    b.HasIndex("OwnerId");
 
                     b.ToTable("tbl_KPITasks", "KPI");
                 });
@@ -2074,6 +2115,12 @@ namespace AquaSolution.Data.Migrations
 
             modelBuilder.Entity("AquaSolution.Data.Data.Entities.KPITask", b =>
                 {
+                    b.HasOne("AquaSolution.Data.Data.Entities.KPI.QuarterCalculate", null)
+                        .WithMany()
+                        .HasForeignKey("CalculatedId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("AquaSolution.Data.Data.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("CreatedById")
@@ -2095,12 +2142,6 @@ namespace AquaSolution.Data.Migrations
                     b.HasOne("AquaSolution.Data.Data.Entities.Formula", null)
                         .WithMany()
                         .HasForeignKey("FormulaId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("AquaSolution.Data.Data.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

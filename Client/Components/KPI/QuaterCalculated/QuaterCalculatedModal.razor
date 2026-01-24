@@ -30,18 +30,26 @@
                 <TextArea ShowCount MinRows="1" MaxRows="1" @bind-Value="@QuaterCalculatedDto.Calculated" AllowClear="true" />
             </FormItem>
             </Col>
+
             <Col Span="6">
             <FormItem Label="QuarterCalculateType" Required="true">
-                <Select TItem="KPIQuarterCalculateType"
-                        TItemValue="KPIQuarterCalculateType"
+                <Select TItem="QuarterCalculateType"
+                        TItemValue="QuarterCalculateType"
                         DataSource="@ListKPIQuarterCalculateType"
-                        @bind-Value="@QuaterCalculatedDto.KPIQuarterCalculateType"
+                        @bind-Value="@QuaterCalculatedDto.QuarterCalculateType"
                         ItemValue="c => c"
                         ItemLabel="c => c.ToString()">
                 </Select>
             </FormItem>
             </Col>
         
+        </Row>
+        <Row Gutter="16">
+            <Col Span="24">
+            <FormItem Required="true" Label="DesCription">
+                <TextArea ShowCount MinRows="2" MaxRows="2" @bind-Value="@QuaterCalculatedDto.DesCription" AllowClear="true" />
+            </FormItem>
+            </Col>
         </Row>
 
      

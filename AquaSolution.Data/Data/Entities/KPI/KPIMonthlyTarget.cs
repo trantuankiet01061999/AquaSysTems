@@ -4,7 +4,9 @@
     {
         public Guid Id { get; set; }
         public Guid UserTaskId { get; set; }
-        public int? Month { get; set; }  
+        public int? Month { get; set; }
+        public int? Quarter { get; set; }
+        public int? HalfYear { get; set; }
         public int Year { get; set; }
         public decimal TargetValue { get; set; }
         public DateTime CreatedDate { get; set; }

@@ -15,7 +15,7 @@ namespace AquaSolution.Client.Components.KPI.QuaterCalculated
         private QuaterCalculatedDto QuaterCalculatedDto = new QuaterCalculatedDto();
         private Form<QuaterCalculatedDto> formRef;
         private bool IsEdit { get; set; }
-        private List<KPIQuarterCalculateType> ListKPIQuarterCalculateType = new List<KPIQuarterCalculateType>();
+        private List<QuarterCalculateType> ListKPIQuarterCalculateType = new List<QuarterCalculateType>();
 
         #endregion
         #region Init
@@ -42,8 +42,8 @@ namespace AquaSolution.Client.Components.KPI.QuaterCalculated
       
         private void GetEnum()
         {
-            ListKPIQuarterCalculateType = Enum.GetValues(typeof(KPIQuarterCalculateType))
-                    .Cast<KPIQuarterCalculateType>()
+            ListKPIQuarterCalculateType = Enum.GetValues(typeof(QuarterCalculateType))
+                    .Cast<QuarterCalculateType>()
                     .ToList();
    
         }
@@ -69,7 +69,7 @@ namespace AquaSolution.Client.Components.KPI.QuaterCalculated
         private async Task<bool> CreatedAsync()
         {
 
-            var response = await Http.PostAsJsonAsync("api/quaterCalculated/create", QuaterCalculatedDto);
+            var response = await Http.PostAsJsonAsync("api/QuarterCalculated/create", QuaterCalculatedDto);
 
             if (response.IsSuccessStatusCode)
             {
@@ -84,7 +84,7 @@ namespace AquaSolution.Client.Components.KPI.QuaterCalculated
         }
         private async Task<bool> UpdateAsync()
         {
-            var response = await Http.PutAsJsonAsync("api/quaterCalculated/update", QuaterCalculatedDto);
+            var response = await Http.PutAsJsonAsync("api/QuarterCalculated/update", QuaterCalculatedDto);
 
             if (response.IsSuccessStatusCode)
             {

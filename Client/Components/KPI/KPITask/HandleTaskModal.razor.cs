@@ -20,7 +20,7 @@ namespace AquaSolution.Client.Components.KPI.KPITask
         [Parameter] public EventCallback OnSave { get; set; }
         private HandleTaskDto HandleTaskDto = new HandleTaskDto();
         private Form<HandleTaskDto> formRef;
-        private List<UserContributerDto> ListUser = new List<UserContributerDto>();
+        private List<QuaterCalculatedDto> ListCalculated = new List<QuaterCalculatedDto>();
         private UserDto CurrentUser = new UserDto();
         private List<BaseDto> ListDepartment = new List<BaseDto>();
         private List<BaseDto> ListFactory = new List<BaseDto>();
@@ -47,7 +47,7 @@ namespace AquaSolution.Client.Components.KPI.KPITask
 
             IsModalVisible = true;
             CurrentUser = user;
-            await LoadUser();
+            await LoadCalculated();
             await LoadDepartment();
             await LoadFactory();
             await LoadFormula();
@@ -55,12 +55,21 @@ namespace AquaSolution.Client.Components.KPI.KPITask
             StateHasChanged();
         }
 
-        private async Task LoadUser()
-        {
-            var data = await Http.GetFromJsonAsync<List<UserContributerDto>>("api/user/get-contributer");
-            ListUser = data.ToList();
+        //private async Task LoadUser()
+        //{
+        //    var data = await Http.GetFromJsonAsync<List<UserContributerDto>>("api/user/get-contributer");
+        //    ListUser = data.ToList();
 
+        //}
+        private async Task LoadCalculated()
+        {
+            var result = await Http.GetFromJsonAsync<List<QuaterCalculatedDto>>("api/QuarterCalculated/get-list");
+            if (result != null)
+            {
+                ListCalculated = result;
+            }
         }
+
         private async Task LoadDepartment()
         {
      

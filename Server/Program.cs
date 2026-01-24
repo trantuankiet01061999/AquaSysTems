@@ -168,7 +168,11 @@ builder.Services.AddAppServices();
 // ===================== SWAGGER =====================
 
 builder.Services.AddEndpointsApiExplorer();
-
+builder.Services.AddControllers()
+    .AddJsonOptions(opt =>
+    {
+        opt.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    });
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo

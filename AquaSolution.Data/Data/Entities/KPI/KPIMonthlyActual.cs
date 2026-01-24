@@ -5,7 +5,9 @@
         public Guid Id { get; set; }
         public Guid KPIMonthlyTargetId { get; set; }
         public Guid KPITotalScoreId { get; set; }
-        public int? Month { get; set; }  
+        public int? Month { get; set; }
+        public int? Quarter { get; set; }
+        public int? HalfYear { get; set; }
         public int? Year { get; set; }
         public decimal? ActualValue { get; set; }
         public DateTime CreatedDate { get; set; }

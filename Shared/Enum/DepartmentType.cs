@@ -21,6 +21,7 @@ namespace AquaSolution.Shared.Enum
         OPERATION,
         PRODUCTION,
         RD,
-        HR
+        HR,
+        IE
     }
 }

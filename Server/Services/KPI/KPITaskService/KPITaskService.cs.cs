@@ -1,4 +1,5 @@
 ﻿using AquaSolution.Data.Data.Entities;
+using AquaSolution.Data.Data.Entities.KPI;
 using AquaSolution.Data.Repositories;
 using AquaSolution.Shared.KPI.KPITasks;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ public class KPITaskService : IKPITaskService
     private readonly IRepository<Formula> _formulaRepo;
     private readonly IRepository<Department> _departmentRepo;
     private readonly IRepository<Factory> _factoryIdRepo;
+    private readonly IRepository<QuarterCalculate> _quarterCalculateRepo;
 
 
 
@@ -19,7 +21,8 @@ public class KPITaskService : IKPITaskService
         IRepository<User> userRepo,
         IRepository<Formula> formulaRepo,
         IRepository<Department> departmentRepo,
-        IRepository<Factory> factoryIdRepo
+        IRepository<Factory> factoryIdRepo,
+        IRepository<QuarterCalculate> quarterCalculateRepo
         )
     {
         _kPITaskRepo = kPITaskRepo;
@@ -27,6 +30,7 @@ public class KPITaskService : IKPITaskService
         _formulaRepo = formulaRepo;
         _departmentRepo = departmentRepo;
         _factoryIdRepo = factoryIdRepo;
+        _quarterCalculateRepo = quarterCalculateRepo;
     }
 
     public async Task<bool> CreatedAsync(HandleTaskDto formulaDto)
@@ -39,7 +43,8 @@ public class KPITaskService : IKPITaskService
             TaskDescription = formulaDto.TaskDescription,
             CalculatedMdethod = formulaDto.CalculatedMdethod,
             DataSource = formulaDto.DataSource,
-            OwnerId = formulaDto.OwnerId,
+            PIC = formulaDto.PIC,
+            CalculatedId = formulaDto.CalculatedId,
             KPIIndexType = formulaDto.KPIIndexType,
             FormulaId = formulaDto.FormulaId,
             Max = formulaDto.Max,
@@ -66,8 +71,9 @@ public class KPITaskService : IKPITaskService
     {
         var user = await _userRepo.GetQueryableAsync();
         var query = from kpiTask in await _kPITaskRepo.GetQueryableAsync()
-                    join owner in user on kpiTask.OwnerId equals owner.Id
                     join formula in await _formulaRepo.GetQueryableAsync() on kpiTask.FormulaId equals formula.Id
+                    join quarterCalculate in await _quarterCalculateRepo.GetQueryableAsync() on kpiTask.CalculatedId equals quarterCalculate.Id
+
                     join department in await _departmentRepo.GetQueryableAsync() on kpiTask.DepartmentId equals department.Id
                     join factory in await _factoryIdRepo.GetQueryableAsync() on kpiTask.FactoryId equals factory.Id
                     join createdBy in user on kpiTask.CreatedById equals createdBy.Id
@@ -79,8 +85,7 @@ public class KPITaskService : IKPITaskService
                         TaskDescription = kpiTask.TaskDescription,
                         CalculatedMdethod = kpiTask.CalculatedMdethod,
                         DataSource = kpiTask.DataSource,
-                        OwnerId = kpiTask.OwnerId,
-                        OwnerName = owner.FullName,
+                        PIC = kpiTask.PIC,
                         KPIIndexType = kpiTask.KPIIndexType,
                         FormulaId = kpiTask.FormulaId,
                         Formula = formula.FormulaName,
@@ -91,6 +96,8 @@ public class KPITaskService : IKPITaskService
                         DepartmentId = kpiTask.DepartmentId,
                         Department = department.Name,
                         Unit = kpiTask.Unit,
+                        Calculated = quarterCalculate.QuarterCalculated,
+                        CalculatedId = quarterCalculate.Id,
                         CreatedById = kpiTask.CreatedById,
                         CreatedByName = createdBy.FullName,
                         CreatedDate = kpiTask.CreatedDate,
@@ -112,7 +119,8 @@ public class KPITaskService : IKPITaskService
         entity.TaskDescription = formulaDto.TaskDescription;
         entity.CalculatedMdethod = formulaDto.CalculatedMdethod;
         entity.DataSource = formulaDto.DataSource;
-        entity.OwnerId = formulaDto.OwnerId;
+        entity.PIC = formulaDto.PIC;
+        entity.CalculatedId = formulaDto.CalculatedId;
         entity.KPIIndexType = formulaDto.KPIIndexType;
         entity.FormulaId = formulaDto.FormulaId;
         entity.Max = formulaDto.Max;

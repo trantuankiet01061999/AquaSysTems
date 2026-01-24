@@ -32,7 +32,7 @@ namespace AquaSolution.Client.Pages.KPI.QuaterCalculated
         }
         private async Task LoadData()
         {
-            var result = await Http.GetFromJsonAsync<List<QuaterCalculatedDto>>("api/quaterCalculated/get-list");
+            var result = await Http.GetFromJsonAsync<List<QuaterCalculatedDto>>("api/QuarterCalculated/get-list");
 
             if (result is not null)
             {
@@ -61,7 +61,7 @@ namespace AquaSolution.Client.Pages.KPI.QuaterCalculated
             var confirm = await JS.InvokeAsync<bool>("confirm", "Bạn có chắc chắn muốn xóa không?");
             if (!confirm)
                 return;
-            var response = await Http.DeleteAsync($"api/quaterCalculated/delete/{QuaterCalculatedDto.Id}");
+            var response = await Http.DeleteAsync($"api/QuarterCalculated/delete/{QuaterCalculatedDto.Id}");
 
             if (response.IsSuccessStatusCode)
             {
