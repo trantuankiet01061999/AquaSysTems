@@ -52,15 +52,10 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddTransient<AuthMessageHandler>();
 
 builder.Services.AddScoped(sp =>
-{
-    var navigationManager = sp.GetRequiredService<NavigationManager>();
-
-    return new HttpClient
+    new HttpClient
     {
-        // Ví dụ: http://server14/ITSM/
-        BaseAddress = new Uri($"{navigationManager.BaseUri}")
-    };
-});
+        BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
+    });
 
 // ================= AUTH =================
 builder.Services.AddBlazoredSessionStorage();
