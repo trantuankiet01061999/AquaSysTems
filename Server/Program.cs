@@ -122,6 +122,7 @@ using AquaSolution.Data.Data;
 using AquaSolution.Server;
 using AquaSolution.Server.Services.Common.Hangfire;
 using AquaSolution.Server.Services.Hangfire;
+using AquaSolution.Server.Services.VacuumBackgroundService;
 using AquaSolution.Server.SignalR;
 using Hangfire;
 using Hangfire.SqlServer;
@@ -206,6 +207,7 @@ builder.Services.AddHangfire(config =>
 
 builder.Services.AddHangfireServer();
 
+builder.Services.AddHostedService<VacuumBackgroundService>();
 
 // ===================== BUILD =====================
 var app = builder.Build();
