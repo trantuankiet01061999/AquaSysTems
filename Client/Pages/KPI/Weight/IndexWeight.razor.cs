@@ -1,12 +1,9 @@
 ﻿using AntDesign;
+using AquaSolution.Client.Components.KPI.IndexWeight;
 using AquaSolution.Shared.Enum;
 using AquaSolution.Shared.Enum.KPIType;
-using AquaSolution.Shared.KPI.Formula;
 using AquaSolution.Shared.KPI.IndexWeight;
-using AquaSolution.Shared.KPI.QuaterCalculated;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using System.Net.Http.Json;
 
 
@@ -21,6 +18,7 @@ namespace AquaSolution.Client.Pages.KPI.Weight
         private List<PeriodType> ListPeriodType = new List<PeriodType>();
         private List<KPIIndexType> ListKPIIndexType = new List<KPIIndexType>();
         private List<IndexWeightDto> DataSource = new();
+        private IndexWeightModal indexWeightModal = new();
         #endregion
         #region Innit
         protected override async Task OnInitializedAsync()
@@ -30,16 +28,16 @@ namespace AquaSolution.Client.Pages.KPI.Weight
         }
         private async Task LoadData()
         {
-            //var result = await Http.GetFromJsonAsync<List<IndexWeightDto>>("api/QuarterCalculated/get-list");
+            var result = await Http.GetFromJsonAsync<List<IndexWeightDto>>("api/IndexWeight/index-weight");
 
-            //if (result is not null)
-            //{
-            //    DataSource = result;
-            //}
-            //else
-            //{
-            //    DataSource = new();
-            //}
+            if (result is not null)
+            {
+                DataSource = result;
+            }
+            else
+            {
+                DataSource = new();
+            }
 
             StateHasChanged();
         }
@@ -61,10 +59,12 @@ namespace AquaSolution.Client.Pages.KPI.Weight
         #region Actions
         private async Task CreatedAsync(PositionType type)
         {
-
-
+            await indexWeightModal.ShowModal(
+                 IsEdit: true,
+                 indexWeightDto: null,
+                 positionType: type
+             );
         }
-
         #endregion
 
     }

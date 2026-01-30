@@ -5,6 +5,7 @@ using AquaSolution.Client.Common.ConvertNumber;
 using AquaSolution.Shared.Enum;
 using AquaSolution.Shared.Enum.KPIType;
 using AquaSolution.Shared.KPI.DealineManagement;
+using AquaSolution.Shared.KPI.IndexWeight;
 using AquaSolution.Shared.KPI.KPISubmit;
 using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;

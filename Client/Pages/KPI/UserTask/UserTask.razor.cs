@@ -7,6 +7,7 @@ using AquaSolution.Shared.Departments;
 using AquaSolution.Shared.Enum;
 using AquaSolution.Shared.Enum.KPIType;
 using AquaSolution.Shared.Factory;
+using AquaSolution.Shared.KPI.IndexWeight;
 using AquaSolution.Shared.KPI.KPISubmit;
 using AquaSolution.Shared.KPI.Result;
 using AquaSolution.Shared.KPI.UserTask;

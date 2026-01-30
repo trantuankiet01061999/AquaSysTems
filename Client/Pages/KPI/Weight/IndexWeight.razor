@@ -6,6 +6,7 @@
 @inject ModalService modal
 @inject NavigationManager Navigation
 @inject IMessageService Message
+@using AquaSolution.Client.Components.KPI.IndexWeight
 @using AquaSolution.Client.Components.KPI.KPITask
 @using AquaSolution.Client.Components.KPI.QuaterCalculated
 @using AquaSolution.Shared.KPI.IndexWeight
@@ -77,9 +78,11 @@
         {
             <Panel Header="@($"{group.ToString()}")">
                 <button class="btn btn-primary custom-button-type" @onclick="@(async () => await CreatedAsync(group))">
-                    <i class="fas fa-plus"></i>Created Pages
+                    <i class="fas fa-plus"></i>Created
                 </button>
-                <Table TItem="IndexWeightDto" DataSource="DataSource" HidePagination Size="TableSize.Small">
+                <Table Style="height:40vh" TItem="IndexWeightDto"
+                    DataSource="DataSource.Where(x => x.PositionType == group).ToList()"
+                    HidePagination Size="TableSize.Small">
                     <ChildContent Context="p">
                         <PropertyColumn Title="Name" Width="250" Property="c => c.Name"></PropertyColumn>
                         <PropertyColumn Title="Weight" Width="300" Property="c => c.Weight"></PropertyColumn>
@@ -92,4 +95,4 @@
         }
     </Collapse>
 </div>
-@* <QuaterCalculatedModal @ref="quaterCalculatedModal" OnSave="LoadData"></QuaterCalculatedModal> *@
+<IndexWeightModal @ref="indexWeightModal" OnSave="LoadData"></IndexWeightModal>
