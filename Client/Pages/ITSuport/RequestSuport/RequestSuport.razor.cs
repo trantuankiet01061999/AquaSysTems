@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
+using System.Globalization;
 using System.Net.Http.Json;
 
 namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
@@ -36,16 +37,22 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
         #region Innit
         protected override async Task OnInitializedAsync()
         {
-           // _hubConnection = new HubConnectionBuilder()
-           //.WithUrl(Navigation.ToAbsoluteUri(Navigation.BaseUri + "signalrhub"))
-           //.Build();
-           // _hubConnection.On("LoadRequestSuport", async () =>
-           // {
-           //     await LoadData();
-           //     await Search();
-           //     StateHasChanged();
-           // });
-           // await _hubConnection.StartAsync();
+            // _hubConnection = new HubConnectionBuilder()
+            //.WithUrl(Navigation.ToAbsoluteUri(Navigation.BaseUri + "signalrhub"))
+            //.Build();
+            // _hubConnection.On("LoadRequestSuport", async () =>
+            // {
+            //     await LoadData();
+            //     await Search();
+            //     StateHasChanged();
+            // });
+            // await _hubConnection.StartAsync();
+            if (Http != null)
+            {
+                var currenUserClass = new CurrenUser(Http, AuthStateProvider);
+                CurrenUser = await currenUserClass.LoadCurrenUser();
+            }
+
             await SignalRReload();
             await LoadData();
             await LoadStatusOptions();
@@ -78,7 +85,20 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
             if (Http != null)
             {
                 var data = await Http.GetFromJsonAsync<List<RequestSuportDto>>("api/RequestITSuport/get-all");
-                if (data != null) _requestSuport = data.ToList();
+                if (data != null)
+                {
+                    if (CurrenUser == null) return;
+                    if(CurrenUser.Roles.Any(x=>x.Name =="IT" || x.Name =="Admin"))
+                    {
+                        _requestSuport = data.ToList();
+
+                    }
+                    else
+                    {
+                        _requestSuport = data.Where(x=>x.RequestById==CurrenUser.Id).ToList();
+                    }
+
+                }
             }
 
             _requestSuportFillter = _requestSuport.ToList();
@@ -86,12 +106,7 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
         }
         private async Task CheckPermission()
         {
-            if (Http != null)
-            {
-                var currenUserClass = new CurrenUser(Http, AuthStateProvider);
-                CurrenUser = await currenUserClass.LoadCurrenUser();
-            }
-
+           
             if (CurrenUser != null)
             {
                 Created = await _hasPermission.CheckPermissions(PageId, nameof(PermissionActionType.Add),

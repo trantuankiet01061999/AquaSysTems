@@ -1,0 +1,70 @@
+﻿@using AntDesign
+@using AquaSolution.Shared.CommonDto;
+@using AquaSolution.Shared.KPI.IndexWeight
+@using AquaSolution.Shared.UserManagements
+@using AquaSolution.Shared.Administration.UserManagements
+@using AquaSolution.Shared.Enum.KPIType
+@using AquaSolution.Shared.KPI.Formula
+@using AquaSolution.Shared.KPI.QuaterCalculated
+@using AquaSolution.Shared.Enum
+@inject IMessageService Message
+@{
+    RenderFragment footer = @<Template>
+
+        <Button OnClick="@SaveAsync" @key="@( "submit" )"
+                Type="ButtonType.Primary">
+            Save
+        </Button>
+
+        <Button Style="color:#808080" OnClick="@Close" @key="@("back")">Close</Button>
+
+    </Template>;
+}
+<Modal @bind-Visible="IsModalVisible" Style="z-index: 9999;width:1000px;margin-top:-75px" Draggable="true" Footer="@footer">
+    <Form Model="@IndexWeight"
+          Layout="FormLayout.Vertical"
+          OnFinish="SaveAsync"
+          ValidateMode="FormValidateMode.Complex"
+          ValidateOnChange="true">
+        <Row Gutter="16">
+            <Col Span="20">
+            <FormItem Required="true" Label="Name">
+                <TextArea ShowCount MinRows="1" MaxRows="1" @bind-Value="@IndexWeight.Name" AllowClear="true" />
+            </FormItem>
+            </Col>
+            <Col Span="4">
+            <FormItem Required="true" Label="Weight">
+                <Input  @bind-Value="@IndexWeight.Weight"  />
+            </FormItem>
+            </Col>
+      
+        </Row>
+        <Row Gutter="16">
+            <Col Span="12">
+            <FormItem Label="Position">
+                <Select TItem="PeriodType" TItemValue="PeriodType"
+                        DataSource="@ListPeriodType"
+                        @bind-Value="@IndexWeight.PeriodType"
+                        AllowClear="true"
+                        ItemValue="c => c"
+                        ItemLabel="c => c.ToString()">
+                </Select>
+            </FormItem>
+            </Col>
+
+            <Col Span="12">
+            <FormItem Label="Position">
+                <Select TItem="KPIIndexType" TItemValue="KPIIndexType"
+                        DataSource="@ListKPIIndexType"
+                        @bind-Value="@IndexWeight.KPIIndexType"
+                        AllowClear="true"
+                        ItemValue="c => c"
+                        ItemLabel="c => c.ToString()">
+                </Select>
+            </FormItem>
+            </Col>
+
+        </Row>
+       
+    </Form>
+</Modal>
