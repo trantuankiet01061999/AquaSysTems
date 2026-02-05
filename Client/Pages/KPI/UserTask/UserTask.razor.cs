@@ -15,6 +15,7 @@ using AquaSolution.Shared.Position;
 using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.SignalR.Client;
 using NPOI.OpenXmlFormats.Spreadsheet;
 using System;
 using System.Net.Http.Json;
@@ -39,6 +40,7 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
         private bool CalculateQuarterPointsPermission { get; set; } = false;
         private bool TaskManagement { get; set; } = false;
         private bool IsLock { get;set;  }
+        private HubConnection? _hubConnection;
         #endregion
         #region Innit
         protected override async Task OnInitializedAsync()
@@ -51,9 +53,25 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
             await CheckLock();
             await LoadData();
             await LoadDataFilterAsync();
-
+            await ReloadIsLock();
 
         }
+        private async Task ReloadIsLock()
+        {
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl(Navigation.ToAbsoluteUri(Navigation.BaseUri + "signalrhub"))
+                .Build();
+            _hubConnection.On<Guid>("IsLockSystem", async pageId =>
+            {
+                if (pageId == PageId)
+                {
+                    await CheckLock();
+                    await InvokeAsync(StateHasChanged);
+                }
+            });
+            await _hubConnection.StartAsync();
+        }
+
         private async Task GetPage()
         {
             var url = "task-user-management";

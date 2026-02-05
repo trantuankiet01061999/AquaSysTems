@@ -15,6 +15,7 @@ namespace AquaSolution.Client.Pages.KPI.KPISubmit
         private UserDto? CurrenUser { get; set; }
         [Inject] private HttpClient? Http { get; set; }
         private SelectedKPISubmitModalrazor _selectedKpiSubmitModalrazor = new();
+
         private List<ViewKPITotalScoreDto> DataSource { get; set; } = new();
         Table<ViewKPITotalScoreDto>? TableRef;
         private ApprovalTaskModal ApprovalTaskModalRef = new();
@@ -30,6 +31,7 @@ namespace AquaSolution.Client.Pages.KPI.KPISubmit
             await CheckLock();
             await LoadData();
             await InitSignalRAsync();
+            await ReloadIsLock();
         }
         private async Task InitSignalRAsync()
         {
@@ -44,6 +46,22 @@ namespace AquaSolution.Client.Pages.KPI.KPISubmit
 
             await _hubConnection.StartAsync();
         }
+        private async Task ReloadIsLock()
+        {
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl(Navigation.ToAbsoluteUri(Navigation.BaseUri + "signalrhub"))
+                .Build();
+            _hubConnection.On<Guid>("IsLockSystem", async pageId =>
+            {
+                if (pageId == PageId)
+                {
+                    await CheckLock();
+                    await InvokeAsync(StateHasChanged);
+                }
+            });
+            await _hubConnection.StartAsync();
+        }
+
         private async Task GetPage()
         {
             var url = "kpi-submit";

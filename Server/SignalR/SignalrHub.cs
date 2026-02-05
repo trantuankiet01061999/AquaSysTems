@@ -18,6 +18,11 @@ namespace AquaSolution.Server.SignalR
         {
             await Clients.All.SendAsync("ReloadMenu");
         }
+        public async Task ReloadIsLockSystem(string pageId)
+        {
+            await Clients.Group(pageId)
+                .SendAsync("IsLockSystemChanged", pageId);
+        }
         #endregion
         #region RequestClinic
         public async Task LoadRequestClinic()

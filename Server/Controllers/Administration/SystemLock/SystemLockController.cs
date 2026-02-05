@@ -1,6 +1,8 @@
 ﻿using AquaSolution.Server.Services.Administration.SystemLock;
+using AquaSolution.Server.SignalR;
 using AquaSolution.Shared.Administration.SystemLock;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace AquaSolution.Server.Controllers.Administration.SystemLocks
 {
@@ -9,10 +11,12 @@ namespace AquaSolution.Server.Controllers.Administration.SystemLocks
     public class SystemLockController : ControllerBase
     {
         private readonly ISystemLockService _SystemLockService;
+        private readonly IHubContext<SignalrHub> _hubContext;
 
-        public SystemLockController(ISystemLockService SystemLockService)
+        public SystemLockController(ISystemLockService SystemLockService, IHubContext<SignalrHub> hubContext)
         {
             _SystemLockService = SystemLockService;
+            _hubContext = hubContext;
         }
 
         [HttpGet("system-locks")]
@@ -38,6 +42,7 @@ namespace AquaSolution.Server.Controllers.Administration.SystemLocks
         public async Task<IActionResult> UpdateAsync([FromBody] SystemLockDto systemLockDto)
         {
             var result = await _SystemLockService.UpdateStatus(systemLockDto.Id, systemLockDto.IsLocket);
+            await _hubContext.Clients.All.SendAsync("IsLockSystem", systemLockDto.PageId);
             return Ok(result);
         }
         [HttpGet("check-lock/{pageId}")]
