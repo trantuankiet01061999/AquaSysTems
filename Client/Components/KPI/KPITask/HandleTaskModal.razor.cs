@@ -62,7 +62,7 @@ namespace AquaSolution.Client.Components.KPI.KPITask
 
         //}
         private async Task LoadCalculated()
-        {
+        { 
             var result = await Http.GetFromJsonAsync<List<QuaterCalculatedDto>>("api/QuarterCalculated/get-list");
             if (result != null)
             {
@@ -72,7 +72,8 @@ namespace AquaSolution.Client.Components.KPI.KPITask
 
         private async Task LoadDepartment()
         {
-     
+            ListDepartment = new();
+
             var data = await Http.GetFromJsonAsync<List<DepartmentDto>>("api/department/get-all");
             if (data != null)
             {
@@ -89,6 +90,7 @@ namespace AquaSolution.Client.Components.KPI.KPITask
 
         private async Task LoadFactory()
         {
+            ListFactory = new();
             var data = await Http.GetFromJsonAsync<List<FactoryDto>>("api/factory/get-all");
             if (data != null)
             {

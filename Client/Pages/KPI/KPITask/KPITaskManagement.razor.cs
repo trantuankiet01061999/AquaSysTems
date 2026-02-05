@@ -98,6 +98,7 @@ namespace AquaSolution.Client.Pages.KPI.KPITask
                 FactoryId = kPITaskDto.FactoryId,
                 Unit = kPITaskDto.Unit ?? string.Empty,
                 DepartmentId = kPITaskDto.DepartmentId,
+                CalculatedId = kPITaskDto.CalculatedId,
             };
             await handleTaskModal.ShowModal(CurrenUser,true, handleDto);
         }
