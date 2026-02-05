@@ -16,6 +16,7 @@ using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using NPOI.OpenXmlFormats.Spreadsheet;
+using System;
 using System.Net.Http.Json;
 
 
@@ -37,7 +38,7 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
         public bool Loading { get; set; }
         private bool CalculateQuarterPointsPermission { get; set; } = false;
         private bool TaskManagement { get; set; } = false;
-
+        private bool IsLock { get;set;  }
         #endregion
         #region Innit
         protected override async Task OnInitializedAsync()
@@ -47,13 +48,25 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
             await CheckPermission();
             Month = DateTime.Now.Month;
             Year = DateTime.Now.Year;
+            await CheckLock();
             await LoadData();
             await LoadDataFilterAsync();
+
+
         }
         private async Task GetPage()
         {
             var url = "task-user-management";
             if (Http != null) PageId = await Http.GetFromJsonAsync<Guid>($"api/Page/GetPageIdByUrl/{url}");
+        }
+        private async Task CheckLock()
+        {
+            if (CurrenUser != null && CurrenUser.Roles.Any(x => x.Name == "Admin"))
+            {
+                IsLock = false;
+                return;
+            }
+            IsLock = await Http.GetFromJsonAsync<bool>($"api/systemLock/check-lock/{PageId}");
         }
         private async Task LoadCurrenUser()
         {

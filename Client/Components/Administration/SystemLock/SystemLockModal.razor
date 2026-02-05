@@ -1,0 +1,38 @@
+﻿@using AntDesign
+@using AquaSolution.Shared.ApprovalFlows
+@using AquaSolution.Shared.CommonDto;
+@using AquaSolution.Shared.UserManagements
+@inject IMessageService Message
+@{
+    RenderFragment footer = @<Template>
+
+        <Button OnClick="@SaveAsync" @key="@( "submit" )"
+                Type="ButtonType.Primary">
+            Save
+        </Button>
+
+        <Button Style="color:#808080" OnClick="@CloseModal" @key="@("back")">Close</Button>
+
+    </Template>;
+}
+<Modal @bind-Visible="IsVisibleModal" Style="z-index: 9999;width:1000px;margin-top:-75px" Footer="@footer">
+    <Form Model="@_systemLockDto"
+          Layout="FormLayout.Vertical"
+          OnFinish="SaveAsync"
+          ValidateMode="FormValidateMode.Complex"
+          ValidateOnChange="true">
+        <Row Gutter="16">
+            <Col Span="8">
+            <FormItem Label="Pages" Required="true">
+                <Select TItem="BaseDto" TItemValue="Guid ?"
+                        DataSource="@_listPage"
+                        @bind-Value="@_systemLockDto.PageId"
+                        ItemValue="c => c.Id"
+                        ItemLabel="c => c.Name">
+                </Select>
+            </FormItem>
+            </Col>
+        </Row>
+    </Form>
+</Modal>
+

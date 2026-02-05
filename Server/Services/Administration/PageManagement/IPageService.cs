@@ -8,6 +8,6 @@ namespace AquaSolution.Server.Services.Administration.PageManagement
         Task<Guid>GetPageByURL(string url);
         Task<List<BaseDto>>GetPagesByMenu(Guid menuId);
         Task<bool>CreatedPage(HandlePageDto handlePageDto);
-
+        Task<List<BaseDto>>GetAllPage();
     }
 }

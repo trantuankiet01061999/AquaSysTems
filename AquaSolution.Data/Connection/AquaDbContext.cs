@@ -1,4 +1,5 @@
 ﻿using AquaSolution.Data.Data.Entities;
+using AquaSolution.Data.Data.Entities.Admin;
 using AquaSolution.Data.Data.Entities.KPI;
 using AquaSolution.Data.Data.MappingConfigurations;
 using AquaSolution.Data.Data.MappingConfigurations.KPI;
@@ -26,6 +27,8 @@ namespace AquaSolution.Data.Connection
         public DbSet<Factory> tbl_Factorys { get; set; }
         public DbSet<Position> tbl_Positions { get; set; }
         public DbSet<ApprovalFlow> tbl_ApprovalFlow { get; set; }
+        public DbSet<SystemLock> tbl_SystemLock { get; set; }
+
         #endregion
         #region Clinic
         public DbSet<Product> tbl_Product { get; set; }
@@ -88,6 +91,10 @@ namespace AquaSolution.Data.Connection
             modelBuilder.ApplyConfiguration(new FactoryConfiguration());
             modelBuilder.ApplyConfiguration(new PositionConfiguration());
             modelBuilder.ApplyConfiguration(new ApprovalFlowConfiguration());
+             
+            modelBuilder.ApplyConfiguration(new SystemLockConfiguration());
+             
+
             #region Clinic
             modelBuilder.ApplyConfiguration(new RequestClinicConfiguration());
             modelBuilder.ApplyConfiguration(new ProductConfiguration());

@@ -46,46 +46,61 @@
         }
 
     </style>
-    <div style="display: flex;  align-items: center; margin-bottom: 10px; ">
-        <button @onclick="SelectedKpi" class="btn btn-primary custom-button-type">
-            <Icon Type="plus" />Selected KPI
-        </button>
+    @if (!IsLock)
+    {
+        <div style="display: flex;  align-items: center; margin-bottom: 10px; ">
+            <button @onclick="SelectedKpi" class="btn btn-primary custom-button-type">
+                <Icon Type="plus" />Selected KPI
+            </button>
 
-    </div>
-
+        </div>
+    }
 </div>
 
 <div style="width:98%;overflow-x:scroll ;max-height:70vh; ">
+    @{
+        if (IsLock)
+        {
+            <div class="lock-page">
+                <Icon Type="lock" Style="font-size:48px;color:#ff4d4f" />
+                <h2>This page has been locked by the administrator</h2>
+                <p>Please contact the administrator for more information.</p>
+            </div>
+        }
+        else
+        {
+            <Table TItem="ViewKPITotalScoreDto"
+                   @ref="TableRef"
+                   Size="TableSize.Small"
+                   Class="customTable fix-table-header"
+                   DataSource="DataSource">
+                <ColumnDefinitions Context="row">
+                    <PropertyColumn Fixed="ColumnFixPlacement.Left" Width="300px" Title="Title" Property="c => c.Title"></PropertyColumn>
+                    <PropertyColumn Width="100px" Title="Status" Property="c => c.Status">
+                        <Tag Color="@GetTagColor.GetTagColorCss(row.Status.ToString())">@row.Status</Tag>
+                    </PropertyColumn>
+                    <PropertyColumn Width="200px" Title="UserName" Property="c => c.UserName"></PropertyColumn>
+                    <PropertyColumn Width="200px" Title="ManagerName" Property="c => c.ManagerName"></PropertyColumn>
+                    <PropertyColumn Width="100px" Title="KPIScore" Property="c => c.KPIScore"></PropertyColumn>
+                    <PropertyColumn Width="100px" Title="KeyTaskScore" Property="c => c.KeyTaskScore"></PropertyColumn>
+                    <PropertyColumn Width="100px" Title="OMGScore" Property="c => c.OMGScore"></PropertyColumn>
+                    <PropertyColumn Width="100px" Title="OMGScore" Property="c => c.TotaleScore"></PropertyColumn>
+                    <PropertyColumn Width="50px" Title="Year" Property="c => c.Year"></PropertyColumn>
+                    <Column Fixed="ColumnFixPlacement.Right" TData="ViewKPITotalScoreDto" Title="Acction" Width="50px" Context="row">
+                        @if (row.Month != null)
+                        {
+                            <Template>
+                                <Button Type="ButtonType.Primary" OnClick="@(async () => await ViewAsync(row))" Style="text-align: left;">
+                                    <Icon Type="eye" /> Detail
+                                </Button>
+                            </Template>
+                        }
+                    </Column>
+                </ColumnDefinitions>
+            </Table>
+        }
+    }
 
-    <Table TItem="ViewKPITotalScoreDto"
-           @ref="TableRef"
-           Size="TableSize.Small"
-           Class="customTable fix-table-header"
-           DataSource="DataSource">
-        <ColumnDefinitions Context="row">
-            <PropertyColumn Fixed="ColumnFixPlacement.Left" Width="300px" Title="Title" Property="c => c.Title"></PropertyColumn>
-            <PropertyColumn Width="100px" Title="Status" Property="c => c.Status">
-                <Tag Color="@GetTagColor.GetTagColorCss(row.Status.ToString())">@row.Status</Tag>
-            </PropertyColumn>
-            <PropertyColumn Width="200px" Title="UserName" Property="c => c.UserName"></PropertyColumn>
-            <PropertyColumn Width="200px" Title="ManagerName" Property="c => c.ManagerName"></PropertyColumn>
-            <PropertyColumn Width="100px" Title="KPIScore" Property="c => c.KPIScore"></PropertyColumn>
-            <PropertyColumn Width="100px" Title="KeyTaskScore" Property="c => c.KeyTaskScore"></PropertyColumn>
-            <PropertyColumn Width="100px" Title="OMGScore" Property="c => c.OMGScore"></PropertyColumn>
-            <PropertyColumn Width="100px" Title="OMGScore" Property="c => c.TotaleScore"></PropertyColumn>
-            <PropertyColumn Width="50px" Title="Year" Property="c => c.Year"></PropertyColumn>
-            <Column Fixed="ColumnFixPlacement.Right" TData="ViewKPITotalScoreDto" Title="Acction" Width="50px" Context="row">
-                @if (row.Month != null)
-                {
-                    <Template>
-                        <Button Type="ButtonType.Primary" OnClick="@(async () => await ViewAsync(row))" Style="text-align: left;">
-                            <Icon Type="eye" /> Detail
-                        </Button>
-                    </Template>
-                }
-            </Column>
-        </ColumnDefinitions>
-    </Table>
 </div>
 <SelectedKPISubmitModalrazor @ref="_selectedKpiSubmitModalrazor"></SelectedKPISubmitModalrazor>
 <ApprovalTaskModal @ref="ApprovalTaskModalRef"></ApprovalTaskModal>

@@ -39,6 +39,12 @@ namespace AquaSolution.Server.Controllers.Administration.Pages
 
             return StatusCode(500, new { success = false, message = "Failed to create Page." });
         }
+        [HttpGet("get-all-pages")]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _pageService.GetAllPage();
+            return Ok(result);
+        }
     }
 
 }

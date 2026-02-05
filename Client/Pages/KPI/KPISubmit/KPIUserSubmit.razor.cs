@@ -19,11 +19,15 @@ namespace AquaSolution.Client.Pages.KPI.KPISubmit
         Table<ViewKPITotalScoreDto>? TableRef;
         private ApprovalTaskModal ApprovalTaskModalRef = new();
         private HubConnection? _hubConnection;
+        private Guid PageId { get; set; }
+        private bool IsLock { get; set; }
         #endregion
         #region Init    
         protected override async Task OnInitializedAsync()
         {
             await LoadCurrenUser();
+            await GetPage();
+            await CheckLock();
             await LoadData();
             await InitSignalRAsync();
         }
@@ -39,6 +43,20 @@ namespace AquaSolution.Client.Pages.KPI.KPISubmit
             });
 
             await _hubConnection.StartAsync();
+        }
+        private async Task GetPage()
+        {
+            var url = "task-user-management";
+            if (Http != null) PageId = await Http.GetFromJsonAsync<Guid>($"api/Page/GetPageIdByUrl/{url}");
+        }
+        private async Task CheckLock()
+        {
+            if (CurrenUser != null && CurrenUser.Roles.Any(x => x.Name == "Admin"))
+            {
+                IsLock = false;
+                return;
+            }
+            IsLock = await Http.GetFromJsonAsync<bool>($"api/systemLock/check-lock/{PageId}");
         }
         private async Task LoadCurrenUser()
         {

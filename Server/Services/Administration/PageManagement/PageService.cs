@@ -55,5 +55,18 @@ namespace AquaSolution.Server.Services.Administration.PageManagement
             return await _pageRepo.SaveChangesAsync() > 0;
         }
 
+        public async Task<List<BaseDto>> GetAllPage()
+        {
+           var pages = await _pageRepo.GetQueryableAsync();
+            var data = from page in pages
+                       orderby page.Order
+                       select new BaseDto
+                       {
+                           Id = page.Id,
+                           Name = page.Name,
+                       };
+            var dataReturn = data.ToList();
+            return dataReturn;
+        }
     }
 }

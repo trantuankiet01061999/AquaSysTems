@@ -1,0 +1,65 @@
+﻿@page "/systemlock-management"
+@using AntDesign
+@inject ModalService Modal
+@inject IMessageService Message
+@using AquaSolution.Client.Components.Administration.SystemLock
+@using AquaSolution.Shared.Administration.SystemLock
+@inject AuthenticationStateProvider AuthStateProvider
+@using Microsoft.AspNetCore.Components.Authorization
+<PageTitle>Department</PageTitle>
+<div class="mb-3">
+    <style>
+        .custom-button-type {
+            height: 30px;
+            font-size: 12px;
+        }
+
+        .fix-table-header table {
+            border-collapse: collapse;
+        }
+
+            .fix-table-header table thead th {
+                position: sticky !important;
+                z-index: 8 !important;
+                top: 0;
+                background-color: #fff;
+            }
+
+        .ant-table-content {
+            min-height: 65vh !important;
+        }
+
+        .ant-table-pagination {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 999;
+            background: white;
+            padding: 8px;
+            text-align: center;
+            box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
+             background: transparent !important; 
+        }
+
+    </style>
+    <button @onclick="Created" class="btn btn-primary custom-button-type">
+        <Icon Type="plus" />Created
+    </button>
+</div>
+<div style="width:99%;overflow-x:scroll ;max-height:70vh; ">
+    <Table TItem="SystemLockDto"
+           Size="TableSize.Small"
+           Class="customTable fix-table-header"
+           DataSource="_systemLockDto">
+        <ColumnDefinitions Context="row">
+            <PropertyColumn Title="PageName" Property="c => c.PageName"></PropertyColumn>
+            <PropertyColumn Title="LockedBy" Property="c => c.LockedByName"></PropertyColumn>
+            <PropertyColumn Title="LockedDate" Property="c => c.LockedDate"></PropertyColumn>
+            <Column Title="Lock" Width="100px" TData="SystemLockDto">
+                <AntDesign.Switch Checked="row.IsLocket"
+                                  OnChange="@(async (bool value) => await OnLockChanged(row, value))" />
+            </Column>
+        </ColumnDefinitions>
+    </Table>
+</div>
+<SystemLockModal OnSave="LoadDataAsync" @ref="@systemLockModal"></SystemLockModal>

@@ -8,6 +8,7 @@ using AquaSolution.Server.Services.Administration.PermissionService;
 using AquaSolution.Server.Services.Administration.PositionService;
 using AquaSolution.Server.Services.Administration.RolePermissionService;
 using AquaSolution.Server.Services.Administration.RoleService;
+using AquaSolution.Server.Services.Administration.SystemLock;
 using AquaSolution.Server.Services.Administration.UserService;
 using AquaSolution.Server.Services.Common.HandleInventories;
 using AquaSolution.Server.Services.Common.UserConnectionManager;
@@ -51,6 +52,8 @@ namespace AquaSolution.Server
             services.AddScoped<IFactoryService, FactoryService>();
             services.AddScoped<IPositionService, PositionService>();
             services.AddScoped<IApprovalFlowService, ApprovalFlowService>();
+            services.AddScoped<ISystemLockService, SystemLockService>();
+
             #endregion
             #region Medical
             services.AddScoped<IProductService, ProductService>();
