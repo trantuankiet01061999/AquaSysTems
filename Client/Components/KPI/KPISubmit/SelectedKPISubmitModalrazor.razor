@@ -73,6 +73,8 @@
                     <TabPane Key="1">
                         <Table TItem="HandleActualDto"
                                Size="TableSize.Small"
+                               Bordered
+                               HidePagination
                                Class="customTable fix-table-header"
                                DataSource="HandleActualDto">
                             <ColumnDefinitions Context="row">
@@ -155,6 +157,8 @@
                                     <Table TItem="HandleActualDto"
                                            Size="TableSize.Small"
                                            Class="customTable fix-table-header"
+                                           Bordered
+                                           HidePagination
                                            DataSource="details">
                                         <ColumnDefinitions Context="rowTarget">
                                             <PropertyColumn Width="100px" Title="Index" Property="c => c.KPIIndexType"></PropertyColumn>

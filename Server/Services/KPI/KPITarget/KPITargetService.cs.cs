@@ -73,25 +73,25 @@ public class KPIMonthlyTargetService : IKPIMonthlyTargetService
         var query =
             from kpiTask in taskQuery
 
-            join ut in userTaskQuery
-                on kpiTask.Id equals ut.KPITaskId
-                into userTaskGroup
+            join userTask in userTaskQuery
+                on kpiTask.Id equals userTask.KPITaskId
+            //    into userTaskGroup
 
-            from userTask in userTaskGroup
-                .DefaultIfEmpty()
+            //from userTask in userTaskGroup
+            //    .DefaultIfEmpty()
 
-            join t in targetQuery
-                on userTask.Id equals t.UserTaskId
-                into targetGroup
-            from target in targetGroup.DefaultIfEmpty()
+            join target in targetQuery
+                on userTask.Id equals target.UserTaskId
+            //    into targetGroup
+            //from target in targetGroup.DefaultIfEmpty()
 
-                // LEFT JOIN QuarterCalculate
             join qc in quarterQuery
                 on kpiTask.CalculatedId equals qc.Id
                 into quarterGroup
+
             from quarterCalculate in quarterGroup.DefaultIfEmpty()
 
-            where kpiTask.Id == taskId
+            where kpiTask.Id == taskId && userTask.UserId == userId 
 
             select new GetUserTaskAndTargetDto
             {
