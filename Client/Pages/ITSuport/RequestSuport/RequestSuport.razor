@@ -123,7 +123,8 @@
 
                                 @if (Delete)
                                 {
-                                    <Button Disabled="disable3" Type="ButtonType.Text" OnClick="@(async () => await DeleteAsync(row.Id))" Style="text-align: left;">
+                                    var disible = CurrenUser.Roles.Any(x => x.Name == "Admin") ? false : disable3;
+                                    <Button Disabled="disible" Type="ButtonType.Text" OnClick="@(async () => await DeleteAsync(row.Id))" Style="text-align: left;">
                                         <Icon Type="delete" /> Delete
                                     </Button>
                                 }
