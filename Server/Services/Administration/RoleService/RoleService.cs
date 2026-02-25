@@ -32,7 +32,7 @@ namespace AquaSolution.Server.Services.Administration.RoleService
             }
             var newUserRoles = selectedRoleIds.Select(roleId => new UserRole
             {
-                Id = new Guid(),
+                Id = Guid.NewGuid(),
                 UserId = userId,
                 RoleId = roleId.Id
             }).ToList();

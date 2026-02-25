@@ -26,7 +26,9 @@ namespace AquaSolution.Data.Data.MappingConfigurations.KPI
             builder.Property(d => d.CreatedDate)
                .IsRequired()
                .HasDefaultValueSql("GETDATE()");
-
+            builder.Property(x => x.TargetValue)
+               .HasColumnType("decimal(18,4)")
+               .IsRequired();
         }
     }
 }
