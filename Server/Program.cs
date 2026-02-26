@@ -164,6 +164,5 @@ app.MapHub<SignalrHub>("/signalrhub");
 
 // Blazor fallback (PHẢI CUỐI CÙNG)
 app.MapFallbackToFile("index.html");
-
 app.Run();
 

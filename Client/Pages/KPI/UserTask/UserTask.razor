@@ -92,11 +92,52 @@
                    Class="customTable fix-table-header"
                    DataSource="userFilter">
                 <ColumnDefinitions Context="row">
-                    <Column TData="UserDto" Fixed="ColumnFixPlacement.Left" Width="50px" Context="row">
+         
+                    <Column TData="UserDto" Fixed="ColumnFixPlacement.Left" Width="60px" Context="row">
                         <Template>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <Avatar Src="@row.Avatar" Shape="AvatarShape.Circle" Size="AvatarSize.Small" />
-                            </div>
+                            <Popover Trigger="new Trigger[] { Trigger.Click }"
+                                     Placement="Placement.BottomLeft">
+
+                                <ChildContent>
+                                    <Avatar Src="@row.Avatar"
+                                            Shape="AvatarShape.Circle"
+                                            Size="AvatarSize.Small"
+                                            Style="cursor:pointer;" />
+                                </ChildContent>
+
+                                <ContentTemplate>
+                                    <div style="display:flex; flex-direction:column; gap:4px; padding:8px; min-width:200px;">
+
+                                        @if (CalculateQuarterPointsPermission)
+                                        {
+                                            var disable = !(Month == 4 || Month == 7 || Month == 10 || Month == 1);
+                                            var title = disable ?
+                                            "Quarter Points can only be calculated in April, July, October, and January."
+                                            : "";
+
+                                            <Tooltip Title="@title">
+                                                <Button Disabled="disable"
+                                                        Type="ButtonType.Text"
+                                                        OnClick="@(async () => await CalculateQuarterPoints(row))"
+                                                        Style="text-align:left;">
+                                                    <Icon Type="plus" /> Calculate Quarter Points
+                                                </Button>
+                                            </Tooltip>
+                                        }
+
+                                        @if (TaskManagement)
+                                        {
+                                            <Button Type="ButtonType.Text"
+                                                    OnClick="@(async () => await EditTask(row))"
+                                                    Style="text-align:left;">
+                                                <Icon Type="edit" /> Task Management
+                                            </Button>
+                                        }
+
+                                    </div>
+                                </ContentTemplate>
+
+                            </Popover>
                         </Template>
                     </Column>
                     <PropertyColumn Width="250px" Title="Fullname" Property="c => c.FullName"></PropertyColumn>
