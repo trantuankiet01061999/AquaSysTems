@@ -2,6 +2,7 @@
 using AquaSolution.Client.Common;
 using AquaSolution.Client.Common.ConvertNumber;
 using AquaSolution.Client.Components.Administration.Users;
+using AquaSolution.Client.Components.KPI.Target;
 using AquaSolution.Client.Components.KPI.UserTask;
 using AquaSolution.Shared.Departments;
 using AquaSolution.Shared.Enum;
@@ -31,6 +32,7 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
         private List<UserDto> users = new();
         private List<UserDto> userFilter = new();
         private UserTaskModal _userTaskModal = new();
+        private TargetModal targetModal = new();
         private int Month { get; set; }
         private int Year { get; set; }
         private Guid PageId { get; set; }
@@ -54,7 +56,6 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
             await LoadData();
             await LoadDataFilterAsync();
             await ReloadIsLock();
-
         }
         private async Task ReloadIsLock()
         {
@@ -107,10 +108,10 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
             {
                 Loading = true;
                 var data = await Http.GetFromJsonAsync<List<UserDto>>("api/user/get-all");
-                var result = data.Where(x=>x.IsActive == true).ToList();
+                var result = data.Where(x=>x.IsActive == true && x.PositionId !=null).ToList();
 
                 foreach (var user in result)
-                {
+                {  
                     user.FullName ??= string.Empty;
                     user.WorkDayId ??= string.Empty;
                     user.DepartmentName ??= string.Empty;
@@ -124,6 +125,12 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
                     if(CurrenUser.Roles.Any(x => x.Name == "Admin") || CurrenUser.Roles.Any(x => x.Name == "HR"))
                     {
                         filtered = result;
+                    }
+                    else if (CurrenUser.Roles.Any(x => x.Name == "DepartmentViewer"))
+                    {
+                        filtered = result
+                            .Where(x => x.DepartmentId == CurrenUser.DepartmentId)
+                            .ToList();
                     }
                     else
                     {
@@ -154,7 +161,10 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
         }
         #endregion
         #region Actions
-
+        private async Task ViewTarget(UserDto user)
+        {
+            await targetModal.ShowModal(user);
+        }
         private async Task EditTask(UserDto user)
         {
             await _userTaskModal.ShowModal(user);

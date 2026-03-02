@@ -17,7 +17,8 @@ namespace AquaSolution.Client.Common
         {
             var authState = await _authStateProvider.GetAuthenticationStateAsync();
             var user = authState.User;
-
+            if (user.IsInRole("Admin"))
+                return true;
             return user.Claims.Any(c =>
                 c.Type == "permission" &&
                 c.Value == $"{pageId}:{action}");

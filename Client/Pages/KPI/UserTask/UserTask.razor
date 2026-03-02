@@ -5,6 +5,7 @@
 @inject ModalService modal
 @inject NavigationManager Navigation
 @inject IMessageService Message
+@using AquaSolution.Client.Components.KPI.Target
 @using AquaSolution.Client.Components.KPI.UserTask
 @using AquaSolution.Shared.UserManagements
 @using Microsoft.AspNetCore.Components.Authorization
@@ -133,7 +134,12 @@
                                                 <Icon Type="edit" /> Task Management
                                             </Button>
                                         }
-
+                                        @if (CurrenUser.Id == row.Id || CurrenUser.Id == row.ManagerId || CurrenUser.Roles.Any(x => x.Name == "Admin"))
+                                        {
+                                            <Button Type="ButtonType.Text" OnClick="@(async () => await ViewTarget(row))" Style="text-align: left;">
+                                                <Icon Type="plus" /> View Target
+                                            </Button>
+                                        }
                                     </div>
                                 </ContentTemplate>
 
@@ -176,6 +182,13 @@
                                                 <Icon Type="plus" /> Task Management
                                             </Button>
                                         }
+                                        @if (CurrenUser.Id == row.Id || CurrenUser.Id == row.ManagerId || CurrenUser.Roles.Any(x => x.Name == "Admin"))
+                                        {
+                                            <Button Type="ButtonType.Text" OnClick="@(async () => await ViewTarget(row))" Style="text-align: left;">
+                                                <Icon Type="plus" /> View Target
+                                            </Button>
+                                        }
+
                                     </div>
                                 </ContentTemplate>
                             </Popover>
@@ -191,3 +204,4 @@
 </div>
 @*------------------------------------- TEST -------------------------------*@
 <UserTaskModal CurrenUser="CurrenUser" @ref="_userTaskModal"></UserTaskModal>
+<TargetModal @ref="targetModal"></TargetModal>

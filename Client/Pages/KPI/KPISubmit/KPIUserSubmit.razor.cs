@@ -1,6 +1,7 @@
 ﻿using AntDesign;
 using AquaSolution.Client.Common;
 using AquaSolution.Client.Components.KPI.KPISubmit;
+using AquaSolution.Client.Components.KPI.Target;
 using AquaSolution.Shared.KPI.KPISubmit;
 using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
@@ -15,7 +16,7 @@ namespace AquaSolution.Client.Pages.KPI.KPISubmit
         private UserDto? CurrenUser { get; set; }
         [Inject] private HttpClient? Http { get; set; }
         private SelectedKPISubmitModalrazor _selectedKpiSubmitModalrazor = new();
-
+        private TargetModal targetModal = new();
         private List<ViewKPITotalScoreDto> DataSource { get; set; } = new();
         Table<ViewKPITotalScoreDto>? TableRef;
         private ApprovalTaskModal ApprovalTaskModalRef = new();
@@ -101,6 +102,11 @@ namespace AquaSolution.Client.Pages.KPI.KPISubmit
         }
         #endregion
         #region Action
+        private async Task ViewTarget()
+        {
+            if(CurrenUser == null) { return; }
+            await targetModal.ShowModal(CurrenUser);
+        }
         private async Task SelectedKpi()
         {
           await  _selectedKpiSubmitModalrazor.ShowModal(CurrenUser!);

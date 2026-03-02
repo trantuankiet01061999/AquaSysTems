@@ -626,7 +626,7 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
             var data = await LoadSelectedKPiSubmit(
                 KPIPeriodSubmit.Year,
                 KPIPeriodSubmit.Month);
-            HandleActualDto = data.OrderByDescending(x => x.Index).ToList();
+            HandleActualDto = data.OrderBy(x => x.Index).ToList();
             IsInputActual = HandleActualDto.Any();
             activeTabKey = "1";
             TitleButton = "Next ⟶";

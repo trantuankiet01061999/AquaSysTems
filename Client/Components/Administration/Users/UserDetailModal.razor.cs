@@ -2,6 +2,7 @@
 using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System.IO;
 using System.Net.Http.Json;
 
 
@@ -55,12 +56,13 @@ namespace AquaSolution.Client.Components.Administration.Users
                     var encoded = Uri.EscapeDataString(avatarPath);
                     var response = await Http.DeleteAsync($"api/upload/delete-avatar?avatarUrl={encoded}");
                 }
+                var path = new Uri(UserAvatarUrl).AbsolutePath;
+                path = path.Replace("/ITSM", "");
                 var avata = new AvataDto
                 {
                     UserId = User.Id,
-                    URLAvatarNew = new Uri(UserAvatarUrl).AbsolutePath
+                    URLAvatarNew = path
                 };
-
 
                 var response2 = await Http.PutAsJsonAsync("api/user/update-avatar", avata);
                 if (response2.IsSuccessStatusCode)

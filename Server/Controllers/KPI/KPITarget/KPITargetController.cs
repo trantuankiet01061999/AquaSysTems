@@ -21,5 +21,13 @@ namespace AquaSolution.Server.Controllers.KPI.KPITask
             return Ok(result);
         }
 
+        [HttpGet("target-by-user/{userId}")]
+        public async Task<IActionResult> GetTargetByUser(Guid userId)
+        {
+            var result = await _KPIMonthlyTargetService.GetTargetByUser(userId);
+            return Ok(result);
+        }
+
+
     }
 }

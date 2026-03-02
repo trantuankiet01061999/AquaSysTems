@@ -1,5 +1,6 @@
 ﻿
 using AntDesign;
+using AquaSolution.Client.Common;
 using AquaSolution.Shared.Departments;
 using AquaSolution.Shared.Enum.KPIType;
 using AquaSolution.Shared.Factory;
@@ -26,8 +27,8 @@ namespace AquaSolution.Client.Components.KPI.UserTask
         private IEnumerable<KPITaskDto> Selected;
         private List<KPITaskDto> DataFilter = new();
         private List<HandleUserTaskDto> HandleUserTaskDto = new();
-        private List<IndexWeightDto> CreatedTarget = new();
-        private List<IndexWeightDto> CreatedTargetCompare = new();
+        private List<CreatedTargetDto> CreatedTarget = new();
+        private List<CreatedTargetDto> CreatedTargetCompare = new();
 
         private HandleUserTaskAndTargetDto HandleUserTaskAndTarget = new();
         private UserDto User { get; set; }
@@ -44,10 +45,18 @@ namespace AquaSolution.Client.Components.KPI.UserTask
             CreatedTargetCompare.Clear();
             HandleUserTaskDto.Clear();
             User = user;
-            DataSource = kPITaskDtos
-                .Where(x => x.FactoryId == user.FactoryId && x.DepartmentId == user.DepartmentId)
-                .ToList();
-
+            if(User.Roles.Any(x => x.Name == "DepartmentViewer"))
+            {
+                DataSource = kPITaskDtos
+                              .Where(x => x.DepartmentId == user.DepartmentId)
+                              .ToList();
+            }
+            else
+            {
+                DataSource = kPITaskDtos
+                    .Where(x => x.FactoryId == user.FactoryId && x.DepartmentId == user.DepartmentId)
+                    .ToList();
+            }
             DataFilter = DataSource;
             await LoadDataFilter();
 
@@ -65,7 +74,7 @@ namespace AquaSolution.Client.Components.KPI.UserTask
         #region Handle Data
         private async Task LoadTaskAndTarget()
         {
-            var monthProperties = new Dictionary<int, Action<IndexWeightDto, decimal>>
+            var monthProperties = new Dictionary<int, Action<CreatedTargetDto, decimal>>
             {
                 [1] = (d, v) => d.TargetValue1 = v,
                 [2] = (d, v) => d.TargetValue2 = v,
@@ -187,7 +196,7 @@ namespace AquaSolution.Client.Components.KPI.UserTask
             };
         }
         private void FillQuarterHalfYearAndYear(
-            IndexWeightDto created,
+            CreatedTargetDto created,
             List<UpdateTargetDto> calculated)
         {
             created.TargetQarter1 = calculated.FirstOrDefault(x => x.Quarter == 1)?.TargetValue ?? 0;
@@ -203,7 +212,7 @@ namespace AquaSolution.Client.Components.KPI.UserTask
                 ?.TargetValue ?? 0;
         }
 
-        public List<UpdateTargetDto> ConvertCreatedToUpdateTargets(IndexWeightDto created)
+        public List<UpdateTargetDto> ConvertCreatedToUpdateTargets(CreatedTargetDto created)
         {
             var list = new List<UpdateTargetDto>();
 
@@ -252,7 +261,7 @@ namespace AquaSolution.Client.Components.KPI.UserTask
 
                 foreach (var item in Selected)
                 {
-                    CreatedTarget.Add(new IndexWeightDto
+                    CreatedTarget.Add(new CreatedTargetDto
                     {
                         TaskId = item.Id,
                         TaskName = item.TaskName,
@@ -307,9 +316,9 @@ namespace AquaSolution.Client.Components.KPI.UserTask
                 TitleButton = "NEXT ⟶";
             }
         }
-        private IndexWeightDto CloneTarget(IndexWeightDto x)
+        private CreatedTargetDto CloneTarget(CreatedTargetDto x)
         {
-            return new IndexWeightDto
+            return new CreatedTargetDto
             {
                 TaskId = x.TaskId,
                 UserId = x.UserId,
@@ -343,7 +352,7 @@ namespace AquaSolution.Client.Components.KPI.UserTask
             };
         }
 
-        private bool TargetEquals(IndexWeightDto a, IndexWeightDto b)
+        private bool TargetEquals(CreatedTargetDto a, CreatedTargetDto b)
         {
             if (a == null || b == null) return false;
 
@@ -409,7 +418,13 @@ namespace AquaSolution.Client.Components.KPI.UserTask
                 .GroupBy(x => x.KPIIndexType)
                 .Where(g => Math.Round(g.Sum(x => x.Weight), 4) != 1m)
                 .ToList();
-
+            foreach(var item in CreatedTarget)
+            {
+                if(item.Weight <=0)
+                {
+                     await Message.Error("Weight must be greater than zero");
+                }
+            }
             if (invalidGroups.Any())
             {
                 RenderFragment content = builder =>

@@ -6,6 +6,7 @@
 @inject IJSRuntime JS
 @using AquaSolution.Client.Common
 @using AquaSolution.Client.Components.KPI.KPISubmit
+@using AquaSolution.Client.Components.KPI.Target
 @using AquaSolution.Shared.UserManagements
 @using Microsoft.AspNetCore.Components.Authorization
 @using AquaSolution.Shared.KPI.KPISubmit
@@ -52,7 +53,7 @@
             <button @onclick="SelectedKpi" class="btn btn-primary custom-button-type">
                 <Icon Type="plus" />Selected KPI
             </button>
-
+            <button @onclick="ViewTarget" style="margin-left:5px;border-color:#fff"><Icon Type="eye" />View Target</button>
         </div>
     }
 </div>
@@ -104,3 +105,4 @@
 </div>
 <SelectedKPISubmitModalrazor @ref="_selectedKpiSubmitModalrazor"></SelectedKPISubmitModalrazor>
 <ApprovalTaskModal @ref="ApprovalTaskModalRef"></ApprovalTaskModal>
+<TargetModal @ref="targetModal"></TargetModal>
