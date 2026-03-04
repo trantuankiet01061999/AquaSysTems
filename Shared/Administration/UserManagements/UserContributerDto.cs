@@ -16,6 +16,7 @@ namespace AquaSolution.Shared.UserManagements
         public DepartmentType? DepartmentType { get; set; }
         public Guid? FactoryId { get;set; }
         public  bool IsActive { get; set; }
+        public string DisplayName => $"{Name} <br /> {Email}";
 
     }
 }

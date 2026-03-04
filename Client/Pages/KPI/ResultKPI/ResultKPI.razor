@@ -116,21 +116,21 @@
                     </a>
                 </Template>
             </PropertyColumn>
-            <PropertyColumn Width="100px" Title="WorkDayId" Property="c => c.WorkDayId"></PropertyColumn>
-            <PropertyColumn Width="200px" Title="Approver" Property="c => c.Approver"></PropertyColumn>
-            <PropertyColumn Width="200px" Title="Description" Property="c => c.Description"></PropertyColumn>
-            <PropertyColumn Width="100" Title="Status" Property="c => c.Status" >
+            <PropertyColumn HeaderStyle="text-align: center;" Width="100px" Title="WorkDayId" Property="c => c.WorkDayId"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Width="200px" Title="Approver" Property="c => c.Approver"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Width="200px" Title="Description" Property="c => c.Description"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Width="100" Title="Status" Property="c => c.Status" >
                 <Tag Color="@GetTagColor.GetTagColorCss(row.Status.ToString())">@row.Status</Tag>
             </PropertyColumn>
-            <PropertyColumn Width="160px" Title="ApprovalDate" Property="c => c.ApprovalDate" Format="dd/MM/yyyy HH:mm"></PropertyColumn>
-            <PropertyColumn Title="Month" Property="c => c.Month" Filters="_monthFilter"></PropertyColumn>
-            <PropertyColumn Title="Quarter" Property="c => c.Quarter" Filters="_quaterFilter"></PropertyColumn>
-            <PropertyColumn Title="HalfYear" Property="c => c.HalfYear" Filters="_halfYearFilter"></PropertyColumn>
-            <PropertyColumn Title="Year" Property="c => c.Year" Filters="_yearFilter"></PropertyColumn>
-            <PropertyColumn Title="KPIScore" Property="c => c.KPIScore"></PropertyColumn>
-            <PropertyColumn Title="KeyTaskScore" Property="c => c.KeyTaskScore"></PropertyColumn>
-            <PropertyColumn Title="OMGScore" Property="c => c.OMGScore"></PropertyColumn>
-            <PropertyColumn Title="TotalScroe" Property="c => c.TotalScroe"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Width="160px" Title="ApprovalDate" Property="c => c.ApprovalDate" Format="dd/MM/yyyy HH:mm"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Title="Month" Property="c => c.Month" Filters="_monthFilter"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Title="Quarter" Property="c => c.Quarter" Filters="_quaterFilter"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Title="HalfYear" Property="c => c.HalfYear" Filters="_halfYearFilter"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Title="Year" Property="c => c.Year" Filters="_yearFilter"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Title="KPIScore" Property="c => c.KPIScore"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Title="KeyTaskScore" Property="c => c.KeyTaskScore"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Title="OMGScore" Property="c => c.OMGScore"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Title="TotalScroe" Property="c => c.TotalScroe"></PropertyColumn>
             <Column Fixed="ColumnFixPlacement.Right" TData="ViewResultKpiDto" Width="50px" Context="row">
                 <Template>
                     @if (row.kPITotalScoreType == KPITotalScoreType.Staff)

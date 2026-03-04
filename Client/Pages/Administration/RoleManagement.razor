@@ -50,7 +50,7 @@
        Class="customTable fix-table-header"
        DataSource="_roles">
     <ColumnDefinitions Context="row">
-        <PropertyColumn  Title="RoleName" Property="c => c.Name"></PropertyColumn>
+        <PropertyColumn HeaderStyle="text-align: center;" Title="RoleName" Property="c => c.Name"></PropertyColumn>
         <Column Width="50" Fixed="ColumnFixPlacement.Right" TData="RoleDto" Context="row">
             <Template>
                 <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">

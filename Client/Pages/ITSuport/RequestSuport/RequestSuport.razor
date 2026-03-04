@@ -85,7 +85,7 @@
            Class="customTable fix-table-header"
            DataSource="_requestSuportFillter">
         <ColumnDefinitions Context="row">
-            <PropertyColumn Width="300" Title="RequestTitle" Property="c => c.RequestTitle">
+            <PropertyColumn HeaderStyle="text-align: center;" Width="300" Title="RequestTitle" Property="c => c.RequestTitle">
                 <Template>
                     <a href="javascript:void(0);" @onclick="() => ViewAsync(row)">
                         @row.RequestTitle
@@ -95,11 +95,11 @@
             <PropertyColumn Width="100" Title="Status" Property="c => c.Status" Filters="_statusFilter">
                 <Tag Color="@GetTagColor.GetTagColorCss(row.Status.ToString())">@row.Status</Tag>
             </PropertyColumn>
-            <PropertyColumn Width="220" Title="RequestBy" Property="c => c.RequestByName"></PropertyColumn>
-            <PropertyColumn Width="220" Title="Requester Email" Property="c => c.RequestByEmail"></PropertyColumn>
-            <PropertyColumn Width="220" Title="TechnicianName" Property="c => c.TechnicianName" Filters="_technicianNameFilter"></PropertyColumn>
-            <PropertyColumn Width="100" Title="Category" Property="c => c.RequestSuportCategoryName"></PropertyColumn>
-            <PropertyColumn Width="180" Title="CreatedDate" Property="c => c.CreatedDate"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Width="220" Title="RequestBy" Property="c => c.RequestByName"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Width="220" Title="Requester Email" Property="c => c.RequestByEmail"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Width="220" Title="TechnicianName" Property="c => c.TechnicianName" Filters="_technicianNameFilter"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Width="100" Title="Category" Property="c => c.RequestSuportCategoryName"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Width="180" Title="CreatedDate" Property="c => c.CreatedDate"></PropertyColumn>
             <Column Fixed="ColumnFixPlacement.Right" TData="RequestSuportDto" Width="50px" Context="row">
                 <Template>
                     <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">

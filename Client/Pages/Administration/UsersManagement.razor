@@ -98,12 +98,12 @@
                     </a>
                 </Template>
             </PropertyColumn>
-            <PropertyColumn Width="100px" Title="WorkDayId" Property="c => c.WorkDayId"></PropertyColumn>
-            <PropertyColumn Width="100px" Title="Factory" Property="c => c.FactoryName" Filters="_factoryFilter"></PropertyColumn>
-            <PropertyColumn Width="150px" Title="DepartmentName" Property="c => c.DepartmentName" Filters="_departmentFilter"></PropertyColumn>
-            <PropertyColumn Width="90px"  Title="Position" Property="c => c.PositionName" Filters="_positionFilter"></PropertyColumn>
-            <PropertyColumn Title="Email" Property="c => c.Email"></PropertyColumn>
-            <PropertyColumn Sortable  Title="IsActive" Property="c => c.IsActive"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Width="100px" Title="WorkDayId" Property="c => c.WorkDayId"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Width="100px" Title="Factory" Property="c => c.FactoryName" Filters="_factoryFilter"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Width="150px" Title="DepartmentName" Property="c => c.DepartmentName" Filters="_departmentFilter"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Width="90px" Title="Position" Property="c => c.PositionName" Filters="_positionFilter"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Title="Email" Property="c => c.Email"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Sortable Title="IsActive" Property="c => c.IsActive"></PropertyColumn>
             <Column Fixed="ColumnFixPlacement.Right" TData="UserDto" Width="50px"  Context="row">
                 <Template>
                     <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">

@@ -19,19 +19,21 @@ namespace AquaSolution.Client.Components.KPI.UserTask
         private UserDto User { get; set; }
         private AddTaskByUserModal _addTaskByUserModal = new();
         private List<UserTaskDto> UserTasks = new();
-
+        private string TitleModal = string.Empty;
         #endregion
         #region Innit
         public async Task ShowModal(UserDto user)
         {
+            TitleModal = "Title";
             User = user;
+            TitleModal = user.FullName;
             await LoadData();
             IsModalVisible = true;
             StateHasChanged();
         }
         private async Task LoadData()
         {
-             ListTaskAll = await Http.GetFromJsonAsync<List<KPITaskDto>>("api/KPITask/get-list");
+            ListTaskAll = await Http.GetFromJsonAsync<List<KPITaskDto>>("api/KPITask/get-list");
             UserTasks = await Http.GetFromJsonAsync<List<UserTaskDto>>($"api/UserTask/list-taskIds/{User.Id}");
             if (ListTaskAll is not null && UserTasks is not null)
             {

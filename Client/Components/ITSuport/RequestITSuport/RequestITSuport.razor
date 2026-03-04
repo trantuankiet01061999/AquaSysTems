@@ -101,7 +101,7 @@
                             </Select>
                         </FormItem>
                     </div>
-                    <div style="flex: 0 0 calc(3.85 / 12 * 100%);">
+          @*           <div style="flex: 0 0 calc(3.85 / 12 * 100%);">
                         <FormItem label="RequestBy">
                             <Select TItem="UserContributerDto" TItemValue="Guid"
                                     DataSource="@ListUser"
@@ -112,7 +112,26 @@
                                     ItemLabel="c => c.Name?? string.Empty">
                             </Select>
                         </FormItem>
+                    </div> *@
+                    <div style="flex: 0 0 calc(3.85 / 12 * 100%);">
+                        <FormItem label="RequestBy">
+                            <Select TItem="UserContributerDto" TItemValue="Guid"
+                                    DataSource="@ListUser"
+                                    EnableSearch
+                                    AutoClearSearchValue="true"
+                                    @bind-Value="@RequestSuport.RequestById"
+                                    ItemValue="c => c.Id??Guid.Empty"
+                                    ItemLabel="c => c.Name?? string.Empty">
+                                <ItemTemplate Context="item">
+                                    <div style="white-space: normal;">
+                                        @((MarkupString)item.DisplayName)
+                                    </div>
+              
+                                </ItemTemplate>
+                            </Select>
+                        </FormItem>
                     </div>
+
                     <div style="flex: 0 0 calc(4 / 12 * 100%);">
                         <FormItem label="Technician">
                             <Select TItem="UserContributerDto" TItemValue="Guid?"

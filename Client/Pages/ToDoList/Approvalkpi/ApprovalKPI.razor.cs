@@ -73,10 +73,10 @@ namespace AquaSolution.Client.Pages.ToDoList.Approvalkpi
                 var data = await Http.GetFromJsonAsync<List<ViewKPIForApprovalDto>>("api/KPISubmit/get-kpi-approval");
 
                 if (CurrenUser.Roles.Any(x => x.Name == "Admin"))
-                    data = data.ToList();
+                    data = data.OrderByDescending(x=>x.CreatedDate).ToList();
                 else
                     data = data.Where(x => x.DecisionMaker == CurrenUser.Id &&
-                                           x.EApprovalStatusType != EApprovalStatusType.Pending).ToList();
+                                           x.EApprovalStatusType != EApprovalStatusType.Pending).OrderByDescending(x => x.CreatedDate).ToList();
                 _groupedList.Clear();
                 _groupedList.AddRange(new[]
                 {

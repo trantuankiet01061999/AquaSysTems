@@ -32,15 +32,15 @@
                            HidePagination
                            DataSource="@group.Items">
                         <ColumnDefinitions Context="rowItem">
-                            <PropertyColumn Title="Step" Property="c => c.Step" Width="50" />
-                            <PropertyColumn Title="Position" Property="c => c.Position" Width="50" />
-                            <PropertyColumn Title="Title" Property="c => c.Title" />
-                            <PropertyColumn Width="60" Title="Month" Property="c => c.Month" />
-                            <PropertyColumn Title="Requester" Property="c => c.CreatedByName" Width="120" />
-                            <PropertyColumn Width="60" Title="Status" Property="c => c.EApprovalStatusType">
+                            <PropertyColumn HeaderStyle="text-align: center;" Title="Step" Property="c => c.Step" Width="50" />
+                            <PropertyColumn HeaderStyle="text-align: center;" Title="Position" Property="c => c.Position" Width="50" />
+                            <PropertyColumn HeaderStyle="text-align: center;" Title="Title" Property="c => c.Title" />
+                            <PropertyColumn HeaderStyle="text-align: center;" Width="60" Title="Month" Property="c => c.Month" />
+                            <PropertyColumn HeaderStyle="text-align: center;" Title="Requester" Property="c => c.CreatedByName" Width="120" />
+                            <PropertyColumn  HeaderStyle="text-align: center;" Width="60" Title="Status" Property="c => c.EApprovalStatusType">
                                 <Tag Color="@GetTagColor.GetTagColorCss(rowItem.EApprovalStatusType.ToString())">@rowItem.EApprovalStatusType</Tag>
                             </PropertyColumn>
-                            <PropertyColumn Title="CreatedDate" Property="c => c.CreatedDate" Format="dd/MM/yyyy HH:mm:ss" Width="180" />
+                            <PropertyColumn Sortable Title="CreatedDate" Property="c => c.CreatedDate" Format="dd/MM/yyyy HH:mm:ss" Width="180" />
                             <Column Width="70" Fixed="ColumnFixPlacement.Right" TData="ViewKPIForApprovalDto" Context="row">
                                 <Template>
                                     <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">

@@ -1074,7 +1074,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                     Status = ts.Status,
                     CreatedBy = ts.CreatedBy,
                     CreatedDate = ts.CreatedDate,
-                    IsActive = ts.IsActive
+                    IsActive = ts.IsActive,
                 });
             }
 
@@ -1099,13 +1099,13 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
             var formulas = (await _formulaRepo.GetAllAsync())
                 .Where(f => formulaIds.Contains(f.Id))
                 .ToList();
-
+            var userTaskRepo = await _userTaskepo.GetAllAsync();
             // ===================== 4. MAP DETAIL SCORE =====================
             foreach (var d in detailScores)
             {
                 var task = tasks.FirstOrDefault(t => t.Id == d.TaskId);
                 if (task == null) continue;
-
+                var index = userTaskRepo.FirstOrDefault(x => x.KPITaskId == d.TaskId).Index ?? 0;
                 var formula = formulas.FirstOrDefault(f => f.Id == task.FormulaId);
 
                 result.DetailScore.Add(new DetailScoreDto
@@ -1132,7 +1132,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                     Bottom = task.Bottom,
                     Weight = d.Weight,
                     IndexWeight = d.Weight,
-
+                    Index = index,
                     Unit = task.Unit,
                     PIC = task.PIC,
                     DataSource = task.DataSource,

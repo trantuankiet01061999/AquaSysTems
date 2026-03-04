@@ -142,7 +142,7 @@
                             details = ViewDetailApprovalKPI.DetailScore
                             .Where(x =>
                             x.Month == item.Month &&
-                            x.Year == item.Year)
+                            x.Year == item.Year).OrderBy(x => x.Index)
                             .ToList();
                              Title = $"{item.Title} - KpiScore:{item.KPIScore} - KeyTaskScore:{item.KeyTaskScore} - OMGScore:{item.OMGScore} - TotaleScore:{item.TotaleScore} ";
                         }
@@ -152,7 +152,7 @@
                             details = ViewDetailApprovalKPI.DetailScore
                             .Where(x =>
                             x.Quarter == item.Quarter &&
-                            x.Year == item.Year)
+                            x.Year == item.Year).OrderBy(x => x.Index)
                             .ToList();
                             Title = $"{item.Title} - KpiScore:{item.KPIScore} - KeyTaskScore:{item.KeyTaskScore} - OMGScore:{item.OMGScore} - TotaleScore:{item.TotaleScore} ";
                         }
@@ -162,7 +162,7 @@
                             details = ViewDetailApprovalKPI.DetailScore
                             .Where(x =>
                             x.HalfYear == item.HalfYear &&
-                            x.Year == item.Year)
+                            x.Year == item.Year).OrderBy(x => x.Index)
                             .ToList();
                              Title = $"{item.Title} - KpiScore:{item.KPIScore} - KeyTaskScore:{item.KeyTaskScore} - OMGScore:{item.OMGScore} - TotaleScore:{item.TotaleScore} ";
                         }
@@ -174,7 +174,7 @@
                             x.Month == null &&
                             x.Quarter == null &&
                             x.HalfYear == null
-                            )
+                            ).OrderBy(x => x.Index)
                             .ToList();
 
                              Title = $"{item.Title} - KpiScore:{item.KPIScore} - KeyTaskScore:{item.KeyTaskScore} - OMGScore:{item.OMGScore} - TotaleScore:{item.TotaleScore} ";

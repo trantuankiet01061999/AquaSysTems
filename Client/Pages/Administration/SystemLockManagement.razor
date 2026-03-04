@@ -52,9 +52,9 @@
            Class="customTable fix-table-header"
            DataSource="_systemLockDto">
         <ColumnDefinitions Context="row">
-            <PropertyColumn Title="PageName" Property="c => c.PageName"></PropertyColumn>
-            <PropertyColumn Title="LockedBy" Property="c => c.LockedByName"></PropertyColumn>
-            <PropertyColumn Title="LockedDate" Property="c => c.LockedDate"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Title="PageName" Property="c => c.PageName"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Title="LockedBy" Property="c => c.LockedByName"></PropertyColumn>
+            <PropertyColumn HeaderStyle="text-align: center;" Title="LockedDate" Property="c => c.LockedDate"></PropertyColumn>
             <Column Title="Lock" Width="100px" TData="SystemLockDto">
                 <AntDesign.Switch Checked="row.IsLocket"
                                   OnChange="@(async (bool value) => await OnLockChanged(row, value))" />
