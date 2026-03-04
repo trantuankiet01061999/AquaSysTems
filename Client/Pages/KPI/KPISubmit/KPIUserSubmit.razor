@@ -50,10 +50,10 @@
     @if (!IsLock)
     {
         <div style="display: flex;  align-items: center; margin-bottom: 10px; ">
+            <button @onclick="ViewTarget" style="margin-left:5px;border-color:#fff"><Icon Type="eye" />View Target</button>
             <button @onclick="SelectedKpi" class="btn btn-primary custom-button-type">
                 <Icon Type="plus" />Selected KPI
             </button>
-            <button @onclick="ViewTarget" style="margin-left:5px;border-color:#fff"><Icon Type="eye" />View Target</button>
         </div>
     }
 </div>
@@ -85,7 +85,7 @@
                     <PropertyColumn Width="100px" Title="KPIScore" Property="c => c.KPIScore"></PropertyColumn>
                     <PropertyColumn Width="100px" Title="KeyTaskScore" Property="c => c.KeyTaskScore"></PropertyColumn>
                     <PropertyColumn Width="100px" Title="OMGScore" Property="c => c.OMGScore"></PropertyColumn>
-                    <PropertyColumn Width="100px" Title="OMGScore" Property="c => c.TotaleScore"></PropertyColumn>
+                    <PropertyColumn Width="100px" Title="TotaleScore" Property="c => c.TotaleScore"></PropertyColumn>
                     <PropertyColumn Width="50px" Title="Year" Property="c => c.Year"></PropertyColumn>
                     <Column Fixed="ColumnFixPlacement.Right" TData="ViewKPITotalScoreDto" Title="Acction" Width="50px" Context="row">
                         @if (row.Month != null)
