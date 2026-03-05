@@ -32,16 +32,7 @@
                            HidePagination
                            DataSource="@group.Items">
                         <ColumnDefinitions Context="rowItem">
-                            <PropertyColumn HeaderStyle="text-align: center;" Title="Step" Property="c => c.Step" Width="50" />
-                            <PropertyColumn HeaderStyle="text-align: center;" Title="Position" Property="c => c.Position" Width="50" />
-                            <PropertyColumn HeaderStyle="text-align: center;" Title="Title" Property="c => c.Title" />
-                            <PropertyColumn HeaderStyle="text-align: center;" Width="60" Title="Month" Property="c => c.Month" />
-                            <PropertyColumn HeaderStyle="text-align: center;" Title="Requester" Property="c => c.CreatedByName" Width="120" />
-                            <PropertyColumn  HeaderStyle="text-align: center;" Width="60" Title="Status" Property="c => c.EApprovalStatusType">
-                                <Tag Color="@GetTagColor.GetTagColorCss(rowItem.EApprovalStatusType.ToString())">@rowItem.EApprovalStatusType</Tag>
-                            </PropertyColumn>
-                            <PropertyColumn Sortable Title="CreatedDate" Property="c => c.CreatedDate" Format="dd/MM/yyyy HH:mm:ss" Width="180" />
-                            <Column Width="70" Fixed="ColumnFixPlacement.Right" TData="ViewKPIForApprovalDto" Context="row">
+                            <Column Width="50" Fixed="ColumnFixPlacement.Right" TData="ViewKPIForApprovalDto" Context="row">
                                 <Template>
                                     <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">
                                         <ChildContent>
@@ -55,10 +46,10 @@
                                                 @if (rowItem.EApprovalStatusType == EApprovalStatusType.InReview)
                                                 {
                                                     <Button Class="btn" Type="ButtonType.Link" OnClick="@(async () => await ApprovalAsync(rowItem.SubmitId, rowItem.Id, rowItem.DecisionMaker))" Style="text-align: left;">
-                                                        <Icon Type="check" /> Approved
+                                                        <Icon Type="check" /> Approve
                                                     </Button>
                                                     <Button Class="btn" Type="ButtonType.Text" OnClick="@(async () => await RejectedAsync(rowItem.SubmitId, rowItem.Id, rowItem.DecisionMaker))" Style="text-align: left;color:red">
-                                                        <Icon Type="delete" /> Rejected
+                                                        <Icon Type="delete" /> Reject
                                                     </Button>
                                                 }
                                             </div>
@@ -66,6 +57,23 @@
                                     </Popover>
                                 </Template>
                             </Column>
+                            <PropertyColumn HeaderStyle="text-align: center;" Title="Step" Property="c => c.Step" Width="50" />
+                            <PropertyColumn HeaderStyle="text-align: center;" Title="Position" Property="c => c.Position" Width="50" />
+                            <PropertyColumn HeaderStyle="text-align: center;" Width="250px" Title="Title" Property="c => c.Title">
+                                <Template>
+                                    <a href="javascript:void(0);" @onclick="() => ViewDetail(rowItem)">
+                                        @rowItem.Title
+                                    </a>
+                                </Template>
+                            </PropertyColumn>
+           @*                  <PropertyColumn HeaderStyle="text-align: center;" Title="Title" Property="c => c.Title" /> *@
+                            <PropertyColumn HeaderStyle="text-align: center;" Width="60" Title="Month" Property="c => c.Month" />
+                            <PropertyColumn HeaderStyle="text-align: center;" Title="Requester" Property="c => c.CreatedByName" Width="120" />
+                            <PropertyColumn  HeaderStyle="text-align: center;" Width="60" Title="Status" Property="c => c.EApprovalStatusType">
+                                <Tag Color="@GetTagColor.GetTagColorCss(rowItem.EApprovalStatusType.ToString())">@rowItem.EApprovalStatusType</Tag>
+                            </PropertyColumn>
+                            <PropertyColumn Sortable Title="CreatedDate" Property="c => c.CreatedDate" Format="dd/MM/yyyy HH:mm:ss" Width="160" />
+                           
 
                         </ColumnDefinitions>
                     </Table>
