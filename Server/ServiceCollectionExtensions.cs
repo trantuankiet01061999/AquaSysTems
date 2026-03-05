@@ -29,6 +29,7 @@ using AquaSolution.Server.Services.ManageMedicalRooms.RequestClinicservice;
 using AquaSolution.Server.Services.ManageMedicalRooms.WarehouseExportService;
 using AquaSolution.Server.Services.ManageMedicalRooms.WarehouseImportService;
 using AquaSolution.Server.Services.SemiReport.CusPackService;
+using AquaSolution.Server.Services.SemiReport.PcbReportService;
 using AquaSolution.Server.Services.SemiReport.RollReportService;
 using AquaSolution.Server.Services.SemiReport.SemiReportService;
 
@@ -95,8 +96,9 @@ namespace AquaSolution.Server
             services.AddScoped<ISemiService, SemiService>();
             services.AddScoped<IRollReportService, RollReportService>();
             services.AddScoped<ICusPackService, CusPackService>();
+            services.AddScoped<IPcbReportService, PcbReportService>();
             #endregion
-            
+
             return services;
         }
     }
