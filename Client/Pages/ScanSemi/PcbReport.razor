@@ -1,11 +1,11 @@
-﻿@page "/report-roll"
+﻿@page "/report-pcb"
 @using AntDesign
 @inject IJSRuntime JS
 @inject ModalService modal
 @inject NavigationManager Navigation
 @inject IMessageService Message
 @using AquaSolution.Shared.SemiReport
-<PageTitle>RollReport</PageTitle>
+<PageTitle>PcbReport</PageTitle>
 <div class="mb-3">
     <style>
         .custom-button-type {
@@ -59,7 +59,8 @@
     <div style="display: flex;  align-items: center; margin-bottom: 10px;">
 
         <!-- #region Search -->
-        <Input Placeholder="PackNo" Value="@PackNo" style="margin-left:2px;width:190px;font-size:12px" @onkeydown="HandleKeyDown" @oninput="PackNoInputChanged" />
+        <Input Placeholder="PcbCode" Value="@PcbCode" style="margin-left:2px;width:190px;font-size:12px" @onkeydown="HandleKeyDown" @oninput="PcbCodeInputChanged" />
+        <Input Placeholder="IntermediateCode" Value="@IntermediateCode" style="margin-left:2px;width:190px;font-size:12px" @onkeydown="HandleKeyDown" @oninput="IntermediateCodeInputChanged" />
         <button @onclick="Search" style="margin-left:5px;border-color:#fff"><Icon Type="search" /> Search</button>
         <button @onclick="Reset" style="margin-left:5px;border-color:#fff"><Icon Type="undo" /> Reset</button>
         <button @onclick="ExportExcel" style="margin-left:5px;border-color:#fff"><Icon Type="file-excel" /> Export Excel</button>
@@ -88,18 +89,16 @@
 
 </script>
 <div style="width:100%;overflow-x:scroll ;max-height:70vh; ">
-    <Table TItem="RollReportDto"
+    <Table TItem="PcbReportDto"
            @ref="_tableRef"
            Size="TableSize.Small"
            Bordered
            Class="customTable fix-table-header"
-           DataSource="@_rollFilter">
+           DataSource="@_pcbFilter">
         <ColumnDefinitions Context="row">
-            <PropertyColumn Width="200px" HeaderStyle="text-align: center;" Title="PackNo" Property="c => c.PackNo"></PropertyColumn>
-            <PropertyColumn Width="100px" HeaderStyle="text-align: center;" Style="text-align: center;" Title="Result" Property="c => c.ResultText"></PropertyColumn>
+            <PropertyColumn Width="150px" HeaderStyle="text-align: center;" Title="IntermediateCode" Property="c => c.IntermediateCode"></PropertyColumn>
             <PropertyColumn Width="150px" HeaderStyle="text-align: center;" Sortable Title="ScanTime" Format="yyyy/MM/dd HH:mm:ss" Property="c => c.ScanTime"></PropertyColumn>
-            <PropertyColumn Width="150px" HeaderStyle="text-align: center;" Title="Customer Pack No (Roll Material)" Property="c => c.CusPackno"></PropertyColumn>
-            <PropertyColumn Width="150px" HeaderStyle="text-align: center;" Title="Model Code (Inner Drum)" Property="c => c.ModelCode"></PropertyColumn>
+            <PropertyColumn Width="250px" HeaderStyle="text-align: center;" Title="PcbCode" Property="c => c.PcbCode"></PropertyColumn>
         </ColumnDefinitions>
     </Table>
 </div> 
