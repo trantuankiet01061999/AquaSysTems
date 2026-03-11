@@ -35,5 +35,7 @@ namespace AquaSolution.Shared.ITSuport.RequestSuport
         public string CreatedName { get; set; }
         public string CreatedEmail { get; set; }
         public DateTime? OnHoldDate { get; set; }
+        public int TicketNumber { get; set; }
+        public string TicketCode => TicketNumber.ToString("D6");
     }
 }

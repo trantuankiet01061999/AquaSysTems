@@ -19,5 +19,6 @@ namespace AquaSolution.Server.Services.Administration.UserService
         Task<bool> ChangeAvataAsync(AvataDto avataDto);
         Task<List<UserContributerDto>> GetContributer();
         Task<List<UserSelectedDto>> LoadUserSelected();
+        Task<bool> ResetPasswordAsync(ResetPassword request);
     }
 }

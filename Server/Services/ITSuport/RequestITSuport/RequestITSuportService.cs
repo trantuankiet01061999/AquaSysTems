@@ -131,7 +131,8 @@ namespace AquaSolution.Server.Services.ITSuport.RequestSuportCategories
                             Factory = $"{factory.Name} - {factory.Code}",
                             CreatedName = created.FullName,
                             CreatedEmail = created.Email,
-                            CreatedById = requestSuport.CreatedById
+                            CreatedById = requestSuport.CreatedById,
+                            TicketNumber = requestSuport.TicketNumber,
                         };
             var data = query
                     .OrderByDescending(x => x.CreatedDate)

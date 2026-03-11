@@ -21,15 +21,16 @@ namespace AquaSolution.Client.Pages.Administration
         [Inject] private HttpClient? Http { get; set; }
         private List<UserDto>? _users = new();
         private List<UserDto>? _userFilter = new();
-        private bool _isLoading = true;
         private RoleManagerDialog? _roleManagerDialog;
         private UserModal? _userModal;
+        private ResetPassModal resetPassModal = new();
         private UserDto? CurrenUser { get; set; }
         private UserDetailModal? _detailModal;
         private bool Created { get; set; }
         private bool Edit { get; set; }
         private bool Delete { get; set; }
         private bool EditRole { get; set; }
+        private bool ResetPassword { get; set; }
         public bool Loading { get; set; }
         private Guid PageId { get; set; }
         #endregion
@@ -78,10 +79,11 @@ namespace AquaSolution.Client.Pages.Administration
                 CurrenUser = await currenUserClass.LoadCurrenUser();
             }
 
-            EditRole =await permissionService.HasPermissionAsync(PageId, PermissionActionType.EditRole);
+            EditRole = await permissionService.HasPermissionAsync(PageId, PermissionActionType.EditRole);
             Created = await permissionService.HasPermissionAsync(PageId, PermissionActionType.Add);
             Edit = await permissionService.HasPermissionAsync(PageId, PermissionActionType.Edit);
             Delete = await permissionService.HasPermissionAsync(PageId, PermissionActionType.Delete);
+            ResetPassword = await permissionService.HasPermissionAsync(PageId, PermissionActionType.ResetPassword);
         }
         #endregion
         #region Action
@@ -140,6 +142,10 @@ namespace AquaSolution.Client.Pages.Administration
         private async Task DetailUser(UserDto user)
         {
             await _detailModal?.ShowModal(user, new CurrentUserInfo(), false)!;
+        }
+        private async Task ResetPasswordAsync(UserDto user)
+        {
+            await resetPassModal.ShowModal(user);
         }
         #endregion
         #region Handle Data

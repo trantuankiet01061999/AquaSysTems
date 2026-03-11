@@ -41,4 +41,19 @@ public class AuthController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword(ResetPassword request)
+    {
+        try
+        {
+            var success = await _userService.ResetPasswordAsync(request);
+            if (success)
+                return Ok(new { message = "Password reset successfully." });
+            return BadRequest(new { message = "Password reset failed." });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
 }

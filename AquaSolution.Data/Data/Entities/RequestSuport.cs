@@ -24,6 +24,6 @@ namespace AquaSolution.Data.Data.Entities
         public DateTime? CancelDate { get; set; }
         public DateTime? OnHoldDate { get; set; }
         public Guid CreatedById { get; set; }
-
+        public int TicketNumber { get; set; }
     }
 }

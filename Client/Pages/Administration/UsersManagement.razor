@@ -133,6 +133,13 @@
                                         <Icon Type="delete" /> Delete
                                     </Button>
                                 }
+                                @if (ResetPassword)
+                                {
+                                    <Button Type="ButtonType.Text" OnClick="@(async () => await ResetPasswordAsync(row))" Style="text-align: left;">
+                                        <Icon Type="delete" /> Reset Password
+                                    </Button>
+                                }
+
                             </div>
                         </ContentTemplate>
                     </Popover>
@@ -145,3 +152,4 @@
                    OnSave="HandleSaved" />
 <UserModal @ref="_userModal" OnSave="HandleSaved"></UserModal>
 <UserDetailModal @ref="_detailModal"></UserDetailModal>
+<ResetPassModal @ref="resetPassModal"></ResetPassModal>

@@ -496,7 +496,27 @@ public class UserService : IUserService
 
         return true;
     }
+    public async Task<bool> ResetPasswordAsync(ResetPassword request)
+    {
+        // Step 1: Find user
+        var user = await _userRepo.GetByIdAsync(request.UserId);
+        if (user == null || user.IsDeleted || !user.IsActive)
+            throw new Exception("User does not exist or has been deactivated.");
 
+        // Step 2: Check confirm password
+        if (request.NewPassword != request.ConfirmPassword)
+            throw new Exception("Confirm password does not match the new password.");
+
+        // Step 3: Hash new password
+        var newHashedPassword = PasswordHelper.HashPassword(request.NewPassword);
+
+        // Step 4: Update
+        user.PasswordHash = newHashedPassword;
+
+        await _userRepo.SaveChangesAsync();
+
+        return true;
+    }
     public async Task<bool> ChangeAvataAsync(AvataDto avataDto)
     {
         var user = await _userRepo.FirstOrDefaultAsync(x => x.Id == avataDto.UserId);

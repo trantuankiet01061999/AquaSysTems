@@ -20,5 +20,6 @@ namespace AquaSolution.Shared.Enum
         Detail,
         CalculateQuarterPoints,
         TaskManagement,
+        ResetPassword,
     }
 }

@@ -85,6 +85,7 @@
            Class="customTable fix-table-header"
            DataSource="_requestSuportFillter">
         <ColumnDefinitions Context="row">
+            <PropertyColumn HeaderStyle="text-align: center;" Width="80" Title="TicketCode" Property="c => c.TicketCode"></PropertyColumn>
             <PropertyColumn HeaderStyle="text-align: center;" Width="300" Title="RequestTitle" Property="c => c.RequestTitle">
                 <Template>
                     <a href="javascript:void(0);" @onclick="() => ViewAsync(row)">

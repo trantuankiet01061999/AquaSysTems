@@ -14,6 +14,9 @@ namespace AquaSolution.Data.Data.MappingConfigurations
                    .WithMany()
                    .HasForeignKey(e => e.RequestBy)
                    .OnDelete(DeleteBehavior.Restrict);
+            builder.Property(x => x.TicketNumber)
+                   .ValueGeneratedOnAdd()
+                   .UseIdentityColumn(1, 1);
 
             builder.HasOne<User>()
                    .WithMany()

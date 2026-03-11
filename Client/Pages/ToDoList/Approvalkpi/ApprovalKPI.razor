@@ -32,6 +32,11 @@
                            HidePagination
                            DataSource="@group.Items">
                         <ColumnDefinitions Context="rowItem">
+                            <Column Title="No" Width="40" TData="ViewKPIForApprovalDto" Context="row">
+                                <Template>
+                                    @(group.Items.IndexOf(rowItem) + 1)
+                                </Template>
+                            </Column>
                             <Column Width="50" Fixed="ColumnFixPlacement.Right" TData="ViewKPIForApprovalDto" Context="row">
                                 <Template>
                                     <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">
@@ -57,7 +62,7 @@
                                     </Popover>
                                 </Template>
                             </Column>
-                            <PropertyColumn HeaderStyle="text-align: center;" Title="Step" Property="c => c.Step" Width="50" />
+                            <PropertyColumn HeaderStyle="text-align: center;" Title="Step" Property="c => c.Step" Width="30" />
                             <PropertyColumn HeaderStyle="text-align: center;" Title="Position" Property="c => c.Position" Width="50" />
                             <PropertyColumn HeaderStyle="text-align: center;" Width="250px" Title="Title" Property="c => c.Title">
                                 <Template>
@@ -67,12 +72,12 @@
                                 </Template>
                             </PropertyColumn>
                             <PropertyColumn Filters="_monthFilter" HeaderStyle="text-align: center;" Width="60" Title="Month" Property="c => c.Month" />
-                            <PropertyColumn  Filterable  HeaderStyle="text-align: center;" Title="Requester" Property="c => c.CreatedByName" Width="120" />
-                            <PropertyColumn  HeaderStyle="text-align: center;" Width="60" Title="Status" Property="c => c.EApprovalStatusType">
+                            <PropertyColumn Filterable HeaderStyle="text-align: center;" Title="Requester" Property="c => c.CreatedByName" Width="140" />
+                            <PropertyColumn HeaderStyle="text-align: center;" Width="60" Title="Status" Property="c => c.EApprovalStatusType">
                                 <Tag Color="@GetTagColor.GetTagColorCss(rowItem.EApprovalStatusType.ToString())">@rowItem.EApprovalStatusType</Tag>
                             </PropertyColumn>
-                            <PropertyColumn Sortable Title="CreatedDate" Property="c => c.CreatedDate" Format="dd/MM/yyyy HH:mm:ss" Width="160" />
-                           
+                            <PropertyColumn Sortable Title="CreatedDate" Property="c => c.CreatedDate" Format="dd/MM/yyyy HH:mm:ss" Width="150" />
+
 
                         </ColumnDefinitions>
                     </Table>
