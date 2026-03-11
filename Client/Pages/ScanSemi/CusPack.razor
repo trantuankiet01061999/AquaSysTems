@@ -54,8 +54,8 @@
            Class="customTable fix-table-header"
            DataSource="_cusPackNo">
         <ColumnDefinitions Context="row">
-            <PropertyColumn Fixed="ColumnFixPlacement.Left" Title="Customer Pack No (Roll Material)" Property="c => c.CusPackNo"></PropertyColumn>
-            <PropertyColumn Title="Model Code (Inner Drum)" Property="c => c.ModelCode"></PropertyColumn>
+            <PropertyColumn Fixed="ColumnFixPlacement.Left" Title="Roll Material (BOM) " Property="c => c.CusPackNo"></PropertyColumn>
+            <PropertyColumn Title="Inner Drum (BOM)" Property="c => c.ModelCode"></PropertyColumn>
             <Column Fixed="ColumnFixPlacement.Right" TData="CusPackNoDto" Width="50px" Context="row">
                 <Template>
                     <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">
