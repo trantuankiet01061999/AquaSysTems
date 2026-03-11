@@ -41,7 +41,7 @@
             padding: 8px;
             text-align: center;
             box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
-             background: transparent !important; 
+            background: transparent !important;
         }
 
 
@@ -67,8 +67,15 @@
             </button>
         }
         <!-- #region Search -->
-        <Input Placeholder="WorkDayId" Value="@WorkDayId" style="margin-left:2px;width:190px;font-size:12px" @onkeydown="HandleKeyDown" @oninput="WorkDayIdInputChanged" />
-        <Input Placeholder="Full Name" Value="@FullName" style="margin-left:2px;width:190px;font-size:12px" @onkeydown="HandleKeyDown" @oninput="FullNameInputChanged" />
+        <Input Placeholder="WorkDayId" Value="@WorkDayId"
+               style="margin-left:2px;width:190px;font-size:12px"
+               @onkeydown="HandleKeyDown"
+               @oninput="WorkDayIdInputChanged" />
+        <Input Placeholder="Full Name" Value="@FullName"
+               style="margin-left:2px;width:190px;font-size:12px"
+               @onkeydown="HandleKeyDown"
+               @oninput="FullNameInputChanged" />
+
         <button @onclick="Search" style="margin-left:5px;border-color:#fff"><Icon Type="search" />Search</button>
         <button @onclick="Reset" style="margin-left:5px;border-color:#fff"><Icon Type="undo" />Reset</button>
     </div>
@@ -104,7 +111,7 @@
             <PropertyColumn HeaderStyle="text-align: center;" Width="90px" Title="Position" Property="c => c.PositionName" Filters="_positionFilter"></PropertyColumn>
             <PropertyColumn HeaderStyle="text-align: center;" Title="Email" Property="c => c.Email"></PropertyColumn>
             <PropertyColumn HeaderStyle="text-align: center;" Sortable Title="IsActive" Property="c => c.IsActive"></PropertyColumn>
-            <Column Fixed="ColumnFixPlacement.Right" TData="UserDto" Width="50px"  Context="row">
+            <Column Fixed="ColumnFixPlacement.Right" TData="UserDto" Width="50px" Context="row">
                 <Template>
                     <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">
                         <ChildContent>
@@ -136,7 +143,7 @@
                                 @if (ResetPassword)
                                 {
                                     <Button Type="ButtonType.Text" OnClick="@(async () => await ResetPasswordAsync(row))" Style="text-align: left;">
-                                        <Icon Type="delete" /> Reset Password
+                                        <Icon Type="reload" /> Reset Password
                                     </Button>
                                 }
 

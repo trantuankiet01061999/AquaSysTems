@@ -173,6 +173,8 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
         private string? RequesterName { get; set; }
         private string? Requesteremail { get; set; }
 
+        private string? TicketCode { get; set; }
+
 
         private async Task HandleKeyDown(KeyboardEventArgs e)
         {
@@ -189,6 +191,10 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
         private void RequesteremailInputChanged(ChangeEventArgs e)
         {
             Requesteremail = e.Value?.ToString();
+        }
+        private void TicketCodeInputChanged(ChangeEventArgs e)
+        {
+            TicketCode = e.Value?.ToString();
         }
 
         TableFilter<RequestSuportStatusType>[] _statusFilter = Array.Empty<TableFilter<RequestSuportStatusType>>();
@@ -224,31 +230,12 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
                .ToArray();
             return Task.CompletedTask;
         }
-        //private Task Search()
-        //{
-        //    var name = StringHelper.NormalizeText(RequesterName?.Trim());
-        //    var email = StringHelper.NormalizeText(Requesteremail?.Trim());
 
-        //    var filtered = _requestSuport
-        //        .Where(x =>
-        //            (string.IsNullOrWhiteSpace(name) ||
-        //                (!string.IsNullOrWhiteSpace(x.RequestByName) &&
-        //                 StringHelper.NormalizeText(x.RequestByName).Contains(name)))
-        //        )
-        //        .ToList();
-
-        //    if (string.IsNullOrWhiteSpace(name))
-        //    {
-        //        filtered = _requestSuport;
-        //    }
-        //    _requestSuportFillter = filtered;
-        //    return Task.CompletedTask;
-        //}
         private Task Search()
         {
             var name = StringHelper.NormalizeText(RequesterName?.Trim());
             var email = StringHelper.NormalizeText(Requesteremail?.Trim());
-
+            var ticketCode = StringHelper.NormalizeText(TicketCode?.Trim());
             var query = _requestSuport.AsEnumerable();
 
             if (!string.IsNullOrWhiteSpace(name))
@@ -257,7 +244,12 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
                     !string.IsNullOrWhiteSpace(x.RequestByName) &&
                     StringHelper.NormalizeText(x.RequestByName).Contains(name));
             }
-
+            if(!string.IsNullOrWhiteSpace(ticketCode))
+            {
+                query = query.Where(x =>
+                    !string.IsNullOrWhiteSpace(x.TicketCode) &&
+                    StringHelper.NormalizeText(x.TicketCode).Contains(ticketCode));
+            }
             if (!string.IsNullOrWhiteSpace(email))
             {
                 query = query.Where(x =>
@@ -274,6 +266,7 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
         {
             RequesterName = null;
             Requesteremail= null;
+            TicketCode = null;
             _requestSuportFillter = _requestSuport;
             _tableRef?.ReloadData();
             await InvokeAsync(StateHasChanged);
