@@ -133,7 +133,6 @@ namespace AquaSolution.Client.Components.ITSuport.RequestITSuport
 
             if (!IsEdit)
             {
-
                 data.Status = RequestSuportStatusType.Open;
                 data.CreatedDate = DateTime.Now;
             }

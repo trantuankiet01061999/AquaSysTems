@@ -16,7 +16,9 @@ namespace AquaSolution.Data.Data.MappingConfigurations
                    .OnDelete(DeleteBehavior.Restrict);
             builder.Property(x => x.TicketNumber)
                    .ValueGeneratedOnAdd()
-                   .UseIdentityColumn(1, 1);
+                   .UseIdentityColumn(1, 1)
+          .Metadata.SetAfterSaveBehavior(
+           Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
 
             builder.HasOne<User>()
                    .WithMany()

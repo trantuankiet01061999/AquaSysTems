@@ -223,11 +223,10 @@ namespace AquaSolution.Server.Services.ITSuport.RequestSuportCategories
                         await _attachmentRepo.InsertAsync(attachment);
                     }
                 }
-                await _requestSuportRepo.SaveChangesAsync();
                 return await _requestSuportRepo.UpdateAsync(requestSuport);
             }
             return false;
         }
-
+       
     }
 }
