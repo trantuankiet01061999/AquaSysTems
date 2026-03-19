@@ -26,7 +26,7 @@
             .fix-table-header table thead th {
                 position: sticky !important;
                 z-index: 8 !important;
-                top: 0;
+                top: 0; 
                 background-color: #fff;
             }
 
@@ -98,10 +98,10 @@
                     </PropertyColumn>
                     <PropertyColumn HeaderStyle="text-align: center;" Width="200px" Title="UserName" Property="c => c.UserName"></PropertyColumn>
                     <PropertyColumn HeaderStyle="text-align: center;" Width="200px" Title="ManagerName" Property="c => c.ManagerName"></PropertyColumn>
-                    <PropertyColumn HeaderStyle="text-align: center;" Width="100px" Title="KPIScore" Property="c => c.KPIScore"></PropertyColumn>
-                    <PropertyColumn HeaderStyle="text-align: center;" Width="100px" Title="KeyTaskScore" Property="c => c.KeyTaskScore"></PropertyColumn>
-                    <PropertyColumn HeaderStyle="text-align: center;" Width="100px" Title="OMGScore" Property="c => c.OMGScore"></PropertyColumn>
-                    <PropertyColumn HeaderStyle="text-align: center;" Width="100px" Title="TotaleScore" Property="c => c.TotaleScore"></PropertyColumn>
+                    <PropertyColumn HeaderStyle="text-align: center;" Width="100px" Format="0.####" Title="KPIScore" Property="c => c.KPIScore"></PropertyColumn>
+                    <PropertyColumn HeaderStyle="text-align: center;" Width="100px" Format="0.####" Title="KeyTaskScore" Property="c => c.KeyTaskScore"></PropertyColumn>
+                    <PropertyColumn HeaderStyle="text-align: center;" Width="100px" Format="0.####" Title="OMGScore" Property="c => c.OMGScore"></PropertyColumn>
+                    <PropertyColumn HeaderStyle="text-align: center;" Width="100px" Format="0.####" Title="TotaleScore" Property="c => c.TotaleScore"></PropertyColumn>
                     <PropertyColumn HeaderStyle="text-align: center;" Width="50px" Title="Year" Property="c => c.Year"></PropertyColumn>
                   
                 </ColumnDefinitions>

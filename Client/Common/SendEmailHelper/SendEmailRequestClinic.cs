@@ -24,7 +24,7 @@ namespace AquaSolution.Client.Common.SendEmailHelper
         public static async Task SendEmailRequestAsync(string emailManager)
         {
             var data = await EmailTemplate(emailManager);
-            // await HandleEmail(data);
+             await HandleEmail(data);
         }
         private static Task<SendEmailDto> EmailTemplate(string emailManager)
         {

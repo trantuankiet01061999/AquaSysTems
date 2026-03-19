@@ -55,7 +55,8 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
             await CheckLock();
             await LoadData();
             await LoadDataFilterAsync();
-            await ReloadIsLock();
+            await ReloadIsLock();   
+
         }
         private async Task ReloadIsLock()
         {

@@ -37,6 +37,8 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         private List<HandleActualDto> HandleActualDto = new();
 
         private KPITotalScoreDto CurrenTotalScore = new();
+        private int QuarterValue { get; set; }
+        private int MonthValue { get; set; }
         #endregion
 
         #region INIT
@@ -246,13 +248,14 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
                     $"api/kpiSubmit/get-result-detail/{CurrenUser.Id}/{year}/{m}");
                 if (details != null) handleKPISubmit.HandleActual.AddRange(details);
             }
-
+            if (handleKPISubmit.KPITotalScore.Count < 2) return;
             await CalculatedQuarter(handleKPISubmit, month.Value);
         }
 
         private async Task CalculatedQuarter(HandleKPISubmitDto handleKPISubmit, int month)
         {
             int quarter = (month + 2) / 3;
+            QuarterValue = quarter;
             int year = handleKPISubmit.HandleActual.First().Year;
             var listTotalQuarter = new List<KPITotalScoreDto>();
 
@@ -363,6 +366,10 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
             {
                 handleKPISubmit.KPITotalScore.Add(listTotalQuarter.First());
             }
+            var removeHandleActual = handleKPISubmit.HandleActual.Where(x=>x.Month !=month && x.Quarter == null).ToList();
+            var removeTotalScore = handleKPISubmit.KPITotalScore.Where(x => x.Month != month && x.Quarter == null).ToList();
+            removeHandleActual.ForEach(x => handleKPISubmit.HandleActual.Remove(x));
+            removeTotalScore.ForEach(x => handleKPISubmit.KPITotalScore.Remove(x));
             await Task.CompletedTask;
         }
 

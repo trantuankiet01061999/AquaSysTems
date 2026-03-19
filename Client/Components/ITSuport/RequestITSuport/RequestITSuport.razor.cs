@@ -79,13 +79,12 @@ namespace AquaSolution.Client.Components.ITSuport.RequestITSuport
                 RequestSuportCategories = new List<RequestSuportCategoryDto>();
             }
         }
-
         #endregion
         #region Action
         private async Task SaveAsync()
         {
 
-            IsSave = true; 
+            IsSave = true;
             StateHasChanged();
             var data = await MappingData();
 
@@ -102,8 +101,11 @@ namespace AquaSolution.Client.Components.ITSuport.RequestITSuport
                     await Message.Error("Please provide enough information!");
                     return;
                 }
-                await CreatedAsync(data);
-                await ConvertDataSendEmailRequest(RequestSuport, RequestSuportStatusType.Open);
+                var created = await CreatedAsync(data);
+                if (created)
+                {
+                    await ConvertDataSendEmailRequest(RequestSuport, RequestSuportStatusType.Open);
+                }
             }
             IsModalVisible = false;
             IsSave = false;
@@ -148,13 +150,13 @@ namespace AquaSolution.Client.Components.ITSuport.RequestITSuport
                 var dataSendEmail = new RequestSuportDto
                 {
                     RequestTitle = data.RequestTitle,
-                    TechnicianName = technical!=null? technical.Name:string.Empty,
+                    TechnicianName = technical != null ? technical.Name : string.Empty,
                     RequestDescription = data.RequestDescription,
                     RequestSolution = data.RequestSolution,
                     RequestSuportCategoryName = data.RequestSuportCategoryName,
                     Status = data.Status,
                     RequestByName = requester.Name,
-                    TechnicianEmail = technical != null ? technical.Email: string.Empty,
+                    TechnicianEmail = technical != null ? technical.Email : string.Empty,
                     RequestByEmail = requester.Email,
 
                     CreatedDate = data.CreatedDate,
@@ -188,11 +190,12 @@ namespace AquaSolution.Client.Components.ITSuport.RequestITSuport
                         break;
                 }
                 await SendEmailRequestSuport.SendEmailStatusRequestAsync(dataSendEmail);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw ex;
             }
-           
+
         }
         private void Close()
         {
@@ -252,7 +255,7 @@ namespace AquaSolution.Client.Components.ITSuport.RequestITSuport
 
             }
         }
-        private async Task CreatedAsync(HandleRequestSuportDto handleRequestSuportDto)
+        private async Task<bool> CreatedAsync(HandleRequestSuportDto handleRequestSuportDto)
         {
             var response = await Http.PostAsJsonAsync("api/RequestITSuport/created", handleRequestSuportDto);
 
@@ -260,11 +263,13 @@ namespace AquaSolution.Client.Components.ITSuport.RequestITSuport
             {
 
                 await Message.Success("Created successfully !");
+                return true;
             }
             else
             {
                 var error = await response.Content.ReadAsStringAsync();
                 await Message.Error($"Create failed");
+                return false;
             }
         }
         #endregion
@@ -305,7 +310,6 @@ namespace AquaSolution.Client.Components.ITSuport.RequestITSuport
                 return $"{Math.Round(bytes / (1024.0 * 1024.0))} MB";
             return $"{Math.Round(bytes / 1024.0)} KB";
         }
-
         private bool BeforeUpload1(UploadFileItem file)
         {
             var ext = Path.GetExtension(file.FileName).ToLowerInvariant();

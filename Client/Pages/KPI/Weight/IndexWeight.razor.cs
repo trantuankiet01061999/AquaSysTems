@@ -15,8 +15,6 @@ namespace AquaSolution.Client.Pages.KPI.Weight
         #region Declaration
         [Inject] private HttpClient Http { get; set; }
         private List<PositionType> ListPositionType = new List<PositionType>();
-        private List<PeriodType> ListPeriodType = new List<PeriodType>();
-        private List<KPIIndexType> ListKPIIndexType = new List<KPIIndexType>();
         private List<IndexWeightDto> DataSource = new();
         private IndexWeightModal indexWeightModal = new();
         #endregion
@@ -47,13 +45,7 @@ namespace AquaSolution.Client.Pages.KPI.Weight
         {
             ListPositionType = Enum.GetValues(typeof(PositionType))
                     .Cast<PositionType>()
-                    .ToList();
-            ListPeriodType = Enum.GetValues(typeof(PeriodType))
-                    .Cast<PeriodType>()
-                    .ToList();
-            ListKPIIndexType = Enum.GetValues(typeof(KPIIndexType))
-                    .Cast<KPIIndexType>()
-                    .ToList();
+                    .ToList(); 
         }
         #endregion
         #region Actions

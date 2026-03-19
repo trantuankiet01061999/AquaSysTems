@@ -99,7 +99,7 @@
                                 {
 
 
-                                    if (item.Month.HasValue)
+                                    if (item.Month.HasValue && item.Month == KPIPeriodSubmit.Month)
                                     {
 
                                         details = HandleKPISubmitDto.HandleActual
@@ -109,7 +109,7 @@
                                         .ToList();
                                         Title = $"{item.Title} - KpiScore:{item.KPIScore: 0.###} - KeyTaskScore:{item.KeyTaskScore: 0.###} - OMGScore:{item.OMGScore: 0.###} - TotaleScore:{item.TotaleScore: 0.###}";
                                     }
-                                    else if (item.Quarter.HasValue)
+                                    else if (item.Quarter.HasValue && item.Quarter == QuarterValue)
                                     {
                                         // ✅ THEO QUÝ
                                         details = HandleKPISubmitDto.HandleActual

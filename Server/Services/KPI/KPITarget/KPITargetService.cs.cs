@@ -50,15 +50,9 @@ public class KPIMonthlyTargetService : IKPIMonthlyTargetService
 
             join userTask in userTaskQuery
                 on kpiTask.Id equals userTask.KPITaskId
-            //    into userTaskGroup
-
-            //from userTask in userTaskGroup
-            //    .DefaultIfEmpty()
 
             join target in targetQuery
                 on userTask.Id equals target.UserTaskId
-            //    into targetGroup
-            //from target in targetGroup.DefaultIfEmpty()
 
             join qc in quarterQuery
                 on kpiTask.CalculatedId equals qc.Id

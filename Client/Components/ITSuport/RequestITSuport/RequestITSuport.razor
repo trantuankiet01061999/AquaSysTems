@@ -101,18 +101,6 @@
                             </Select>
                         </FormItem>
                     </div>
-          @*           <div style="flex: 0 0 calc(3.85 / 12 * 100%);">
-                        <FormItem label="RequestBy">
-                            <Select TItem="UserContributerDto" TItemValue="Guid"
-                                    DataSource="@ListUser"
-                                    EnableSearch
-                                    AutoClearSearchValue="false"
-                                    @bind-Value="@RequestSuport.RequestById"
-                                    ItemValue="c => c.Id??Guid.Empty"
-                                    ItemLabel="c => c.Name?? string.Empty">
-                            </Select>
-                        </FormItem>
-                    </div> *@
                     <div style="flex: 0 0 calc(3.85 / 12 * 100%);">
                         <FormItem label="RequestBy">
                             <Select TItem="UserContributerDto" TItemValue="Guid"
@@ -184,7 +172,6 @@
                     <TextArea ShowCount MinRows="2" @bind-Value="@RequestSuport.RequestSolution" MaxLength="2000" AllowClear="true" />
                 </FormItem>
             }
-
             <div>
                 <div style="text-align:right;padding-bottom:5px;">
                     <Upload Action="@($"{Navigation.BaseUri}api/Common/upload-file-suport")"
@@ -198,7 +185,6 @@
                         </Button>
                     </Upload>
                 </div>
-
                 <Table Class="style-attach" DataSource="Attachment" HidePagination Size="TableSize.Small">
                     <ChildContent Context="file">
                         <Column Fixed="ColumnFixPlacement.Left" Title="FileName" TData="string">@file.FileName</Column>
