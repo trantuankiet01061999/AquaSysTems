@@ -1,4 +1,4 @@
-﻿using AquaSolution.Client.Modals.Administration;
+﻿using AquaSolution.Client.Components.Administration;
 using AquaSolution.Shared.Menus;
 using System.Net.Http.Json;
 

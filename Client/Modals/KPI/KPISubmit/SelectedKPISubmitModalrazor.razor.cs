@@ -60,7 +60,7 @@ namespace AquaSolution.Client.Modals.KPI.KPISubmit
 
             await GetDeadline();
             await GetIndexWeight();
-            await GetCeilingLevel ();
+            await GetCeilingLevel();
             await InvokeAsync(StateHasChanged);
         }
 
@@ -177,7 +177,7 @@ namespace AquaSolution.Client.Modals.KPI.KPISubmit
             else
                 await Message.Error(await response.Content.ReadAsStringAsync());
             IsModalVisible = false;
-                         
+
         }
 
         #endregion
@@ -201,7 +201,7 @@ namespace AquaSolution.Client.Modals.KPI.KPISubmit
             };
             if (target == 0)
             {
-                achievement = item.Max.HasValue ? item.Max.Value*100 :0;
+                achievement = item.Max.HasValue ? item.Max.Value * 100 : 0;
             }
             if (item.Bottom.HasValue && achievement < item.Bottom) achievement = 0;
             if (item.Max.HasValue && achievement > item.Max) achievement = item.Max.Value;
@@ -226,7 +226,6 @@ namespace AquaSolution.Client.Modals.KPI.KPISubmit
         #endregion
 
         #region QUARTER
-
         private List<int> GetMonthsInQuarter(int month)
         {
             return month switch
@@ -270,7 +269,7 @@ namespace AquaSolution.Client.Modals.KPI.KPISubmit
             var listTotalQuarter = new List<KPITotalScoreDto>();
 
             foreach (var group in handleKPISubmit.HandleActual.GroupBy(x => x.TaskId))
-            {   
+            {
                 var first = group.First();
                 decimal? actual = null;
                 decimal? target = null;
@@ -363,7 +362,7 @@ namespace AquaSolution.Client.Modals.KPI.KPISubmit
 
                 }
                 totalScore = ConvertNumberCommon.ConvertNumber(kpiScore + keytaskscore + omgscore);
-                if(totalScore > CeilingLevel.CeilingLevelValue && CeilingLevel.CeilingLevelValue>0)
+                if (totalScore > CeilingLevel.CeilingLevelValue && CeilingLevel.CeilingLevelValue > 0)
                 {
                     totalScore = CeilingLevel.CeilingLevelValue;
                 }
@@ -384,7 +383,7 @@ namespace AquaSolution.Client.Modals.KPI.KPISubmit
             {
                 handleKPISubmit.KPITotalScore.Add(listTotalQuarter.First());
             }
-            var removeHandleActual = handleKPISubmit.HandleActual.Where(x=>x.Month !=month && x.Quarter == null).ToList();
+            var removeHandleActual = handleKPISubmit.HandleActual.Where(x => x.Month != month && x.Quarter == null).ToList();
             var removeTotalScore = handleKPISubmit.KPITotalScore.Where(x => x.Month != month && x.Quarter == null).ToList();
             removeHandleActual.ForEach(x => handleKPISubmit.HandleActual.Remove(x));
             removeTotalScore.ForEach(x => handleKPISubmit.KPITotalScore.Remove(x));

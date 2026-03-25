@@ -1,5 +1,5 @@
 ﻿using AquaSolution.Client.Common;
-using AquaSolution.Client.Modals.Administration;
+using AquaSolution.Client.Components.Administration;
 using AquaSolution.Shared.CommonDto;
 using AquaSolution.Shared.Menus;
 using AquaSolution.Shared.Permissions;
