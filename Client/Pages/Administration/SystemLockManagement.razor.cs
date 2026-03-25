@@ -1,13 +1,9 @@
 ﻿using AquaSolution.Client.Common;
-using AquaSolution.Client.Components.Administration.Department;
-using AquaSolution.Client.Components.Administration.SystemLock;
+using AquaSolution.Client.Modals.Administration.SystemLock;
 using AquaSolution.Shared.Administration.SystemLock;
-using AquaSolution.Shared.CommonDto;
-using AquaSolution.Shared.Departments;
 using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
-using System.Runtime.CompilerServices;
 
 namespace AquaSolution.Client.Pages.Administration
 {

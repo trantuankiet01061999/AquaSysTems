@@ -1,6 +1,6 @@
 ﻿using AntDesign;
 using AquaSolution.Client.Common;
-using AquaSolution.Client.Components.ManageMedicalRooms.Treatments;
+using AquaSolution.Client.Modals.ManageMedicalRooms.Treatments;
 using AquaSolution.Shared.Enum;
 using AquaSolution.Shared.ITSuport.RequestSuport;
 using AquaSolution.Shared.ManageMedicalRooms.RequestClinics;
@@ -9,7 +9,6 @@ using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.SignalR.Client;
-using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Json;
 
 namespace AquaSolution.Client.Pages.ManageMedicalRooms.ClinicCheckIns

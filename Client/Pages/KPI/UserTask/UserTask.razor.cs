@@ -1,9 +1,8 @@
 ﻿using AntDesign;
 using AquaSolution.Client.Common;
 using AquaSolution.Client.Common.ConvertNumber;
-using AquaSolution.Client.Components.Administration.Users;
-using AquaSolution.Client.Components.KPI.Target;
-using AquaSolution.Client.Components.KPI.UserTask;
+using AquaSolution.Client.Modals.KPI.Target;
+using AquaSolution.Client.Modals.KPI.UserTask;
 using AquaSolution.Shared.Departments;
 using AquaSolution.Shared.Enum;
 using AquaSolution.Shared.Enum.KPIType;
@@ -17,8 +16,6 @@ using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.SignalR.Client;
-using NPOI.OpenXmlFormats.Spreadsheet;
-using System;
 using System.Net.Http.Json;
 
 

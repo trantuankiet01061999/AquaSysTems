@@ -1,14 +1,11 @@
 ﻿using AquaSolution.Client.Common;
-using AquaSolution.Client.Components.ManageMedicalRooms.RequestClinics;
+using AquaSolution.Client.Modals.ManageMedicalRooms.RequestClinics;
 using AquaSolution.Shared.CommonDto;
 using AquaSolution.Shared.Enum;
 using AquaSolution.Shared.ManageMedicalRooms.RequestClinics;
-using AquaSolution.Shared.Menus;
 using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
-using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Json;
 
 namespace AquaSolution.Client.Pages.ToDoList.MedicalRoomRequest

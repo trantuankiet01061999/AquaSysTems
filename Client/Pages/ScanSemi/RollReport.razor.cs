@@ -1,20 +1,10 @@
 ﻿using AntDesign;
-using AquaSolution.Client.Common;
 using AquaSolution.Client.Common.ExcelHelper;
-using AquaSolution.Client.Components.Administration.Users;
-using AquaSolution.Shared.CommonDto;
-using AquaSolution.Shared.Departments;
-using AquaSolution.Shared.Enum;
-using AquaSolution.Shared.Factory;
-using AquaSolution.Shared.Position;
 using AquaSolution.Shared.SemiReport;
-using AquaSolution.Shared.UserManagements;
-using ICSharpCode.SharpZipLib.Core;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
-using Org.BouncyCastle.Bcpg;
 using System.Net.Http.Json;
 
 namespace AquaSolution.Client.Pages.ScanSemi

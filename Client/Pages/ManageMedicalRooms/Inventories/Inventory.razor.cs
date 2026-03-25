@@ -1,12 +1,6 @@
 ﻿using AntDesign;
-using AquaSolution.Client.Components.ManageMedicalRooms.ReportInventory;
-using AquaSolution.Client.Components.ManageMedicalRooms.WarehouseExports;
-using AquaSolution.Client.Components.ManageMedicalRooms.WarehouseImports;
-using AquaSolution.Shared.Departments;
+using AquaSolution.Client.Modals.ManageMedicalRooms.ReportInventory;
 using AquaSolution.Shared.ManageMedicalRooms.Inventories;
-using AquaSolution.Shared.ManageMedicalRooms.WarehouseExports;
-using AquaSolution.Shared.ManageMedicalRooms.WarehouseImports;
-using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.Net.Http.Json;
