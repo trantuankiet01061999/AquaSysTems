@@ -300,6 +300,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                         join request in await _kpiRequestRepo.GetQueryableAsync()
                         on totalScore.SubmitId equals request.SubmitId
                         where request.RequestStatus == StatusKPIRequestType.Approved
+                        && totalScore.Status == StatusKPIRequestType.Approved
                         && totalScore.CreatedBy == userId
                         && totalScore.Year == year
                         && (month == null || totalScore.Month == month)
@@ -376,6 +377,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
                         where totalScore.CreatedBy == userId
                         && totalScore.Year == year
                         && totalScore.Month == month
+                        && totalScore.Status == StatusKPIRequestType.Approved   
                         select new HandleActualDto
                         {
                             TaskId = detailScore.TaskId,

@@ -19,6 +19,12 @@ namespace AquaSolution.Client.Components.KPI.KPISubmit
         public List<HandleActualDto> HandleActual { get; set; } = new();
         [Parameter]
         public string Title { get; set; } =string.Empty;
+        [Parameter]
+        public bool isCalculating { get; set; }
+        protected override void OnParametersSet()
+        {
+            StateHasChanged();
+        }
         #endregion
 
     }

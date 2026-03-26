@@ -105,6 +105,7 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
             try
             {
                 Loading = true;
+                StateHasChanged();
                 var data = await Http.GetFromJsonAsync<List<UserDto>>("api/user/get-all");
                 var result = data.Where(x=>x.IsActive == true && x.PositionId !=null).ToList();
 
@@ -151,6 +152,7 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
                 userFilter = users;
                 await Search();
                 Loading = false;
+                StateHasChanged();
             }
             catch (Exception ex)
             {

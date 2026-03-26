@@ -260,14 +260,22 @@ namespace AquaSolution.Client.Modals.KPI.KPISubmit
             if (handleKPISubmit.KPITotalScore.Count < 2) return;
             await CalculatedQuarter(handleKPISubmit, month.Value);
         }
-
         private async Task CalculatedQuarter(HandleKPISubmitDto handleKPISubmit, int month)
         {
             int quarter = (month + 2) / 3;
             QuarterValue = quarter;
-            int year = handleKPISubmit.HandleActual.First().Year;
-            var listTotalQuarter = new List<KPITotalScoreDto>();
 
+            int year = handleKPISubmit.HandleActual.First().Year;
+
+            var TotalQuarter = new KPITotalScoreDto();
+            var newHandleActualList = new List<HandleActualDto>();
+
+            decimal kpiScore = 0;
+            decimal omgscore = 0;
+            decimal keytaskscore = 0;
+            decimal totalScore = 0;
+
+            // 🔹 STEP 1: BUILD DATA
             foreach (var group in handleKPISubmit.HandleActual.GroupBy(x => x.TaskId))
             {
                 var first = group.First();
@@ -280,21 +288,30 @@ namespace AquaSolution.Client.Modals.KPI.KPISubmit
                         actual = group.Sum(x => x.ActualValue ?? 0);
                         target = group.Sum(x => x.TargetValue ?? 0);
                         break;
+
                     case QuarterCalculateType.CAL2:
                         actual = group.Where(x => x.ActualValue.HasValue).Average(x => x.ActualValue);
                         target = group.Where(x => x.TargetValue.HasValue).Average(x => x.TargetValue);
                         break;
+
                     case QuarterCalculateType.CAL3:
                         var last = group.OrderByDescending(x => x.Month).First();
                         actual = last.ActualValue;
                         target = last.TargetValue;
                         break;
                 }
-                decimal achivement = target > 0 ? actual.Value / target.Value : 0;
-                if (group == null) return;
-                if (group.First().Bottom.HasValue && achivement < group.First().Bottom) achivement = 0;
-                if (group.First().Max.HasValue && achivement > group.First().Max) achivement = group.First().Max.Value;
-                handleKPISubmit.HandleActual.Add(new HandleActualDto
+
+                decimal achivement = (target.HasValue && target > 0 && actual.HasValue)
+                    ? actual.Value / target.Value
+                    : 0;
+
+                if (first.Bottom.HasValue && achivement < first.Bottom)
+                    achivement = 0;
+
+                if (first.Max.HasValue && achivement > first.Max)
+                    achivement = first.Max.Value;
+
+                var newItem = new HandleActualDto
                 {
                     TaskId = first.TaskId,
                     Year = year,
@@ -318,77 +335,86 @@ namespace AquaSolution.Client.Modals.KPI.KPISubmit
                     Unit = first.Unit,
                     DataSource = first.DataSource,
                     PIC = first.PIC,
+
                     ActualValue = actual,
                     TargetValue = target,
                     Achiement = achivement,
 
                     Score = achivement != 0 && first.Weight.HasValue
-                        ? Math.Round(
-                            achivement * first.Weight.Value,
-                            4,
-                            MidpointRounding.AwayFromZero
-                          )
+                        ? Math.Round(achivement * first.Weight.Value, 4, MidpointRounding.AwayFromZero)
                         : null
-                });
-                decimal kpiScore = 0;
-                decimal omgscore = 0;
-                decimal keytaskscore = 0;
-                decimal totalScore = 0;
-                var indexWeights = IndexWeight?.Where(x => x.PeriodType == PeriodType.Quarter).ToList() ?? new List<IndexWeightDto>();
+                };
 
-                decimal omgWeight = indexWeights?.FirstOrDefault(x => x.KPIIndexType == KPIIndexType.OMG)?.Weight ?? 0;
-                decimal kpiWeight = indexWeights?.FirstOrDefault(x => x.KPIIndexType == KPIIndexType.KPI)?.Weight ?? 0;
-                decimal keyTaskWeight = indexWeights?.FirstOrDefault(x => x.KPIIndexType == KPIIndexType.KeyTask)?.Weight ?? 0;
-                var Total = handleKPISubmit.KPITotalScore.Where(x=>x.Quarter == null).ToList().Count;
-                if (handleKPISubmit.HandleActual != null && handleKPISubmit.HandleActual.Any())
-                {
-                    // OMG
-                    var listOMGDetails = handleKPISubmit.HandleActual.Where(x => x.KPIIndexType == KPIIndexType.OMG && x.Quarter == null).ToList();
-                    decimal sumOMG = listOMGDetails.Sum(x => x.Score ?? 0);
-                    var avgOMG = listOMGDetails.Count > 0 ? sumOMG / Total : 0;
-                    omgscore = avgOMG * omgWeight;
-
-                    // KPI
-                    var listKPIDetails = handleKPISubmit.HandleActual.Where(x => x.KPIIndexType == KPIIndexType.KPI && x.Quarter == null).ToList();
-                    decimal sumKPI = listKPIDetails.Sum(x => x.Score ?? 0);
-                    var avgKPI = listKPIDetails.Count > 0 ? sumKPI / Total : 0;
-                    kpiScore = avgKPI * kpiWeight;
-
-                    // KeyTask
-                    var listKeyTaskDetails = handleKPISubmit.HandleActual.Where(x => x.KPIIndexType == KPIIndexType.KeyTask && x.Quarter == null).ToList();
-                    decimal sumKeyTask = listKeyTaskDetails.Sum(x => x.Score ?? 0);
-                    var avgKeyTask = listKeyTaskDetails.Count > 0 ? sumKeyTask / Total : 0;
-                    keytaskscore = avgKeyTask * keyTaskWeight;
-
-                }
-                totalScore = ConvertNumberCommon.ConvertNumber(kpiScore + keytaskscore + omgscore);
-                if (totalScore > CeilingLevel.CeilingLevelValue && CeilingLevel.CeilingLevelValue > 0)
-                {
-                    totalScore = CeilingLevel.CeilingLevelValue;
-                }
-                listTotalQuarter.Add(new KPITotalScoreDto
-                {
-                    Title = $"EMC - {year} - Q{quarter} - {CurrenUser.FullName}",
-                    Year = year,
-                    Quarter = quarter,
-                    KPIScore = ConvertNumberCommon.ConvertNumber(kpiScore),
-                    KeyTaskScore = ConvertNumberCommon.ConvertNumber(keytaskscore),
-                    OMGScore = ConvertNumberCommon.ConvertNumber(omgscore),
-                    TotaleScore = totalScore,
-                    CreatedBy = CurrenUser.Id
-                });
-
+                newHandleActualList.Add(newItem);
             }
-            if (listTotalQuarter.Any())
+
+            // 🔹 STEP 2: ADD DATA SAU KHI BUILD XONG
+            handleKPISubmit.HandleActual.AddRange(newHandleActualList);
+
+            var indexWeights = IndexWeight?.Where(x => x.PeriodType == PeriodType.Quarter).ToList()
+                                ?? new List<IndexWeightDto>();
+
+            decimal omgWeight = indexWeights.FirstOrDefault(x => x.KPIIndexType == KPIIndexType.OMG)?.Weight ?? 0;
+            decimal kpiWeight = indexWeights.FirstOrDefault(x => x.KPIIndexType == KPIIndexType.KPI)?.Weight ?? 0;
+            decimal keyTaskWeight = indexWeights.FirstOrDefault(x => x.KPIIndexType == KPIIndexType.KeyTask)?.Weight ?? 0;
+
+            // 🔹 STEP 3: CALCULATE SCORE (SAU KHI CÓ DATA ĐẦY ĐỦ)
+
+            var listOMGDetails = handleKPISubmit.HandleActual
+                .Where(x => x.KPIIndexType == KPIIndexType.OMG && x.Quarter == quarter)
+                .ToList();
+
+            var listKPIDetails = handleKPISubmit.HandleActual
+                .Where(x => x.KPIIndexType == KPIIndexType.KPI && x.Quarter == quarter)
+                .ToList();
+
+            var listKeyTaskDetails = handleKPISubmit.HandleActual
+                .Where(x => x.KPIIndexType == KPIIndexType.KeyTask && x.Quarter == quarter)
+                .ToList();
+
+            decimal sumOMG = listOMGDetails.Sum(x => x.Score ?? 0);
+            decimal sumKPI = listKPIDetails.Sum(x => x.Score ?? 0);
+            decimal sumKeyTask = listKeyTaskDetails.Sum(x => x.Score ?? 0);
+
+            omgscore = sumOMG * omgWeight;
+            kpiScore = sumKPI * kpiWeight;
+            keytaskscore = sumKeyTask * keyTaskWeight;
+
+            totalScore = ConvertNumberCommon.ConvertNumber(kpiScore + keytaskscore + omgscore);
+
+            if (totalScore > CeilingLevel.CeilingLevelValue && CeilingLevel.CeilingLevelValue > 0)
             {
-                handleKPISubmit.KPITotalScore.Add(listTotalQuarter.First());
+                totalScore = CeilingLevel.CeilingLevelValue;
             }
-            var removeHandleActual = handleKPISubmit.HandleActual.Where(x => x.Month != month && x.Quarter == null).ToList();
-            var removeTotalScore = handleKPISubmit.KPITotalScore.Where(x => x.Month != month && x.Quarter == null).ToList();
+
+            TotalQuarter = new KPITotalScoreDto
+            {
+                Title = $"EMC - {year} - Q{quarter} - {CurrenUser.FullName}",
+                Year = year,
+                Quarter = quarter,
+                KPIScore = ConvertNumberCommon.ConvertNumber(kpiScore),
+                KeyTaskScore = ConvertNumberCommon.ConvertNumber(keytaskscore),
+                OMGScore = ConvertNumberCommon.ConvertNumber(omgscore),
+                TotaleScore = totalScore,
+                CreatedBy = CurrenUser.Id
+            };
+
+            handleKPISubmit.KPITotalScore.Add(TotalQuarter);
+            // 🔹 STEP 4: REMOVE OLD DATA
+            var removeHandleActual = handleKPISubmit.HandleActual
+                .Where(x => x.Month != month && x.Quarter == null)
+                .ToList();
+
+            var removeTotalScore = handleKPISubmit.KPITotalScore
+                .Where(x => x.Month != month && x.Quarter == null)
+                .ToList();
+
             removeHandleActual.ForEach(x => handleKPISubmit.HandleActual.Remove(x));
             removeTotalScore.ForEach(x => handleKPISubmit.KPITotalScore.Remove(x));
+
             await Task.CompletedTask;
         }
+
 
         #endregion
 

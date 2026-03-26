@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
 using System.Globalization;
 using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
 
 namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
 {
@@ -30,6 +31,7 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
         private RequestITSuport _requestItSuport = new();
         private List<AttachmentDto> _attachment = new();
         private bool Created { get; set; }
+        private bool Loading { get; set; }
         private bool Edit { get; set; }
         private bool Delete { get; set; }
         private Guid PageId { get; set; }
@@ -37,16 +39,7 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
         #region Innit
         protected override async Task OnInitializedAsync()
         {
-            // _hubConnection = new HubConnectionBuilder()
-            //.WithUrl(Navigation.ToAbsoluteUri(Navigation.BaseUri + "signalrhub"))
-            //.Build();
-            // _hubConnection.On("LoadRequestSuport", async () =>
-            // {
-            //     await LoadData();
-            //     await Search();
-            //     StateHasChanged();
-            // });
-            // await _hubConnection.StartAsync();
+            ;
             if (Http != null)
             {
                 var currenUserClass = new CurrenUser(Http, AuthStateProvider);
@@ -81,6 +74,8 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
         }
         private async Task LoadData()
         {
+            Loading = true;
+            StateHasChanged();
             _requestSuport = new();
             if (Http != null)
             {
@@ -88,25 +83,25 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
                 if (data != null)
                 {
                     if (CurrenUser == null) return;
-                    if(CurrenUser.Roles.Any(x=>x.Name =="IT" || x.Name =="Admin"))
+                    if (CurrenUser.Roles.Any(x => x.Name == "IT" || x.Name == "Admin"))
                     {
                         _requestSuport = data.ToList();
 
                     }
                     else
                     {
-                        _requestSuport = data.Where(x=>x.RequestById==CurrenUser.Id).ToList();
+                        _requestSuport = data.Where(x => x.RequestById == CurrenUser.Id).ToList();
                     }
 
                 }
             }
-
             _requestSuportFillter = _requestSuport.ToList();
+            Loading = false;
             StateHasChanged();
         }
         private async Task CheckPermission()
         {
-           
+
             if (CurrenUser != null)
             {
                 Created = await _hasPermission.CheckPermissions(PageId, nameof(PermissionActionType.Add),
@@ -223,8 +218,8 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
                .Cast<RequestSuportStatusType>()
                .Select(e => new TableFilter<RequestSuportStatusType>
                {
-                   Text =  EnumHelper.GetDisplayName(e), 
-                   Value = e,                
+                   Text = EnumHelper.GetDisplayName(e),
+                   Value = e,
                    Selected = false
                })
                .ToArray();
@@ -244,7 +239,7 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
                     !string.IsNullOrWhiteSpace(x.RequestByName) &&
                     StringHelper.NormalizeText(x.RequestByName).Contains(name));
             }
-            if(!string.IsNullOrWhiteSpace(ticketCode))
+            if (!string.IsNullOrWhiteSpace(ticketCode))
             {
                 query = query.Where(x =>
                     !string.IsNullOrWhiteSpace(x.TicketCode) &&
@@ -265,7 +260,7 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
         private async Task Reset()
         {
             RequesterName = null;
-            Requesteremail= null;
+            Requesteremail = null;
             TicketCode = null;
             _requestSuportFillter = _requestSuport;
             _tableRef?.ReloadData();

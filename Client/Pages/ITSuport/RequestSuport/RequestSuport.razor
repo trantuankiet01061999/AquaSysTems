@@ -84,6 +84,7 @@
     <Table TItem="RequestSuportDto"
            Size="TableSize.Small"
            @ref="@_tableRef"
+           Loading="@Loading"
            Class="customTable fix-table-header"
            DataSource="_requestSuportFillter">
         <ColumnDefinitions Context="row">

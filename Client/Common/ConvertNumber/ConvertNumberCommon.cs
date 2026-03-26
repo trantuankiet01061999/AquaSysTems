@@ -4,7 +4,7 @@
     {
         public static decimal ConvertNumber(decimal number)
         {
-            return Math.Round(number, 2, MidpointRounding.AwayFromZero);
+            return Math.Round(number, 3, MidpointRounding.AwayFromZero);
         }
     }
 }

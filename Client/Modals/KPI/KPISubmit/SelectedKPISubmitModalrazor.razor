@@ -79,8 +79,8 @@
                     </TabPane>
 
                     <TabPane Key="2">
-                        @if (!isCalculating)
-                        {
+                       @*  @if (!isCalculating)
+                        { *@
                             <Collapse DefaultActiveKey="@(new[] { "1" })">
                                 @{
                                     var orderedScores = HandleKPISubmitDto.KPITotalScore
@@ -110,7 +110,7 @@
                                             .ToList();
                                             var a = details;
                                             Title = $"{item.Title} - KpiScore:{item.KPIScore: 0.###} - KeyTaskScore:{item.KeyTaskScore: 0.###} - OMGScore:{item.OMGScore: 0.###} - TotaleScore:{item.TotaleScore: 0.###}";
-                                            <RenderKPISubmitComponent HandleActual="details" Title="@Title"></RenderKPISubmitComponent>
+                                            <RenderKPISubmitComponent isCalculating="@isCalculating" HandleActual="details" Title="@Title"></RenderKPISubmitComponent>
                                         }
                                         else if (item.Quarter.HasValue && item.Quarter == QuarterValue)
                                         {
@@ -122,7 +122,7 @@
                                             .ToList();
                                             Title = $"{item.Title} - KpiScore:{item.KPIScore: 0.###} - KeyTaskScore:{item.KeyTaskScore: 0.###} - OMGScore:{item.OMGScore: 0.###} - TotaleScore:{item.TotaleScore: 0.###}";
                                             var a = details;
-                                            <RenderKPISubmitComponent HandleActual="details" Title="@Title"></RenderKPISubmitComponent>
+                                            <RenderKPISubmitComponent isCalculating="@isCalculating" HandleActual="details" Title="@Title"></RenderKPISubmitComponent>
                                         }
                                         else if (item.HalfYear.HasValue)
                                         {
@@ -149,7 +149,7 @@
 
                                 }
                             </Collapse>
-                        }
+                        @* } *@
                     </TabPane>
                 </Tabs>
             </div>

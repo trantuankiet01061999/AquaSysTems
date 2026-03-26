@@ -10,6 +10,7 @@
            Class="customTable fix-table-header"
            Bordered
            HidePagination
+           Loading ="@isCalculating"
            DataSource="HandleActual">
         <ColumnDefinitions Context="rowTarget">
             <PropertyColumn Width="100px" Title="Index" Property="c => c.KPIIndexType"></PropertyColumn>
