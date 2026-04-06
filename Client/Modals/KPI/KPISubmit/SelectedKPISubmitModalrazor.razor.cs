@@ -291,7 +291,7 @@ namespace AquaSolution.Client.Modals.KPI.KPISubmit
                     case QuarterCalculateType.CAL1:
                         actual = group.Sum(x => x.ActualValue ?? 0);
                         target = group.Sum(x => x.TargetValue ?? 0);
-                        achivement = group.Sum(x => x.Achiement ?? 0);
+                        achivement = group.Where(x => x.Achiement.HasValue).Average(x => x.Achiement) ?? 0;
                         break;
 
                     case QuarterCalculateType.CAL2:
@@ -304,9 +304,13 @@ namespace AquaSolution.Client.Modals.KPI.KPISubmit
                         var last = group.OrderByDescending(x => x.Month).First();
                         actual = last.ActualValue;
                         target = last.TargetValue;
-                        achivement = last.Achiement ??0;
+                        achivement = last.Achiement ?? 0;
                         break;
                 }
+
+                 //achivement = (target.HasValue && target > 0 && actual.HasValue)
+                 //   ? actual.Value / target.Value
+                 //   : 0;
 
                 if (first.Bottom.HasValue && achivement < first.Bottom)
                     achivement = 0;
