@@ -14,6 +14,7 @@ using AquaSolution.Server.Services.Common.HandleInventories;
 using AquaSolution.Server.Services.Common.UserConnectionManager;
 using AquaSolution.Server.Services.ePAD;
 using AquaSolution.Server.Services.HRMS;
+using AquaSolution.Server.Services.ImgsService;
 using AquaSolution.Server.Services.ITSuport.RequestSuportCategories;
 using AquaSolution.Server.Services.KPi.CeilingLevelService;
 using AquaSolution.Server.Services.KPi.FormulaService;
@@ -57,6 +58,7 @@ namespace AquaSolution.Server
             services.AddScoped<IPositionService, PositionService>();
             services.AddScoped<IApprovalFlowService, ApprovalFlowService>();
             services.AddScoped<ISystemLockService, SystemLockService>();
+            services.AddScoped<IImgService, ImgService>();
 
             #endregion
             #region Medical

@@ -1,0 +1,194 @@
+﻿@page "/img-management"
+@using AquaSolution.Client.Common
+@using AquaSolution.Client.Modals.Administration.Users
+@using AntDesign
+@inject IJSRuntime JSRuntime
+@inject ModalService modal
+@inject NavigationManager Navigation
+@inject IMessageService Message
+@using AquaSolution.Shared.HRMS
+@using AquaSolution.Shared.Imgs
+@using AquaSolution.Shared.KPI.IndexWeight
+@using AquaSolution.Shared.UserManagements
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthStateProvider
+@inject PermissionService permissionService
+<PageTitle>Users</PageTitle>
+<div class="mb-3">
+    <style>
+            .custom-button-type {
+                height: 30px;
+                font-size: 12px;
+            }
+
+            .fix-table-header table {
+                border-collapse: collapse;
+            }
+
+                .fix-table-header table thead th {
+                    position: sticky !important;
+                    z-index: 8 !important;
+                    top: 0;
+                    background-color: #fff;
+                }
+
+            .ant-table-content {
+                min-height: 65vh !important;
+            }
+
+            .ant-table-pagination {
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                z-index: 999;
+                background: white;
+                padding: 8px;
+                text-align: center;
+                box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
+                background: transparent !important;
+            }
+
+
+
+            .custom-label {
+                background-color: #007bff;
+                color: white;
+                padding: 8px 15px;
+                border-radius: 5px;
+                cursor: pointer;
+                display: inline-block;
+            }
+
+                .custom-label:hover {
+                    background-color: #0056b3;
+                }
+    </style>
+    <div style="display: flex;  align-items: center; margin-bottom: 10px;">
+    </div>
+</div>
+<div style="width:100%;overflow-x:scroll ;max-height:70vh; ">
+
+        @if (images == null || !images.Any())
+        {
+            <p>Không có hình ảnh</p>
+        }
+        else
+        {
+        <Collapse Accordion="true">
+     
+            @foreach (var group in images)
+            {
+                   <Panel Header="@($"{group.WorkId} ({group.CloudinaryImageDtos.Count})")">
+                <Table TItem="CloudinaryImageDto"
+                       DataSource="group.CloudinaryImageDtos"
+                       Size="TableSize.Small"
+                       Bordered
+                       Class="customTable fix-table-header">
+
+                    <ColumnDefinitions Context="row">
+                        <!-- Action -->
+                        <Column Align="ColumnAlign.Center" TData="CloudinaryImageDto" Width="50px" Title="Action">
+                            <Template Style="gap:5px">
+                    
+                                <ActionColumn>
+                                    <Button Type="ButtonType.Link" OnClick="() => Download(row)">⬇DownLoad</Button>
+                                </ActionColumn>
+                                <ActionColumn>
+                                    <a href="@row.SecureUrl" target="_blank" style="width:500px;height:500px;">
+                                        👁View
+                                    </a>
+                                </ActionColumn>
+              
+                            </Template>
+                        </Column>
+                        <!-- Ảnh -->
+                        <Column Align="ColumnAlign.Center" TData="CloudinaryImageDto" Width="170px" Title="Image">
+                            <Template>
+                                <img src="@row.SecureUrl"
+                                     style="width:100px;height:100px;object-fit:cover;border-radius:4px;"
+                                     loading="lazy" />
+                            </Template>
+                        </Column>
+
+
+                        <PropertyColumn Align="ColumnAlign.Center" Width="280px"
+                                        Title="Public Id"
+                                        Property="c => c.PublicId" />
+
+                        <!-- File Size -->
+                        <Column Align="ColumnAlign.Center" TData="CloudinaryImageDto" Width="100px" Title="Size">
+                            <Template>
+                                @($"{row.FileSize} {row.FileSizeUnit}")
+                            </Template>
+                        </Column>
+
+                        <!-- Upload Date -->
+                        <Column Align="ColumnAlign.Center" Sortable TData="CloudinaryImageDto" Width="160px" Title="Uploaded At">
+                            <Template>
+                                @row.UpLoadDate.ToString("dd/MM/yyyy HH:mm")
+                            </Template>
+                        </Column>
+
+
+                    </ColumnDefinitions>
+                </Table>
+                </Panel>
+            }
+        </Collapse>
+    }
+
+    @* <Table TItem="CloudinaryImageDto"
+           DataSource="images.First()"
+           Size="TableSize.Small"
+           Bordered
+           Class="customTable fix-table-header">
+
+        <ColumnDefinitions Context="row">
+            <!-- Action -->
+            <Column Align="ColumnAlign.Center" TData="CloudinaryImageDto" Width="50px" Title="Action">
+                <Template Style="gap:5px">
+                    
+                    <ActionColumn >
+                        <Button Type="ButtonType.Link" OnClick="() => Download(row)">⬇DownLoad</Button>
+                    </ActionColumn>
+                    <ActionColumn>
+                        <a href="@row.SecureUrl" target="_blank" style="width:500px;height:500px;">
+                            👁View
+                        </a>
+                    </ActionColumn>
+              
+                </Template>
+            </Column>
+            <!-- Ảnh -->
+            <Column Align="ColumnAlign.Center" TData="CloudinaryImageDto" Width="170px" Title="Image">
+                <Template>
+                    <img src="@row.SecureUrl"
+                         style="width:100px;height:100px;object-fit:cover;border-radius:4px;"
+                         loading="lazy" />
+                </Template>
+            </Column>
+
+
+            <PropertyColumn Align="ColumnAlign.Center" Width="280px"
+                            Title="Public Id"
+                            Property="c => c.PublicId" />
+
+            <!-- File Size -->
+            <Column Align="ColumnAlign.Center" TData="CloudinaryImageDto" Width="100px" Title="Size">
+                <Template>
+                    @($"{row.FileSize} {row.FileSizeUnit}")
+                </Template>
+            </Column>
+
+            <!-- Upload Date -->
+            <Column Align="ColumnAlign.Center" Sortable TData="CloudinaryImageDto" Width="160px" Title="Uploaded At">
+                <Template>
+                    @row.UpLoadDate.ToString("dd/MM/yyyy HH:mm")
+                </Template>
+            </Column>
+
+
+        </ColumnDefinitions>
+    </Table> *@
+
+</div>

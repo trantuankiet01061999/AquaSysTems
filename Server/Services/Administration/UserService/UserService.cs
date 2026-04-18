@@ -84,7 +84,7 @@ public class UserService : IUserService
                 .WhereAsync(p => permissionIds.Contains(p.Id));
 
             var permissionNames = permissions.Select(p => p.Action.ToString()).Distinct().ToList();
-      
+
 
             var claims = new List<Claim>
                     {
@@ -93,7 +93,7 @@ public class UserService : IUserService
                         new Claim(ClaimTypes.Email, user.Email ?? ""),
                     };
             //add Claim
-            var perrmission_user= await GetPermissionRole(user.Id);
+            var perrmission_user = await GetPermissionRole(user.Id);
             foreach (var p in perrmission_user)
             {
                 claims.Add(new Claim("permission", $"{p.PageId}:{p.Action}"));
@@ -414,7 +414,7 @@ public class UserService : IUserService
                 DepartmentId = createdUserDto.DepartmentId,
                 PositionId = createdUserDto.PositionId,
                 FactoryId = createdUserDto.FactoryId,
-                FlowApproval =createdUserDto.FlowApproval ?? 1,
+                FlowApproval = createdUserDto.FlowApproval ?? 1,
                 Avatar = "/uploads/avatars/default.jpg"
 
             };
@@ -583,20 +583,21 @@ public class UserService : IUserService
                    };
         return user.ToList();
     }
-    private async Task<List<UserPermissionDto>>GetPermissionRole(Guid userId)
+    private async Task<List<UserPermissionDto>> GetPermissionRole(Guid userId)
     {
-           var permission_User =
-           from ur in await _userRoleRepo.GetQueryableAsync()
-           join rp in await _rolePermissionRepo.GetQueryableAsync() on ur.RoleId equals rp.RoleId
-           join p in await _permissionRepo.GetQueryableAsync() on rp.PermissionId equals p.Id
-           join page in await _pageRepo.GetQueryableAsync() on p.PageId equals page.Id
-           where ur.UserId == userId
-           select new UserPermissionDto
-           {
-               PageId = page.Id,
-               PageName = page.Name,
-               Action = p.Action
-           };
+        var permission_User =
+        from ur in await _userRoleRepo.GetQueryableAsync()
+        join rp in await _rolePermissionRepo.GetQueryableAsync() on ur.RoleId equals rp.RoleId
+        join p in await _permissionRepo.GetQueryableAsync() on rp.PermissionId equals p.Id
+        join page in await _pageRepo.GetQueryableAsync() on p.PageId equals page.Id
+        where ur.UserId == userId
+        select new UserPermissionDto
+        {
+            PageId = page.Id,
+            PageName = page.Name,
+            Action = p.Action
+        };
         return permission_User.ToList();
     }
+
 }
