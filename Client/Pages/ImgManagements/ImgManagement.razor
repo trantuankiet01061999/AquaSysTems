@@ -66,6 +66,21 @@
     <div style="display: flex;  align-items: center; margin-bottom: 10px;">
     </div>
 </div>
+<style>
+    
+    window.downloadFile = async (url, fileName) = > {
+        const res = await fetch(url);
+        const blob = await res.blob();
+        const link = document.createElement("a");
+        link .href = URL.createObjectURL(blob);
+        link .download = fileName;
+        document .body.appendChild(link);
+        link .click();
+        document .body.removeChild(link);
+    }
+
+    ;
+</style>
 <div style="width:100%;overflow-x:scroll ;max-height:70vh; ">
 
         @if (images == null || !images.Any())
