@@ -12,5 +12,6 @@ namespace AquaSolution.Server.Services.ImgsService
     public interface IImgService
     {
         Task<List<CloudinaryImageDto>> GetImagesFromCloudinary(string workId);
+        Task<List<CloudinaryImageDto>> GetAllImagesFromCloudinary();
     }
 }

@@ -32,6 +32,7 @@ namespace AquaSolution.Server.Controllers.Imgs
 
             try
             {
+                url = Uri.UnescapeDataString(url); 
                 using var http = new HttpClient();
                 var bytes = await http.GetByteArrayAsync(url);
                 var fileName = $"{publicId}.jpg";

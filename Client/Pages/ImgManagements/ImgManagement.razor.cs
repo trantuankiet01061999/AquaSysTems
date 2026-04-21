@@ -76,43 +76,6 @@ namespace AquaSolution.Client.Pages.ImgManagements
             }
 
         }
-        //private async Task GetCurrentUser()
-        //{
-        //    if (Http == null) return;
-
-        //    var currenUserClass = new CurrenUser(Http, AuthStateProvider);
-        //    CurrenUser = await currenUserClass.LoadCurrenUser();
-
-        //    try
-        //    {
-        //        var data = await Http.GetFromJsonAsync<List<UserContributerDto>>(
-        //            "api/User/get-contributer");
-
-        //        if (data == null)
-        //        {
-        //            Contributors = new();
-        //            return;
-        //        }
-
-        //        if (CurrenUser.Roles.Any(r => r.Name == "Admin"))
-        //        {
-        //            Contributors = data;
-        //            return;
-        //        }
-
-        //        Contributors = data
-        //            .Where(x =>
-        //                (CurrenUser.FactoryId == Guid.Empty || x.FactoryId == CurrenUser.FactoryId) &&
-        //                (CurrenUser.DepartmentId == Guid.Empty || x.DepartmentId == CurrenUser.DepartmentId)
-        //            )
-        //            .ToList();
-        //    }
-        //    catch (HttpRequestException ex)
-        //    {
-        //        Contributors = new();
-        //        Console.WriteLine(ex);
-        //    }
-        //}
         private async Task GetIMG()
         {
             if (Contributors == null || !Contributors.Any())
@@ -141,12 +104,12 @@ namespace AquaSolution.Client.Pages.ImgManagements
         }
         #endregion
 
-        private async Task Download(CloudinaryImageDto row)
+        private void Download(CloudinaryImageDto row)
         {
             var url =
-               $"/api/img/download" +
-               $"?url={Uri.EscapeDataString(row.SecureUrl)}" +
-               $"&publicId={row.PublicId}";
+                "/api/img/download" +
+                "?url=" + Uri.EscapeDataString(row.SecureUrl) +
+                "&publicId=" + Uri.EscapeDataString(row.PublicId);
 
             Navigation.NavigateTo(url, forceLoad: true);
         }
