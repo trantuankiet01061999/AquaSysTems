@@ -126,16 +126,14 @@
                                             </Tooltip>
                                         }
 
-                                        @if (TaskManagement)
+                                        @if (CurrenUser.Id == row.Id || CurrenUser.Id == row.ManagerId || CurrenUser.Roles.Any(x => x.Name == "Admin"))
                                         {
                                             <Button Type="ButtonType.Text"
                                                     OnClick="@(async () => await EditTask(row))"
                                                     Style="text-align:left;">
                                                 <Icon Type="edit" /> Task Management
                                             </Button>
-                                        }
-                                        @if (CurrenUser.Id == row.Id || CurrenUser.Id == row.ManagerId || CurrenUser.Roles.Any(x => x.Name == "Admin"))
-                                        {
+                                        
                                             <Button Type="ButtonType.Text" OnClick="@(async () => await ViewTarget(row))" Style="text-align: left;">
                                                 <Icon Type="plus" /> View Target
                                             </Button>

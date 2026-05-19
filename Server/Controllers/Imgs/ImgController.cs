@@ -15,19 +15,38 @@ namespace AquaSolution.Server.Controllers.Imgs
             _imgService = imgService;
         }
 
-        [HttpGet("get-img/{workId}")]
-        public async Task<IActionResult> GetImg(string workId)
-        {
-            var list = await _imgService.GetImagesFromCloudinary(workId);
-            return Ok(list);
-        }
+        //[HttpGet("get-img/{workId}")]
+        //public async Task<IActionResult> GetImg(string workId)
+        //{
+        //    var list = await _imgService.GetImagesFromCloudinary(workId);
+        //    return Ok(list);
+        //}
         [HttpGet("get-all-img")]
         public async Task<IActionResult> GetAllImg()
         {
             var list = await _imgService.GetAllImagesFromCloudinary();
             return Ok(list);
         }
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeleteImage([FromQuery] string publicId)
+        {
+            if (string.IsNullOrWhiteSpace(publicId))
+                return BadRequest("Missing publicId");
 
+            try
+            {
+                var result = await _imgService.DeleteImageFromCloudinary(publicId);
+
+                if (!result)
+                    return NotFound("Image not found or already deleted");
+
+                return Ok("Deleted successfully");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpGet("download")]
         public async Task<IActionResult> Download([FromQuery] string url)
         {
@@ -36,9 +55,7 @@ namespace AquaSolution.Server.Controllers.Imgs
 
             try
             {
-                // FE đã Escape → BE bắt buộc Unescape
-                url = Uri.UnescapeDataString(url);
-
+                url = Uri.    UnescapeDataString(url);
                 using var http = new HttpClient();
                 var bytes = await http.GetByteArrayAsync(url);
 

@@ -85,6 +85,18 @@ builder.Services.AddHangfire(config =>
                   DisableGlobalLocks = true
               });
 });
+// ✅ ADD CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
 
 builder.Services.AddHangfireServer();
 
@@ -134,6 +146,7 @@ app.UseSwaggerUI(c =>
     );
 });
 
+
 // ===================== ENV =====================
 if (app.Environment.IsDevelopment())
 {
@@ -157,7 +170,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // ===================== MAP =====================
-
+app.UseCors("AllowAll");
 app.MapRazorPages();
 app.MapControllers();
 app.MapHub<SignalrHub>("/signalrhub");

@@ -93,8 +93,6 @@ namespace AquaSolution.Client.Pages.ImgManagements
                     images = new List<GroupImg>();
                     return;
                 }
-
-                // ✅ Admin → full ảnh
                 if (CurrenUser.Roles.Any(r => r.Name == "Admin"))
                 {
                     images = allImages
@@ -112,7 +110,6 @@ namespace AquaSolution.Client.Pages.ImgManagements
                     return;
                 }
 
-                // ✅ User thường
                 if (Contributors == null || !Contributors.Any())
                 {
                     images = new List<GroupImg>();
@@ -144,14 +141,47 @@ namespace AquaSolution.Client.Pages.ImgManagements
             }
         }
         #endregion
-        private async Task Download(CloudinaryImageDto row)
+        private async Task Delete(CloudinaryImageDto row)
         {
-            var url =
-                "/api/img/download" +
-                "?url=" + Uri.EscapeDataString(row.SecureUrl);
+            if (Http == null) return;
 
-            await JSRuntime.InvokeVoidAsync("open", url, "_blank");
+            try
+            {
+                var confirm = await JSRuntime.InvokeAsync<bool>("confirm", "Bạn có chắc chắn muốn xóa không?");
+                if (!confirm)
+                    return;
+                var publicId = Uri.EscapeDataString(row.PublicId);
+
+                var res = await Http.DeleteAsync($"api/Img/delete?publicId={publicId}");
+
+                if (res.IsSuccessStatusCode)
+                {
+
+                    var group = images.FirstOrDefault(x => x.WorkId == row.WorkId);
+                    if (group != null)
+                    {
+                        group.CloudinaryImageDtos.Remove(row);
+
+                        if (!group.CloudinaryImageDtos.Any())
+                        {
+                            images.Remove(group);
+                        }
+                    }
+
+                    await InvokeAsync(StateHasChanged);
+                }
+                else
+                {
+                    var msg = await res.Content.ReadAsStringAsync();
+                    Console.WriteLine(msg);
+                }
+            }
+            catch (Exception ex)
+            {                                         
+                Console.WriteLine(ex.Message);
+
+
+            }
         }
-
     }
 }

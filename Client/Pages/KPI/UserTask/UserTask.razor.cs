@@ -357,7 +357,6 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
                 decimal kpiScore = 0;
                 decimal omgscore = 0;
                 decimal keytaskscore = 0;
-
                 var indexWeights = IndexWeight?.Where(x => x.PeriodType == PeriodType.Quarter).ToList() ?? new List<IndexWeightDto>();
 
                 decimal omgWeight = indexWeights?.FirstOrDefault(x => x.KPIIndexType == KPIIndexType.OMG)?.Weight ?? 0;
@@ -365,19 +364,17 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
                 decimal keyTaskWeight = indexWeights?.FirstOrDefault(x => x.KPIIndexType == KPIIndexType.KeyTask)?.Weight ?? 0;
                 if (listResultDetail != null && listResultDetail.Any())
                 {
-                    // OMG
+ 
                     var listOMGDetails = listResultDetail.Where(x => x.KPIIndexType == KPIIndexType.OMG).ToList();
                     decimal sumOMG = listOMGDetails.Sum(x => x.Score ?? 0);
                     var avgOMG = listOMGDetails.Count > 0 ? sumOMG / listOMGDetails.Count : 0;
                     omgscore = avgOMG * omgWeight;
 
-                    // KPI
                     var listKPIDetails = listResultDetail.Where(x => x.KPIIndexType == KPIIndexType.KPI).ToList();
                     decimal sumKPI = listKPIDetails.Sum(x => x.Score ?? 0);
                     var avgKPI = listKPIDetails.Count > 0 ? sumKPI / listKPIDetails.Count : 0;
                     kpiScore = avgKPI * kpiWeight;
 
-                    // KeyTask
                     var listKeyTaskDetails = listResultDetail.Where(x => x.KPIIndexType == KPIIndexType.KeyTask).ToList();
                     decimal sumKeyTask = listKeyTaskDetails.Sum(x => x.Score ?? 0);
                     var avgKeyTask = listKeyTaskDetails.Count > 0 ? sumKeyTask / listKeyTaskDetails.Count : 0;
@@ -385,10 +382,9 @@ namespace AquaSolution.Client.Pages.KPI.UserTask
                 }
 
                 decimal totalScore = kpiScore + keytaskscore + omgscore;
-
                 int quarter = ((month + 8) % 12) / 3 + 1;
 
-                // Kiểm tra đã có chưa
+  
                 bool alreadyExists = CalculateQuarterPoint.Any(x => x.Quarter == quarter && x.Month == null && x.HalfYear == null);
                 if (!alreadyExists)
                 {

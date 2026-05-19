@@ -90,68 +90,75 @@
             <Spin Tip="Đang tải dữ liệu..." Size="SpinSize.Large" />
         </div>
     }
-
-        else
-        {
+    else
+    {
         <Collapse Accordion="true">
      
             @foreach (var group in images)
             {
-                   <Panel Header="@($"{group.WorkId} ({group.CloudinaryImageDtos.Count})")">
-                <Table TItem="CloudinaryImageDto"
-                       DataSource="group.CloudinaryImageDtos"
-                       Size="TableSize.Small"
-                       Bordered
-                       Loading="@Loading"
-                       Class="customTable fix-table-header">
+                <Panel Header="@($"{group.WorkId} ({group.CloudinaryImageDtos.Count})")">
+                    <Table TItem="CloudinaryImageDto"
+                           DataSource="group.CloudinaryImageDtos"
+                           Size="TableSize.Small"
+                           Bordered
+                           HidePagination 
+                           Loading="@Loading"
+                           Class="customTable fix-table-header">
 
-                    <ColumnDefinitions Context="row">
-                        <!-- Action -->
-                        <Column Align="ColumnAlign.Center" TData="CloudinaryImageDto" Width="50px" Title="Action">
-                            <Template Style="gap:5px">
-                    
-                         @*        <ActionColumn>
-                                    <Button Type="ButtonType.Link" OnClick="() => Download(row)">⬇DownLoad</Button>
-                                </ActionColumn> *@
-                                <ActionColumn>
-                                    <a href="@row.SecureUrl" target="_blank" style="width:500px;height:500px;">
-                                        👁View
-                                    </a>
-                                </ActionColumn>
+                        <ColumnDefinitions Context="row">
+                            <!-- Action -->
+                            <Column Align="ColumnAlign.Center" TData="CloudinaryImageDto" Width="50px" Title="Action">
+                                <Template Style="gap:5px">
+                                    <ActionColumn>
+                                        <a href="@row.SecureUrl" target="_blank" style="width:500px;height:500px;">
+                                            👁View
+                                        </a>
+                                    </ActionColumn>
               
-                            </Template>
-                        </Column>
-                        <!-- Ảnh -->
-                        <Column Align="ColumnAlign.Center" TData="CloudinaryImageDto" Width="170px" Title="Image">
-                            <Template>
-                                <img src="@row.SecureUrl"
-                                     style="width:100px;height:100px;object-fit:cover;border-radius:4px;"
-                                     loading="lazy" />
-                            </Template>
-                        </Column>
+                                </Template>
+                                @if (CurrenUser.WorkDayId == row.WorkId || CurrenUser.Roles.Any(x => x.Name == "Admin"))
+                                {
+                                    <Template Style="gap:5px">
+                                        <ActionColumn>
+                                            <Button Type="ButtonType.Text" OnClick="@(async () => await Delete(row))" Style="text-align: left;">
+                                                <Icon Type="delete" /> Delete
+                                            </Button>
+                                        </ActionColumn>
+              
+                                    </Template>
+                                }
+                            </Column>
+                            <!-- Ảnh -->
+                            <Column Align="ColumnAlign.Center" TData="CloudinaryImageDto" Width="170px" Title="Image">
+                                <Template>
+                                    <img src="@row.SecureUrl"
+                                         style="width:100px;height:100px;object-fit:cover;border-radius:4px;"
+                                         loading="lazy" />
+                                </Template>
+                            </Column>
 
 
-                        <PropertyColumn Align="ColumnAlign.Center" Width="280px"
-                                        Title="Public Id"
-                                        Property="c => c.PublicId" />
+                            <PropertyColumn Align="ColumnAlign.Center" Width="280px"
+                                            Title="Public Id"
+                                            Property="c => c.PublicId" />
 
-                        <!-- File Size -->
-                        <Column Align="ColumnAlign.Center" TData="CloudinaryImageDto" Width="100px" Title="Size">
-                            <Template>
-                                @($"{row.FileSize} {row.FileSizeUnit}")
-                            </Template>
-                        </Column>
+                            <!-- File Size -->
+                            <Column Align="ColumnAlign.Center" TData="CloudinaryImageDto" Width="100px" Title="Size">
+                                <Template>
+                                    @($"{row.FileSize} {row.FileSizeUnit}")
+                                </Template>
+                            </Column>
 
-                        <!-- Upload Date -->
-                        <Column Align="ColumnAlign.Center" Sortable TData="CloudinaryImageDto" Width="160px" Title="Uploaded At">
-                            <Template>
-                                @row.UpLoadDate.ToString("dd/MM/yyyy HH:mm")
-                            </Template>
-                        </Column>
+                            <!-- Upload Date -->
+                            <Column Align="ColumnAlign.Center" Sortable TData="CloudinaryImageDto" Width="160px" Title="Uploaded At">
+                                <Template>
+                                    @row.UpLoadDate.ToString("dd/MM/yyyy HH:mm")
+                                </Template>
+                            </Column>
 
 
-                    </ColumnDefinitions>
-                </Table>
+                        </ColumnDefinitions>
+                    </Table>
                 </Panel>
             }
         </Collapse>
