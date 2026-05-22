@@ -4,6 +4,7 @@ using AquaSolution.Data.Connection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AquaSolution.Data.Migrations
 {
     [DbContext(typeof(AquaDbContext))]
-    partial class AquaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260521022359_Table_ScrapManagermen_v2")]
+    partial class Table_ScrapManagermen_v2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1944,39 +1947,6 @@ namespace AquaSolution.Data.Migrations
                     b.ToTable("tbl_RequestSuportCategorys", "RequestSuport");
                 });
 
-            modelBuilder.Entity("AquaSolution.Data.Data.Entities.Scraps.FlowApprovalScrap", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DecisionMaker")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DepartmentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(2500)
-                        .HasColumnType("nvarchar(2500)");
-
-                    b.Property<Guid>("FactoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("Step")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("tbl_FlowApprovalScraps", "ScrapManagement");
-                });
-
             modelBuilder.Entity("AquaSolution.Data.Data.Entities.Scraps.HistoryScrap", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1989,15 +1959,9 @@ namespace AquaSolution.Data.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("DepartmentId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("FactoryId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("LastActionBy")
                         .HasColumnType("uniqueidentifier");
@@ -2016,10 +1980,6 @@ namespace AquaSolution.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedBy");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.HasIndex("FactoryId");
 
                     b.HasIndex("LastActionBy");
 
@@ -2133,11 +2093,14 @@ namespace AquaSolution.Data.Migrations
                     b.ToTable("tbl_RequestApprovals", "ScrapManagement");
                 });
 
-            modelBuilder.Entity("AquaSolution.Data.Data.Entities.Scraps.Weight", b =>
+            modelBuilder.Entity("AquaSolution.Data.KPI.Entities.CeilingLevel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("CeilingLevelValue")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
@@ -2145,33 +2108,25 @@ namespace AquaSolution.Data.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("FactoryId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
-
-                    b.Property<Guid>("MaterialId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("WeightValue")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(18,4)")
-                        .HasDefaultValue(0m);
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedBy");
 
-                    b.HasIndex("MaterialId");
+                    b.HasIndex("FactoryId");
 
-                    b.ToTable("tbl_Weights", "ScrapManagement");
+                    b.ToTable("tbl_CeilingLevels", "KPI");
                 });
 
-            modelBuilder.Entity("AquaSolution.Data.Entities.Scraps.Material", b =>
+            modelBuilder.Entity("AquaSolution.Data.KPI.Entities.Scraps.Material", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -2210,14 +2165,11 @@ namespace AquaSolution.Data.Migrations
                     b.ToTable("tbl_Materials", "ScrapManagement");
                 });
 
-            modelBuilder.Entity("AquaSolution.Data.KPI.Entities.CeilingLevel", b =>
+            modelBuilder.Entity("AquaSolution.Data.KPI.Entities.Scraps.Weight", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("CeilingLevelValue")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
@@ -2225,22 +2177,30 @@ namespace AquaSolution.Data.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("FactoryId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<Guid>("MaterialId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("WeightValue")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(18,4)")
+                        .HasDefaultValue(0m);
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedBy");
 
-                    b.HasIndex("FactoryId");
+                    b.HasIndex("MaterialId");
 
-                    b.ToTable("tbl_CeilingLevels", "KPI");
+                    b.ToTable("tbl_Weights", "ScrapManagement");
                 });
 
             modelBuilder.Entity("AquaSolution.Data.KPI.Entities.UserTask", b =>
@@ -2766,18 +2726,6 @@ namespace AquaSolution.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("AquaSolution.Data.Data.Entities.Admin.Department", null)
-                        .WithMany()
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("AquaSolution.Data.Data.Entities.Admin.Factory", null)
-                        .WithMany()
-                        .HasForeignKey("FactoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("AquaSolution.Data.Data.Entities.Admin.User", null)
                         .WithMany()
                         .HasForeignKey("LastActionBy")
@@ -2786,7 +2734,7 @@ namespace AquaSolution.Data.Migrations
 
             modelBuilder.Entity("AquaSolution.Data.Data.Entities.Scraps.HistoryScrapDetail", b =>
                 {
-                    b.HasOne("AquaSolution.Data.Entities.Scraps.Material", null)
+                    b.HasOne("AquaSolution.Data.KPI.Entities.Scraps.Material", null)
                         .WithMany()
                         .HasForeignKey("MaterialId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -2819,21 +2767,6 @@ namespace AquaSolution.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("AquaSolution.Data.Data.Entities.Scraps.Weight", b =>
-                {
-                    b.HasOne("AquaSolution.Data.Data.Entities.Admin.User", null)
-                        .WithMany()
-                        .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("AquaSolution.Data.Entities.Scraps.Material", null)
-                        .WithMany()
-                        .HasForeignKey("MaterialId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("AquaSolution.Data.KPI.Entities.CeilingLevel", b =>
                 {
                     b.HasOne("AquaSolution.Data.Data.Entities.Admin.User", null)
@@ -2845,6 +2778,21 @@ namespace AquaSolution.Data.Migrations
                     b.HasOne("AquaSolution.Data.Data.Entities.Admin.Factory", null)
                         .WithMany()
                         .HasForeignKey("FactoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AquaSolution.Data.KPI.Entities.Scraps.Weight", b =>
+                {
+                    b.HasOne("AquaSolution.Data.Data.Entities.Admin.User", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AquaSolution.Data.KPI.Entities.Scraps.Material", null)
+                        .WithMany()
+                        .HasForeignKey("MaterialId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

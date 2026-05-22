@@ -10,6 +10,7 @@ namespace AquaSolution.Shared.Enum.Scrap
         REF,
         [Display(Name = "9A62")]
         WM,
-
+        [Display(Name = "9A60")]
+        PL,
     }
 }

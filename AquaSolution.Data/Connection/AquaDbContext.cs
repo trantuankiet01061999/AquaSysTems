@@ -3,10 +3,13 @@ using AquaSolution.Data.Data.Entities.Admin;
 using AquaSolution.Data.Data.Entities.Clinic;
 using AquaSolution.Data.Data.Entities.KPI;
 using AquaSolution.Data.Data.Entities.RequestITSuports;
+using AquaSolution.Data.Data.Entities.Scraps;
 using AquaSolution.Data.Data.MappingConfigurations.Admin;
 using AquaSolution.Data.Data.MappingConfigurations.Clinic;
 using AquaSolution.Data.Data.MappingConfigurations.KPI;
 using AquaSolution.Data.Data.MappingConfigurations.RequestITSuport;
+using AquaSolution.Data.Data.MappingConfigurations.Scraps;
+using AquaSolution.Data.Entities.Scraps;
 using AquaSolution.Data.KPI.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -83,6 +86,16 @@ namespace AquaSolution.Data.Connection
 
 
         #endregion
+        #region Scrap
+        public DbSet<HistoryScrap> tbl_HistoryScraps { get; set; }
+        public DbSet<HistoryScrapDetail> tbl_HistoryScrapDetails { get; set; }
+        public DbSet<RequestApproval> tbl_RequestApprovals { get; set; }
+        public DbSet<Material> tbl_Materials { get; set; }
+        public DbSet<Weight> tbl_Weights { get; set; }
+        public DbSet<FlowApprovalScrap> tbl_FlowApprovalScraps { get; set; }
+
+
+        #endregion
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new MenuConfiguration());
@@ -148,6 +161,15 @@ namespace AquaSolution.Data.Connection
 
             #endregion
 
+            #region Scrap
+            modelBuilder.ApplyConfiguration(new HistoryScrapConfiguration());
+            modelBuilder.ApplyConfiguration(new HistoryScrapDetailConfiguration());
+            modelBuilder.ApplyConfiguration(new MaterialConfiguration());
+            modelBuilder.ApplyConfiguration(new RequestApprovalConfiguration());
+            modelBuilder.ApplyConfiguration(new WeightConfiguration());
+            modelBuilder.ApplyConfiguration(new FlowApprovalScrapConfiguration());
+            
+            #endregion
         }
     }
 }

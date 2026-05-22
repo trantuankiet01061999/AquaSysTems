@@ -97,27 +97,39 @@
             @foreach (var group in images)
             {
                 <Panel Header="@($"{group.WorkId} ({group.CloudinaryImageDtos.Count})")">
+                    @if (CurrenUser.WorkDayId == group.WorkId)
+                    {
+                        <Button OnClick="@(async () => await DeleteAllImg(group.WorkId))">
+                            <Icon Type="delete" /> Delete All
+                        </Button>
+                    }
+                    
+                    @if (!SelectedMap.ContainsKey(group.WorkId))
+                    {
+                        SelectedMap[group.WorkId] = new List<CloudinaryImageDto>();
+                    }
+
                     <Table TItem="CloudinaryImageDto"
                            DataSource="group.CloudinaryImageDtos"
                            Size="TableSize.Small"
                            Bordered
-                           HidePagination 
+                           RowKey="x => x.PublicId"
+                           OnSelectAll="(b) => OnSelectAll(b, group.WorkId)"
+                           @bind-SelectedRows="SelectedMap[group.WorkId]"
+                           HidePagination
                            Loading="@Loading"
                            Class="customTable fix-table-header">
-
+                       
                         <ColumnDefinitions Context="row">
+                            @if (CurrenUser.WorkDayId == group.WorkId)
+                            {
+                                <Selection></Selection>
+                            }
                             <!-- Action -->
                             <Column Align="ColumnAlign.Center" TData="CloudinaryImageDto" Width="50px" Title="Action">
-                                <Template Style="gap:5px">
-                                    <ActionColumn>
-                                        <a href="@row.SecureUrl" target="_blank" style="width:500px;height:500px;">
-                                            👁View
-                                        </a>
-                                    </ActionColumn>
-              
-                                </Template>
                                 @if (CurrenUser.WorkDayId == row.WorkId || CurrenUser.Roles.Any(x => x.Name == "Admin"))
                                 {
+                                   
                                     <Template Style="gap:5px">
                                         <ActionColumn>
                                             <Button Type="ButtonType.Text" OnClick="@(async () => await Delete(row))" Style="text-align: left;">
@@ -127,6 +139,15 @@
               
                                     </Template>
                                 }
+                                <Template Style="gap:5px">
+                                    <ActionColumn>
+                                        <a href="@row.SecureUrl" target="_blank" style="width:500px;height:500px;">
+                                            👁View
+                                        </a>
+                                    </ActionColumn>
+              
+                                </Template>
+                               
                             </Column>
                             <!-- Ảnh -->
                             <Column Align="ColumnAlign.Center" TData="CloudinaryImageDto" Width="170px" Title="Image">

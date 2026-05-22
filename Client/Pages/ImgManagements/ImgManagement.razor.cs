@@ -141,22 +141,63 @@ namespace AquaSolution.Client.Pages.ImgManagements
             }
         }
         #endregion
-        private async Task Delete(CloudinaryImageDto row)
+
+        void OnSelectAll(bool selectAll, string workId)
         {
-            if (Http == null) return;
+            if (!selectAll)
+            {
+                SelectedMap[workId] = new List<CloudinaryImageDto>();
+            }
+        }
+
+        private Dictionary<string, IEnumerable<CloudinaryImageDto>> SelectedMap
+            = new();
+        private async Task DeleteAllImg(string workId)
+        {
+            var confirm = await JSRuntime.InvokeAsync<bool>("confirm", "Bạn có chắc chắn muốn xóa không?");
+            if (!confirm)
+                return;
+
+            if (!SelectedMap.ContainsKey(workId))
+                return;
+
+            var listDelete = SelectedMap[workId].ToList();
+
+            if (!listDelete.Any())
+                return;
 
             try
             {
-                var confirm = await JSRuntime.InvokeAsync<bool>("confirm", "Bạn có chắc chắn muốn xóa không?");
-                if (!confirm)
-                    return;
+                await Task.WhenAll(listDelete.Select(DeleteInternal));
+                SelectedMap[workId] = new List<CloudinaryImageDto>();
+                await GetIMG();
+                await InvokeAsync(StateHasChanged);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private async Task DeleteInternal(CloudinaryImageDto row)
+        {
+            if (Http == null || row == null) return;
+
+            try
+            {
                 var publicId = Uri.EscapeDataString(row.PublicId);
 
                 var res = await Http.DeleteAsync($"api/Img/delete?publicId={publicId}");
 
-                if (res.IsSuccessStatusCode)
+                if (!res.IsSuccessStatusCode)
                 {
+                    var msg = await res.Content.ReadAsStringAsync();
+                    Console.WriteLine(msg);
+                    return;
+                }
 
+                await InvokeAsync(() =>
+                {
                     var group = images.FirstOrDefault(x => x.WorkId == row.WorkId);
                     if (group != null)
                     {
@@ -167,21 +208,29 @@ namespace AquaSolution.Client.Pages.ImgManagements
                             images.Remove(group);
                         }
                     }
-
-                    await InvokeAsync(StateHasChanged);
-                }
-                else
-                {
-                    var msg = await res.Content.ReadAsStringAsync();
-                    Console.WriteLine(msg);
-                }
+                });
             }
             catch (Exception ex)
-            {                                         
+            {
                 Console.WriteLine(ex.Message);
-
-
             }
+        }
+       private async Task Delete(CloudinaryImageDto row)
+        {
+            var confirm = await JSRuntime.InvokeAsync<bool>("confirm", "Bạn có chắc chắn muốn xóa không?");
+            if (!confirm)
+                return;
+
+            await DeleteInternal(row);
+
+            if (SelectedMap.ContainsKey(row.WorkId))
+            {
+                SelectedMap[row.WorkId] = SelectedMap[row.WorkId]
+                    .Where(x => x.PublicId != row.PublicId)
+                    .ToList();
+            }
+
+            await InvokeAsync(StateHasChanged);
         }
     }
 }

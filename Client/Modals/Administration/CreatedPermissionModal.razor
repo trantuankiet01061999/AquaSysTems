@@ -26,7 +26,8 @@
         <Row Gutter="24">
             <Col Span="8">
             <FormItem Label="Menu" Required="true">
-                <Select TItem="BaseDto" TItemValue="BaseDto"
+                <Select TItem="BaseDto"
+                        TItemValue="BaseDto"
                         DataSource="@ListMenu"
                         @bind-Value="@ValueMenu"
                         ItemValue="c => c"
