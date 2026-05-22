@@ -97,7 +97,7 @@
             @foreach (var group in images)
             {
                 <Panel Header="@($"{group.WorkId} ({group.CloudinaryImageDtos.Count})")">
-                    @if (CurrenUser.WorkDayId == group.WorkId)
+                    @if (CurrenUser.WorkDayId == group.WorkId || CurrenUser.Roles.Any(x => x.Name == "Admin"))
                     {
                         <Button OnClick="@(async () => await DeleteAllImg(group.WorkId))">
                             <Icon Type="delete" /> Delete All
@@ -121,7 +121,7 @@
                            Class="customTable fix-table-header">
                        
                         <ColumnDefinitions Context="row">
-                            @if (CurrenUser.WorkDayId == group.WorkId)
+                            @if (CurrenUser.WorkDayId == group.WorkId || CurrenUser.Roles.Any(x => x.Name == "Admin"))
                             {
                                 <Selection></Selection>
                             }
