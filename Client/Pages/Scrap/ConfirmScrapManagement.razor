@@ -1,0 +1,197 @@
+@page "/confirm-scrap"
+@using AquaSolution.Client.Common
+@using AquaSolution.Client.Modals.ScrapManagement.Scrap
+@using AquaSolution.Shared.Enum.Scrap
+@using AquaSolution.Shared.ScrapManagement.Scrap
+@using AquaSolution.Shared.UserManagements
+@using Microsoft.AspNetCore.Components.Authorization
+@using AntDesign
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+
+<PageTitle>Confirm Scrap</PageTitle>
+
+<style>
+    .fix-table-header table { border-collapse: collapse; }
+    .fix-table-header table thead th {
+        position: sticky !important;
+        z-index: 8 !important;
+        top: 0;
+        background-color: #fff;
+    }
+    .ant-table-content { min-height: unset !important; }
+    .group-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        background: #fafafa;
+        cursor: pointer;
+        user-select: none;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .group-header:hover { background: #f0f5ff; }
+    .group-wrapper {
+        margin-bottom: 10px;
+        border: 1px solid #e8e8e8;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+</style>
+
+<div class="mb-3">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px; flex-wrap:wrap;">
+
+        <Select TItem="string" TItemValue="string"
+                DataSource="@_factoryOptions"
+                Value="@_filterFactory"
+                ValueChanged="OnFilterFactory"
+                Placeholder="-- Factory --"
+                Style="width:160px" AllowClear>
+        </Select>
+
+        <Select TItem="string" TItemValue="string"
+                DataSource="@_departmentOptions"
+                Value="@_filterDepartment"
+                ValueChanged="OnFilterDepartment"
+                Placeholder="-- Department --"
+                Style="width:160px" AllowClear>
+        </Select>
+
+        <Button OnClick="ClearFilter" Icon="clear">Clear filter</Button>
+
+        <span style="font-size:12px; color:#999;">
+            @ListFiltered.Count / @ListHistory.Count
+        </span>
+    </div>
+</div>
+
+<div style="width:100%; overflow-x:auto; max-height:80vh; overflow-y:auto;">
+
+    @foreach (var group in GroupedScraps)
+    {
+        var isExpanded = ExpandedGroups.Contains(group.Key);
+
+        var (headerColor, groupLabel, groupIcon) = group.Key switch
+        {
+            "PendingConfirm" => ("#faad14", "Pending Confirm",  "clock-circle"),
+            "Done"           => ("#52c41a", "Done",             "check-circle"),
+            _                => ("#d9d9d9", group.Key,          "question-circle")
+        };
+
+         var iconStyle = $"color:{headerColor}; font-size:14px;"; 
+        <div class="group-wrapper">
+            <div class="group-header" @onclick="() => ToggleGroup(group.Key)">
+                <Icon Type="@(isExpanded ? "down" : "right")" Style="font-size:12px; color:#888;" />
+                <Icon Type="@groupIcon" Style="@iconStyle" />
+                <Tag Color="@headerColor">@groupLabel (@group.Value.Count)</Tag>
+            </div>
+
+            @if (isExpanded)
+            {
+                <div style="overflow-x:auto;">
+                    <Table TItem="HistoryScrapDto"
+                           Size="TableSize.Small"
+                           Bordered
+                           Class="customTable fix-table-header"
+                           DataSource="group.Value"
+                           Loading="IsLoading"
+                           HidePagination="true"
+                           PageSize="9999">
+                        <ColumnDefinitions Context="row">
+
+                            <Column TData="string" Fixed="ColumnFixPlacement.Left" Width="60px">
+                                <Template>
+                                    <Button Size="ButtonSize.Small"
+                                            Icon="eye"
+                                            OnClick="@(async () => await DetailScrap(row))">
+                                        Detail
+                                    </Button>
+                                </Template>
+                            </Column>
+
+                            <PropertyColumn Width="220px" Title="Title"      Property="c => c.Title" />
+                            <PropertyColumn Width="120px" Title="Factory"    Property="c => c.FactoryName" />
+                            <PropertyColumn Width="140px" Title="Department" Property="c => c.DepartmentName" />
+
+                            <Column TData="string" Title="Status" Width="130px">
+                                <Template>
+                                    @{
+                                        var (color, text) = row.Status switch
+                                        {
+                                            StatusScrap.Approved  => ("#faad14", "Pending Confirm"),
+                                            StatusScrap.Done      => ("#52c41a", "Done"),
+                                            _                     => ("#d9d9d9", row.Status.ToString())
+                                        };
+                                    }
+                                    <Tag Color="@color">@text</Tag>
+                                </Template>
+                            </Column>
+
+                            <Column TData="string" Title="Total Amount" Width="130px">
+                                <Template>
+                                    <span style="font-weight:500; color:#1677ff;">
+                                        @(row.TotalAmount?.ToString("N2") ?? "—") kg
+                                    </span>
+                                </Template>
+                            </Column>
+
+                            @* Chỉ hiện cột xác nhận khi là Done *@
+                            @if (group.Key == "Done")
+                            {
+                                <Column TData="string" Title="Confirm Amount" Width="130px">
+                                    <Template>
+                                        <span style="font-weight:500; color:#52c41a;">
+                                            @(row.ConfirmAmount?.ToString("N2") ?? "—") kg
+                                        </span>
+                                    </Template>
+                                </Column>
+
+                                <Column TData="string" Title="Confirm Status" Width="140px">
+                                    <Template>
+                                        @{
+                                            var (cc, ct) = row.ConfirmationStatusType switch
+                                            {
+                                                ConfirmationStatusType.Received      => ("#52c41a", "Received"),
+                                                ConfirmationStatusType.Overreceived  => ("#1677ff", "Over received"),
+                                                ConfirmationStatusType.Underreceived => ("#faad14", "Under received"),
+                                                _                                    => ("#d9d9d9", "—")
+                                            };
+                                        }
+                                        <Tag Color="@cc">@ct</Tag>
+                                    </Template>
+                                </Column>
+
+                                <Column TData="string" Title="Confirmed By" Width="150px">
+                                    @(row.ConfirmerName ?? "—")
+                                </Column>
+
+                                <Column TData="string" Title="Confirmed Date" Width="140px">
+                                    @(row.ConfirmedDate?.ToString("dd/MM/yyyy HH:mm") ?? "—")
+                                </Column>
+                            }
+
+                            <PropertyColumn Width="150px" Title="Last Approved By"   Property="c => c.LastActionByName" />
+                            <Column TData="string"        Title="Last Approved Date" Width="140px">
+                                @(row.LastActionDate?.ToString("dd/MM/yyyy HH:mm") ?? "—")
+                            </Column>
+
+                            <PropertyColumn Width="150px" Title="Created By"   Property="c => c.CreatedByName" />
+                            <PropertyColumn Width="140px" Title="Created Date" Property="c => c.CreatedDate" Format="dd/MM/yyyy HH:mm" />
+
+                        </ColumnDefinitions>
+                    </Table>
+                </div>
+            }
+        
+        </div>
+    }
+
+    @if (!IsLoading && !GroupedScraps.Any())
+    {var nodata= "No data.";
+        <Empty Description="@nodata" />
+    }
+
+</div>
+
+<RegisterScrapModal @ref="registerScrapModal" OnActionCompleted="LoadHistory" />

@@ -447,7 +447,8 @@ namespace AquaSolution.Server.Services.ScrapManagetment.ScapServices
         public async Task<List<HistoryScrapDto>> GetScrapForConfirm()
         {
             var query = from hs in _historyScrapRepository.Query()
-                            .Where(x => x.Status == StatusScrap.Approved)
+                            .Where(x => x.Status == StatusScrap.Approved
+                                    || x.Status == StatusScrap.Done)
                         join factory in _factoryRepository.Query() on hs.FactoryId equals factory.Id
                         join department in _departmentRepository.Query() on hs.DepartmentId equals department.Id
                         join creator in _userRepository.Query() on hs.CreatedBy equals creator.Id
