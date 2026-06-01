@@ -1,116 +1,183 @@
-﻿@using AntDesign
+@using AntDesign
 @using AquaSolution.Client.Common
 @inject ModalService Modal
 @inject NavigationManager Navigation
 @inject IJSRuntime JSRuntime
 
-@{
-    RenderFragment footer = @<Template>
-
-        <Button Style="color:#808080" OnClick="@Close" @key="@("back")">Close</Button>
-
-    </Template>;
-}
-<Modal @bind-Visible="IsModalVisible" Style="z-index: 9999;width:1500px ;height:78vh !important ;top:3px" Draggable="true" Footer="@footer">
+<Modal @bind-Visible="IsModalVisible" Style="z-index: 9999; top: 20px;" Width="1000" Draggable="true" Footer="@(null)" Closable="false" BodyStyle="padding: 0; border-radius: 8px; overflow: hidden;">
 	<script>
 		window.open_blank = function (url) {
 			 window.open(url, '_blank');
 		 }
-
 	</script>
-	<div style="max-height:70vh;overflow-y:auto"> 
-		<Collapse DefaultActiveKey="@(new[] { "1" })">
-			<Panel Class="customInfo" Header="Request Info" Key="1">
+    
+    <!-- Custom Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #f0f0f0; background-color: #fff;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 36px; height: 36px; background-color: #e6f7ff; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                <Icon Type="project" Theme="IconThemeType.Outline" Style="color: #1890ff; font-size: 18px;" />
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 8px;">
+                <span style="font-weight: 600; font-size: 18px; color: #1f1f1f;">@RequestSuport.RequestTitle</span>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <Tag Color="@GetTagColor.GetTagColorCss(RequestSuport.Status.ToString())" Style="border-radius: 12px; padding: 2px 12px; font-weight: 500;">
+                <Icon Type="check-circle" Theme="IconThemeType.Fill" Style="margin-right: 4px;" />
+                @RequestSuport.Status
+            </Tag>
+            <Button Icon="close" OnClick="@Close" Shape="ButtonShape.Circle" Type="default" Style="border: 1px solid #d9d9d9; color: #595959;" />
+        </div>
+    </div>
 
-                <Descriptions Size="DescriptionsSize.Small" Style="margin-bottom: 15px;" Column="4">
-                    <!-- Request Title & Status -->
-                    <DescriptionsItem Title="- RequestTitle" Span="3">
-                        @(RequestSuport.RequestTitle)
-                    </DescriptionsItem>
-                    <DescriptionsItem Title="Status" Span="1">
-                        <Tag Color="@GetTagColor.GetTagColorCss(RequestSuport.Status.ToString())">
-                            @RequestSuport.Status
-                        </Tag>
-                    </DescriptionsItem>
+    <!-- Body Layout -->
+    <div style="padding: 24px; display: flex; flex-direction: column; gap: 24px; background-color: #fff; max-height: 75vh; overflow-y: auto;">
+        
+        <!-- Row 1: PEOPLE -->
+        <div style="background-color: #f7f6f3; border-radius: 12px; padding: 20px;">
+            <div style="font-size: 13px; font-weight: 600; color: #8c8c8c; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; text-transform: uppercase;">
+                <Icon Type="team" /> People
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <!-- Requester -->
+                <div style="display: flex; align-items: center; gap: 16px; background-color: white; padding: 16px; border-radius: 10px; border: 1px solid #eaeaea;">
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-size: 12px; color: #8c8c8c;">Requested by</span>
+                        <span style="font-weight: 600; font-size: 14px; color: #262626;">@RequestSuport.RequestByName - @RequestSuport.RequestByWorkDay</span>
+                        <span style="font-size: 13px; color: #8c8c8c;">@RequestSuport.RequestByEmail</span>
+                    </div>
+                </div>
+                
+                <!-- Technician -->
+                <div style="display: flex; align-items: center; gap: 16px; background-color: white; padding: 16px; border-radius: 10px; border: 1px solid #eaeaea;">
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-size: 12px; color: #8c8c8c;">Technical support</span>
+                        <span style="font-weight: 600; font-size: 14px; color: #262626;">@RequestSuport.TechnicianName</span>
+                        <span style="font-size: 13px; color: #8c8c8c;">@RequestSuport.TechnicianEmail</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                    <!-- Requester Info (left) -->
-                    <DescriptionsItem Title="- Requester Name" Span="2">
-                        @(RequestSuport.RequestByName)
-                    </DescriptionsItem>
-                    <DescriptionsItem Title="- Technical Support Name" Span="2">
-                        @(RequestSuport.TechnicianName)
-                    </DescriptionsItem>
+        <!-- Row 2: DETAILS and TIMELINE -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <!-- DETAILS -->
+            <div style="background-color: #f7f6f3; border-radius: 12px; padding: 20px;">
+                <div style="font-size: 13px; font-weight: 600; color: #8c8c8c; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; text-transform: uppercase;">
+                    <Icon Type="info-circle" /> Details
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div>
+                        <div style="font-size: 12px; color: #8c8c8c; margin-bottom: 4px;">Factory</div>
+                        <div style="font-weight: 500; color: #262626;">@RequestSuport.Factory</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: #8c8c8c; margin-bottom: 4px;">Department</div>
+                        <div style="font-weight: 500; color: #262626;">@RequestSuport.Department</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: #8c8c8c; margin-bottom: 4px;">Category</div>
+                        <div style="font-weight: 500; color: #262626;">@RequestSuport.RequestSuportCategoryName</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: #8c8c8c; margin-bottom: 4px;">Created by</div>
+                        <div style="font-weight: 500; color: #262626;">@RequestSuport.CreatedName</div>
+                    </div>
+                </div>
+            </div>
 
-                    <DescriptionsItem Title="- Requester Email" Span="2">
-                        @(RequestSuport.RequestByEmail)
-                    </DescriptionsItem>
-                    <DescriptionsItem Title="- Technical Support Email" Span="2">
-                        @(RequestSuport.TechnicianEmail)
-                    </DescriptionsItem>
+            <!-- TIMELINE -->
+            <div style="background-color: #f7f6f3; border-radius: 12px; padding: 20px;">
+                <div style="font-size: 13px; font-weight: 600; color: #8c8c8c; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; text-transform: uppercase;">
+                    <Icon Type="calendar" /> Timeline
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div style="background-color: white; padding: 12px 16px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; gap: 12px; align-items: center;">
+                        <Icon Type="calendar" Theme="IconThemeType.Outline" Style="color: #8c8c8c; font-size: 16px;" />
+                        <div>
+                            <div style="font-size: 12px; color: #8c8c8c;">Due date</div>
+                            <div style="font-weight: 500; font-size: 13px; color: #262626;">@(RequestSuport.DueDate?.ToString("dd/MM/yyyy HH:mm") ?? "No time")</div>
+                        </div>
+                    </div>
+                    <div style="background-color: white; padding: 12px 16px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; gap: 12px; align-items: center;">
+                        <Icon Type="caret-right" Theme="IconThemeType.Outline" Style="color: #8c8c8c; font-size: 16px;" />
+                        <div>
+                            <div style="font-size: 12px; color: #8c8c8c;">Start date</div>
+                            <div style="font-weight: 500; font-size: 13px; color: #262626;">@(RequestSuport.InProgessDate?.ToString("dd/MM/yyyy HH:mm") ?? "No time")</div>
+                        </div>
+                    </div>
+                    <div style="background-color: white; padding: 12px 16px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; gap: 12px; align-items: center;">
+                        <Icon Type="check-circle" Theme="IconThemeType.Outline" Style="color: #8c8c8c; font-size: 16px;" />
+                        <div>
+                            <div style="font-size: 12px; color: #8c8c8c;">Resolve date</div>
+                            <div style="font-weight: 500; font-size: 13px; color: #262626;">@(RequestSuport.ResolveDate?.ToString("dd/MM/yyyy HH:mm") ?? "No time")</div>
+                        </div>
+                    </div>
+                    <div style="background-color: white; padding: 12px 16px; border-radius: 8px; border: 1px solid #eaeaea; display: flex; gap: 12px; align-items: center;">
+                        <Icon Type="close" Theme="IconThemeType.Outline" Style="color: #8c8c8c; font-size: 16px;" />
+                        <div>
+                            <div style="font-size: 12px; color: #8c8c8c;">Cancel date</div>
+                            <div style="font-weight: 500; font-size: 13px; color: #262626;">@(RequestSuport.CancelDate?.ToString("dd/MM/yyyy HH:mm") ?? "No time")</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                    <DescriptionsItem Title="- Requester Factory" Span="2">
-                        @(RequestSuport.Factory)
-                    </DescriptionsItem>
-
-                   
-                    <DescriptionsItem Title="- Created By Name" Span="2">
-                        @(RequestSuport.CreatedName)
-                    </DescriptionsItem>
-                    <DescriptionsItem Title="- Requester Department" Span="2">
-                        @(RequestSuport.Department)
-                    </DescriptionsItem>
-
-                    <DescriptionsItem Title="- Created By Email" Span="2">
-                        @(RequestSuport.CreatedEmail)
-                    </DescriptionsItem>
-
-                    <DescriptionsItem Title="- RequestCategory" Span="2">
-                        @(RequestSuport.RequestSuportCategoryName)
-                    </DescriptionsItem>
-                 
-                    <DescriptionsItem Span="2"></DescriptionsItem>
-
-                    <!-- RequestDescription & Solution -->
-                    <DescriptionsItem Title="- RequestDescription" Span="4">
+        <!-- Row 3: DESCRIPTION & SOLUTION -->
+        <div style="background-color: #f7f6f3; border-radius: 12px; padding: 20px;">
+            <div style="font-size: 13px; font-weight: 600; color: #8c8c8c; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; text-transform: uppercase;">
+                <Icon Type="align-left" /> Description & Solution
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <!-- Description -->
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #8c8c8c; text-transform: uppercase;">Description</div>
+                    <div style="background-color: white; padding: 16px; border-radius: 8px; border: 1px solid #eaeaea; height: 160px; overflow-y: auto; color: #262626; line-height: 1.5;">
                         @(new MarkupString(RequestSuport.RequestDescription?.Replace("\n", "<br/>")))
-                    </DescriptionsItem>
-
-                    <DescriptionsItem Title="- RequestSolution" Span="4">
+                    </div>
+                </div>
+                
+                <!-- Solution -->
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="font-size: 12px; font-weight: 600; color: #8c8c8c; text-transform: uppercase;">Solution</div>
+                    <div style="background-color: white; padding: 16px; border-radius: 8px; border: 1px solid #eaeaea; height: 160px; overflow-y: auto; color: #262626; line-height: 1.5;">
                         @(new MarkupString(RequestSuport.RequestSolution?.Replace("\n", "<br/>")))
-                    </DescriptionsItem>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                    <!-- Dates -->
-                    <DescriptionsItem Title="✮ DueDate">
-                        @(RequestSuport.DueDate?.ToString("dd/MM/yyyy HH:mm") ?? "No Time")
-                    </DescriptionsItem>
-
-                    <DescriptionsItem Title="✮ ResolveDate">
-                        @(RequestSuport.ResolveDate?.ToString("dd/MM/yyyy HH:mm") ?? "No Time")
-                    </DescriptionsItem>
-
-                    <DescriptionsItem Title="✮ StartDate">
-                        @(RequestSuport.InProgessDate?.ToString("dd/MM/yyyy HH:mm") ?? "No Time")
-                    </DescriptionsItem>
-
-                    <DescriptionsItem Title="✮ CancelDate">
-                        @(RequestSuport.CancelDate?.ToString("dd/MM/yyyy HH:mm") ?? "No Time")
-                    </DescriptionsItem>
-                </Descriptions>
-
-
-			</Panel>
-			<Panel Class="customDocument" Header="Documents" Key="2">
-				<Table DataSource="@Attachment" HidePagination Size="TableSize.Small">
-					<ChildContent Context="item">
-						<Column  Fixed="ColumnFixPlacement.Left" Title="FileName" TData="string">@item.FileName</Column>
-						<Column Title="FileSize" Width="100" TData="string">@FormatSize(item.FileSize)</Column>
-						<Column Title="CreatedTime" Width="200" TData="string">@item.CreatedTime.ToString("dd/MM/yyyy HH:mm:ss")</Column>
-						<ActionColumn>
-							<Button Icon="cloud-download" Type="ButtonType.Link" OnClick="() => Download(item.FilePath)"></Button>
-						</ActionColumn>
-					</ChildContent>
-				</Table> 
-			</Panel>
-		</Collapse>
-	</div>
+        <!-- Row 4: DOCUMENTS -->
+        <div style="background-color: #f7f6f3; border-radius: 12px; padding: 20px;">
+            <div style="font-size: 13px; font-weight: 600; color: #8c8c8c; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; text-transform: uppercase;">
+                <Icon Type="paper-clip" /> Documents
+                <span style="background-color: #e6e6e6; color: #595959; border-radius: 10px; padding: 2px 8px; font-size: 12px; font-weight: 600;">@(Attachment?.Count ?? 0)</span>
+            </div>
+            
+            <div style="background-color: white; border-radius: 8px; border: 1px solid #eaeaea; overflow: hidden; padding-bottom: 0px;">
+                <Table DataSource="@Attachment" HidePagination Size="TableSize.Small" ScrollY="120px" Style="margin: 0; width: 100%;">
+                    <ChildContent Context="item">
+                        <Column Title="File name" TData="string">
+                            <div style="display: flex; align-items: center; gap: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                <Icon Type="file-text" Theme="IconThemeType.TwoTone" />
+                                @item.FileName
+                            </div>
+                        </Column>
+                        <Column Title="Size" Width="80" TData="string">@FormatSize(item.FileSize)</Column>
+                        <Column Title="Uploaded" Width="130" TData="string">@item.CreatedTime.ToString("dd/MM/yyyy HH:mm")</Column>
+                        <ActionColumn Width="60" Title="DL">
+                            <Button Icon="download" Type="default" OnClick="() => Download(item.FilePath)" Size="ButtonSize.Small" Style="border-radius: 4px;" />
+                        </ActionColumn>
+                    </ChildContent>
+                </Table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div style="padding: 16px 24px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; background-color: white;">
+        <Button OnClick="@Close" Size="ButtonSize.Large" Style="border-radius: 6px; width: 100px;">Close</Button>
+    </div>
 </Modal>

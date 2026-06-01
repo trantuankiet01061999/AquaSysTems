@@ -4,6 +4,7 @@ using AquaSolution.Data.Repositories;
 using AquaSolution.Shared.Enum;
 using AquaSolution.Shared.ITSuport.Attachments;
 using AquaSolution.Shared.ITSuport.RequestSuport;
+using Microsoft.EntityFrameworkCore;
 
 namespace AquaSolution.Server.Services.ITSuport.RequestSuportCategories
 {
@@ -33,7 +34,6 @@ namespace AquaSolution.Server.Services.ITSuport.RequestSuportCategories
             _factoryRepo = factoryRepo;
             _attachmentRepo = attachmentRepo;
         }
-
         public async Task<bool> CreatedAsync(HandleRequestSuportDto handleRequestSuportDto)
         {
             var requestSuport = new RequestSuport
@@ -82,30 +82,90 @@ namespace AquaSolution.Server.Services.ITSuport.RequestSuportCategories
             return false;
         }
 
+        //public async Task<List<RequestSuportDto>> GetAllAsync()
+        //{
+        //    var user = await _userRepo.GetQueryableAsync();
+        //    var query = from requestSuport in await _requestSuportRepo.GetQueryableAsync()
+        //                join created in user on requestSuport.CreatedById equals created.Id
+
+
+        //                join requestCategory in await _requestSuportCategoryRepo.GetQueryableAsync()
+        //                on requestSuport.RequestSuportCategoryId equals requestCategory.Id
+
+        //                join requestBy in user on requestSuport.RequestBy equals requestBy.Id
+
+        //                join technicial in user on requestSuport.TechnicianId equals technicial.Id
+        //                into t
+        //                from technicial in t.DefaultIfEmpty()
+
+        //                join department in await _departmentRepo.GetQueryableAsync()
+        //                on requestBy.DepartmentId equals department.Id
+        //                into d
+        //                from department in d.DefaultIfEmpty()
+
+        //                join factory in await _factoryRepo.GetQueryableAsync()
+        //                on requestBy.FactoryId equals factory.Id
+        //                into f
+        //                from factory in f.DefaultIfEmpty()
+        //                select new RequestSuportDto
+        //                {
+        //                    Id = requestSuport.Id,
+        //                    RequestTitle = requestSuport.RequestTitle,
+        //                    RequestSuportCategoryId = requestSuport.RequestSuportCategoryId,
+        //                    RequestSuportCategoryName = requestCategory.Name,
+        //                    Status = requestSuport.Status,
+        //                    RequestById = requestSuport.RequestBy,
+        //                    RequestByName = requestBy.FullName,
+        //                    RequestByEmail = requestBy.Email,
+        //                    CreatedDate = requestSuport.CreatedDate,
+        //                    RequestDescription = requestSuport.RequestDescription,
+        //                    RequestSolution = requestSuport.RequestSolution,
+        //                    TechnicianId = requestSuport.TechnicianId,
+        //                    TechnicianName = technicial.FullName,
+        //                    TechnicianEmail = technicial.Email,
+        //                    InProgessDate = requestSuport.InProgessDate,
+        //                    DueDate = requestSuport.DueDate,
+        //                    ResolveDate = requestSuport.ResolveDate,
+        //                    CancelDate = requestSuport.CancelDate,
+        //                    Department = department.Name,
+        //                    Factory = $"{factory.Name} - {factory.Code}",
+        //                    CreatedName = created.FullName,
+        //                    CreatedEmail = created.Email,
+        //                    CreatedById = requestSuport.CreatedById,
+        //                    TicketNumber = requestSuport.TicketNumber,
+        //                };
+        //    var data = query
+        //            .OrderByDescending(x => x.CreatedDate)
+        //            .ToList();
+        //    if (data != null)
+        //    {
+        //        return data;
+        //    }
+        //    return new List<RequestSuportDto>();
+        //}
         public async Task<List<RequestSuportDto>> GetAllAsync()
         {
-            var user = await _userRepo.GetQueryableAsync();
-            var query = from requestSuport in await _requestSuportRepo.GetQueryableAsync()
-                        join created in user on requestSuport.CreatedById equals created.Id
+            var users = _userRepo.Query();
+            var requestSuports = _requestSuportRepo.Query();
+            var categories = _requestSuportCategoryRepo.Query();
+            var departments = _departmentRepo.Query();
+            var factories = _factoryRepo.Query();
 
+            var query = from requestSuport in requestSuports
+                        join created in users on requestSuport.CreatedById equals created.Id
+                        join requestCategory in categories
+                            on requestSuport.RequestSuportCategoryId equals requestCategory.Id
 
-                        join requestCategory in await _requestSuportCategoryRepo.GetQueryableAsync()
-                        on requestSuport.RequestSuportCategoryId equals requestCategory.Id
-
-                        join requestBy in user on requestSuport.RequestBy equals requestBy.Id
-
-                        join technicial in user on requestSuport.TechnicianId equals technicial.Id
-                        into t
+                        join requestBy in users on requestSuport.RequestBy equals requestBy.Id
+                        join technicial in users on requestSuport.TechnicianId equals technicial.Id
+                            into t
                         from technicial in t.DefaultIfEmpty()
 
-                        join department in await _departmentRepo.GetQueryableAsync()
-                        on requestBy.DepartmentId equals department.Id
-                        into d
+                        join department in departments on requestBy.DepartmentId equals department.Id
+                            into d
                         from department in d.DefaultIfEmpty()
-
-                        join factory in await _factoryRepo.GetQueryableAsync()
-                        on requestBy.FactoryId equals factory.Id
-                        into f
+                        join factory in factories on requestBy.FactoryId equals factory.Id
+                            into f
                         from factory in f.DefaultIfEmpty()
                         select new RequestSuportDto
                         {
@@ -121,29 +181,25 @@ namespace AquaSolution.Server.Services.ITSuport.RequestSuportCategories
                             RequestDescription = requestSuport.RequestDescription,
                             RequestSolution = requestSuport.RequestSolution,
                             TechnicianId = requestSuport.TechnicianId,
-                            TechnicianName = technicial.FullName,
-                            TechnicianEmail = technicial.Email,
+                            TechnicianName = technicial != null ? technicial.FullName : null,
+                            TechnicianEmail = technicial != null ? technicial.Email : null,
                             InProgessDate = requestSuport.InProgessDate,
                             DueDate = requestSuport.DueDate,
                             ResolveDate = requestSuport.ResolveDate,
                             CancelDate = requestSuport.CancelDate,
-                            Department = department.Name,
-                            Factory = $"{factory.Name} - {factory.Code}",
+                            Department = department != null ? department.Name : null,
+                            Factory = factory != null ? $"{factory.Name} - {factory.Code}" : null,
                             CreatedName = created.FullName,
                             CreatedEmail = created.Email,
                             CreatedById = requestSuport.CreatedById,
                             TicketNumber = requestSuport.TicketNumber,
+                            RequestByWorkDay = requestBy.WorkDayId,
                         };
-            var data = query
-                    .OrderByDescending(x => x.CreatedDate)
-                    .ToList();
-            if (data != null)
-            {
-                return data;
-            }
-            return new List<RequestSuportDto>();
-        }
 
+            return await query
+                .OrderByDescending(x => x.CreatedDate)
+                .ToListAsync(); 
+        }
         public async Task<List<AttachmentDto>> LoadListAttachment(Guid requestITSuportId)
         {
             var query = from attachment in await _attachmentRepo.GetQueryableAsync()
@@ -166,67 +222,122 @@ namespace AquaSolution.Server.Services.ITSuport.RequestSuportCategories
             }
             return new List<AttachmentDto>();
         }
-
         public async Task<bool> UpdateAsync(HandleRequestSuportDto handleRequestSuportDto)
         {
             var requestSuport = await _requestSuportRepo.FirstOrDefaultAsync(x => x.Id == handleRequestSuportDto.Id);
-            if (requestSuport != null)
+            if (requestSuport == null) return false;
+
+            requestSuport.RequestTitle = handleRequestSuportDto.RequestTitle;
+            requestSuport.RequestSuportCategoryId = handleRequestSuportDto.RequestSuportCategoryId;
+            requestSuport.Status = handleRequestSuportDto.Status;
+            requestSuport.RequestBy = handleRequestSuportDto.RequestBy;
+            requestSuport.CreatedDate = handleRequestSuportDto.CreatedDate;
+            requestSuport.RequestDescription = handleRequestSuportDto.RequestDescription;
+            requestSuport.RequestSolution = handleRequestSuportDto.RequestSolution;
+            requestSuport.TechnicianId = handleRequestSuportDto.TechnicianId;
+            requestSuport.DueDate = handleRequestSuportDto.DueDate;
+
+            switch (requestSuport.Status)
             {
-                requestSuport.RequestTitle = handleRequestSuportDto.RequestTitle;
-                requestSuport.RequestSuportCategoryId = handleRequestSuportDto.RequestSuportCategoryId;
-                requestSuport.Status = handleRequestSuportDto.Status;
-                requestSuport.RequestBy = handleRequestSuportDto.RequestBy;
-                requestSuport.CreatedDate = handleRequestSuportDto.CreatedDate;
-                requestSuport.RequestDescription = handleRequestSuportDto.RequestDescription;
-                requestSuport.RequestSolution = handleRequestSuportDto.RequestSolution;
-                requestSuport.TechnicianId = handleRequestSuportDto.TechnicianId;
-                switch (requestSuport.Status)
-                {
-                    case RequestSuportStatusType.InProgress:
-                        requestSuport.InProgessDate = handleRequestSuportDto.InProgessDate;
-                        break;
-                    case RequestSuportStatusType.Resolved:
-                        requestSuport.ResolveDate = handleRequestSuportDto.ResolveDate;
-                        break;
-                    case RequestSuportStatusType.OnHold:
-                        requestSuport.OnHoldDate = handleRequestSuportDto.OnHoldDate;
-                        break;
-                    case RequestSuportStatusType.Cancel:
-                        requestSuport.CancelDate = handleRequestSuportDto.CancelDate;
-                        break;
-
-                }
-                requestSuport.DueDate = handleRequestSuportDto.DueDate;
-
-                var attachments = await _attachmentRepo.GetListAsync(x => x.RequestSuportId == requestSuport.Id);
-                if (attachments != null && attachments.Any())
-                {
-                    foreach (var att in attachments)
-                    {
-                        await _attachmentRepo.DeleteAsync(att);
-                    }
-                }
-                if (handleRequestSuportDto.Attachments != null)
-                {
-                    foreach (var attach in handleRequestSuportDto.Attachments)
-                    {
-                        var attachment = new Attachment
-                        {
-                            Id = Guid.NewGuid(),
-                            RequestSuportId = requestSuport.Id,
-                            FilePath = attach.FilePath,
-                            FileExtend = attach.FileExtend,
-                            FileName = attach.FileName,
-                            FileSize = attach.FileSize,
-                            CreatedTime = attach.CreatedTime
-                        };
-                        await _attachmentRepo.InsertAsync(attachment);
-                    }
-                }
-                return await _requestSuportRepo.UpdateAsync(requestSuport);
+                case RequestSuportStatusType.InProgress:
+                    requestSuport.InProgessDate = handleRequestSuportDto.InProgessDate;
+                    break;
+                case RequestSuportStatusType.Resolved:
+                    requestSuport.ResolveDate = handleRequestSuportDto.ResolveDate;
+                    break;
+                case RequestSuportStatusType.OnHold:
+                    requestSuport.OnHoldDate = handleRequestSuportDto.OnHoldDate;
+                    break;
+                case RequestSuportStatusType.Cancel:
+                    requestSuport.CancelDate = handleRequestSuportDto.CancelDate;
+                    break;
             }
-            return false;
+
+            // Diff attachment
+            var existing = await _attachmentRepo.GetListAsync(x => x.RequestSuportId == requestSuport.Id);
+            var incomingPaths = handleRequestSuportDto.Attachments?.Select(a => a.FilePath).ToHashSet() ?? new();
+            var existingPaths = existing.Select(a => a.FilePath).ToHashSet();
+
+            foreach (var att in existing.Where(a => !incomingPaths.Contains(a.FilePath)))
+                await _attachmentRepo.DeleteAsync(att);
+
+            foreach (var attach in (handleRequestSuportDto.Attachments ?? new List<AttachmentDto>())
+                .Where(a => !existingPaths.Contains(a.FilePath)))
+            {
+                await _attachmentRepo.InsertAsync(new Attachment
+                {
+                    Id = Guid.NewGuid(),
+                    RequestSuportId = requestSuport.Id,
+                    FilePath = attach.FilePath,
+                    FileExtend = attach.FileExtend,
+                    FileName = attach.FileName,
+                    FileSize = attach.FileSize,
+                    CreatedTime = attach.CreatedTime
+                });
+            }
+
+            return await _requestSuportRepo.UpdateAsync(requestSuport);
         }
-       
+        //public async Task<bool> UpdateAsync(HandleRequestSuportDto handleRequestSuportDto)
+        //{
+        //    var requestSuport = await _requestSuportRepo.FirstOrDefaultAsync(x => x.Id == handleRequestSuportDto.Id);
+        //    if (requestSuport != null)
+        //    {
+        //        requestSuport.RequestTitle = handleRequestSuportDto.RequestTitle;
+        //        requestSuport.RequestSuportCategoryId = handleRequestSuportDto.RequestSuportCategoryId;
+        //        requestSuport.Status = handleRequestSuportDto.Status;
+        //        requestSuport.RequestBy = handleRequestSuportDto.RequestBy;
+        //        requestSuport.CreatedDate = handleRequestSuportDto.CreatedDate;
+        //        requestSuport.RequestDescription = handleRequestSuportDto.RequestDescription;
+        //        requestSuport.RequestSolution = handleRequestSuportDto.RequestSolution;
+        //        requestSuport.TechnicianId = handleRequestSuportDto.TechnicianId;
+        //        switch (requestSuport.Status)
+        //        {
+        //            case RequestSuportStatusType.InProgress:
+        //                requestSuport.InProgessDate = handleRequestSuportDto.InProgessDate;
+        //                break;
+        //            case RequestSuportStatusType.Resolved:
+        //                requestSuport.ResolveDate = handleRequestSuportDto.ResolveDate;
+        //                break;
+        //            case RequestSuportStatusType.OnHold:
+        //                requestSuport.OnHoldDate = handleRequestSuportDto.OnHoldDate;
+        //                break;
+        //            case RequestSuportStatusType.Cancel:
+        //                requestSuport.CancelDate = handleRequestSuportDto.CancelDate;
+        //                break;
+
+        //        }
+        //        requestSuport.DueDate = handleRequestSuportDto.DueDate;
+
+        //        var attachments = await _attachmentRepo.GetListAsync(x => x.RequestSuportId == requestSuport.Id);
+        //        if (attachments != null && attachments.Any())
+        //        {
+        //            foreach (var att in attachments)
+        //            {
+        //                await _attachmentRepo.DeleteAsync(att);
+        //            }
+        //        }
+        //        if (handleRequestSuportDto.Attachments != null)
+        //        {
+        //            foreach (var attach in handleRequestSuportDto.Attachments)
+        //            {
+        //                var attachment = new Attachment
+        //                {
+        //                    Id = Guid.NewGuid(),
+        //                    RequestSuportId = requestSuport.Id,
+        //                    FilePath = attach.FilePath,
+        //                    FileExtend = attach.FileExtend,
+        //                    FileName = attach.FileName,
+        //                    FileSize = attach.FileSize,
+        //                    CreatedTime = attach.CreatedTime
+        //                };
+        //                await _attachmentRepo.InsertAsync(attachment);
+        //            }
+        //        }
+        //        return await _requestSuportRepo.UpdateAsync(requestSuport);
+        //    }
+        //    return false;
+        //}
+
     }
 }

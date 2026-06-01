@@ -285,7 +285,7 @@ public class UserService : IUserService
                             CreatedTime = u.CreatedTime,
                             UpdatedTime = u.UpdatedTime,
                             Avatar = string.IsNullOrEmpty(u.Avatar)
-                                ? $"{baseUrl}/uploads/avatars/default.jpg"
+                                ? null
                                 : $"{baseUrl}/{u.Avatar.TrimStart('/')}",
                             DepartmentId = u.DepartmentId,
                             DepartmentName = department.Name,
@@ -415,7 +415,7 @@ public class UserService : IUserService
                 PositionId = createdUserDto.PositionId,
                 FactoryId = createdUserDto.FactoryId,
                 FlowApproval = createdUserDto.FlowApproval ?? 1,
-                Avatar = "/uploads/avatars/default.jpg"
+                Avatar = null,
 
             };
             await _userRepo.InsertAsync(user);
