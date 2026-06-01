@@ -1,5 +1,6 @@
 ﻿using AquaSolution.Client;
 using AquaSolution.Client.Common;
+using AquaSolution.Client.Common.GetInitial_helpers;
 using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -32,5 +33,5 @@ builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
 // ================= UI + SERVICE =================
 builder.Services.AddAntDesign();
 builder.Services.AddScoped<PermissionService>();
-
+builder.Services.AddScoped<GetInitial>();
 await builder.Build().RunAsync();

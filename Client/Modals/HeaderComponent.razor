@@ -1,11 +1,23 @@
-﻿@using AquaSolution.Client.Modals.Administration.Users
+﻿@using AquaSolution.Client.Common.GetInitial_helpers
+@using AquaSolution.Client.Modals.Administration.Users
 @inject IJSRuntime JS
+@inject GetInitial GetInitials
 <div class="user-dropdown-container">
     <div class="user-dropdown" id="userDropdown">
         <div class="user-dropdown-toggle d-flex align-items-center gap-2">
-            <img src="@(!string.IsNullOrWhiteSpace(userDto?.Avatar) ? userDto.Avatar : $"{Navigation.BaseUri.TrimEnd('/')}/uploads/avatars/default.jpg")"
-                 alt="Avatar"
-                 class="avatar-img" />
+            @* Thay thẻ <img> cũ bằng đoạn này *@
+                @if (!string.IsNullOrWhiteSpace(userDto?.Avatar))
+                {
+                    <img src="@userDto.Avatar"
+                         alt="Avatar"
+                         class="avatar-img" />
+                }
+                else
+                {
+                    <div class="avatar-initials">
+                        @GetInitials.GetInitials(userDto?.FullName)
+                    </div>
+                }
             <span class="text-dark">@userDto?.FullName</span>
         </div>
         <div class="user-dropdown-menu">
@@ -19,7 +31,20 @@
 <ChangePassModal @ref="@changePassModal"></ChangePassModal>
 
 <style>
-
+    .avatar-initials {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #1677ff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    border: 1px solid #ccc;
+    flex-shrink: 0;
+}
     .user-dropdown-container {
         position: fixed;
         margin-top: -5px;

@@ -1,5 +1,6 @@
 ﻿@page "/user-management"
 @using AquaSolution.Client.Common
+@using AquaSolution.Client.Common.GetInitial_helpers
 @using AquaSolution.Client.Modals.Administration.Users
 @using AntDesign
 @inject ModalService modal
@@ -9,55 +10,69 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider AuthStateProvider
 @inject PermissionService permissionService
+@inject GetInitial GetInitials
 <PageTitle>Users</PageTitle>
 <div class="mb-3">
     <style>
-        .custom-button-type {
-            height: 30px;
-            font-size: 12px;
-        }
-
-        .fix-table-header table {
-            border-collapse: collapse;
-        }
-
-            .fix-table-header table thead th {
-                position: sticky !important;
-                z-index: 8 !important;
-                top: 0;
-                background-color: #fff;
+            .custom-button-type {
+                height: 30px;
+                font-size: 12px;
             }
 
-        .ant-table-content {
-            min-height: 65vh !important;
-        }
-
-        .ant-table-pagination {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            z-index: 999;
-            background: white;
-            padding: 8px;
-            text-align: center;
-            box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
-            background: transparent !important;
-        }
-
-
-
-        .custom-label {
-            background-color: #007bff;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            display: inline-block;
-        }
-
-            .custom-label:hover {
-                background-color: #0056b3;
+            .fix-table-header table {
+                border-collapse: collapse;
             }
+
+                .fix-table-header table thead th {
+                    position: sticky !important;
+                    z-index: 8 !important;
+                    top: 0;
+                    background-color: #fff;
+                }
+
+            .ant-table-content {
+                min-height: 65vh !important;
+            }
+
+            .ant-table-pagination {
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                z-index: 999;
+                background: white;
+                padding: 8px;
+                text-align: center;
+                box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
+                background: transparent !important;
+            }
+
+
+                .avatar-initials {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #1677ff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    border: 1px solid #ccc;
+    flex-shrink: 0;
+}
+            .custom-label {
+                background-color: #007bff;
+                color: white;
+                padding: 8px 15px;
+                border-radius: 5px;
+                cursor: pointer;
+                display: inline-block;
+            }
+
+                .custom-label:hover {
+                    background-color: #0056b3;
+                }
     </style>
     <div style="display: flex;  align-items: center; margin-bottom: 10px;">
         @if (Created)
@@ -93,7 +108,29 @@
             <Column TData="UserDto" Fixed="ColumnFixPlacement.Left" Width="50px" Context="row">
                 <Template>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <Avatar Src="@row.Avatar" Shape="AvatarShape.Circle" Size="AvatarSize.Small" />
+                     @*    @if (row.Avatar != null)
+                        {
+
+                            <Avatar Src="@row.Avatar" Shape="AvatarShape.Circle" Size="AvatarSize.Small" />
+                        }
+                        else
+                        {
+                            <div class="avatar-initials">
+                                @GetInitials.GetInitials(row?.FullName)
+                            </div>
+
+                        } *@
+
+                        @if (!string.IsNullOrWhiteSpace(row.Avatar))
+                        {
+                            <Avatar Src="@row.Avatar" Shape="AvatarShape.Circle" Size="AvatarSize.Small" />
+                        }
+                        else
+                        {
+                            <div class="avatar-initials" style="background-color:@GetInitials.GetAvatarColor(row?.FullName);">
+                                @GetInitials.GetInitials(row?.FullName)
+                            </div>
+                        }
                     </div>
                 </Template>
             </Column>

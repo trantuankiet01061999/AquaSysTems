@@ -19,6 +19,7 @@ namespace AquaSolution.Shared.ITSuport.RequestSuport
         public Guid RequestById { get; set; }
         public string RequestByName { get; set; } = string.Empty;
         public string RequestByEmail { get; set; } = string.Empty;
+        public string RequestByWorkDay { get; set; } = string.Empty;
         public DateTime CreatedDate { get; set; }
         public string RequestDescription { get; set; } = string.Empty;
         public string? RequestSolution { get; set; }
@@ -37,5 +38,6 @@ namespace AquaSolution.Shared.ITSuport.RequestSuport
         public DateTime? OnHoldDate { get; set; }
         public int TicketNumber { get; set; }
         public string TicketCode => TicketNumber.ToString("D6");
+
     }
 }

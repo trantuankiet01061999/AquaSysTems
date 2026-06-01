@@ -1,5 +1,6 @@
-﻿@page "/request-it-suport"
+@page "/request-it-suport"
 @using AquaSolution.Client.Common
+@using AquaSolution.Client.Common.GetInitial_helpers
 @using AquaSolution.Client.Modals.ITSuport.RequestITSuport
 @using AquaSolution.Shared.Enum
 @using AquaSolution.Shared.ITSuport.RequestSuport;
@@ -11,134 +12,433 @@
 @using AquaSolution.Shared.UserManagements
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider AuthStateProvider
+@inject GetInitial GetInitials
+
 <PageTitle>RequestSuport</PageTitle>
-<div class="mb-3">
+
+<div class="its-page">
+
     <style>
-        .custom-button-type {
-            height: 30px;
+        .its-page {
+            padding: 1.5rem;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* ── Header ── */
+        .its-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .its-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .its-header-left h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .its-header-icon {
+            width: 36px;
+            height: 36px;
+            background-color: #e6f4ff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .its-header-icon .anticon {
+            font-size: 18px;
+            color: #1677ff;
+        }
+
+        /* ── Stats ── */
+        /* ── Stats ── */
+.its-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 1.25rem;
+}
+
+.its-stat-card {
+    background-color: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.its-stat-icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.its-stat-info {
+    min-width: 0;
+}
+
+.its-stat-label {
+    font-size: 11px;
+    color: #8c8c8c;
+    margin-bottom: 2px;
+    white-space: nowrap;
+}
+
+.its-stat-value {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1f1f1f;
+    line-height: 1.2;
+}
+
+.its-stat-value.blue   { color: #1677ff; }
+.its-stat-value.orange { color: #fa8c16; }
+.its-stat-value.green  { color: #52c41a; }
+
+        /* ── Filters ── */
+        .its-filter-row1 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .its-filter-row2 {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .its-filter-row2 .ant-input-affix-wrapper {
+            width: 160px;
+            border-radius: 20px;
             font-size: 12px;
         }
 
-        .fix-table-header table {
-            border-collapse: collapse;
+        .its-filter-row1 .ant-input-affix-wrapper {
+            border-radius: 20px;
+            font-size: 12px;
         }
 
-            .fix-table-header table thead th {
-                position: sticky !important;
-                z-index: 8 !important;
-                top: 0;
-                background-color: #fff;
-            }
-
-        .ant-table-content {
-            min-height: 65vh !important;
+        .its-btn-action {
+            border-radius: 20px !important;
+            font-size: 12px !important;
+            display: flex !important;
+            align-items: center;
+            gap: 5px;
         }
 
+        /* ── Table ── */
+        .its-table-wrap {
+            border: 1px solid #f0f0f0;
+            border-radius: 12px;
+            overflow: hidden;
+                       max-height: 54vh;
+        }
+
+        .its-table-wrap .ant-table-container {
+            border-radius: 0 !important;
+        }
+
+        .its-table-wrap .ant-table-content {
+            overflow-x: auto !important;
+            overflow-y: auto !important;
+ 
+        }
+
+        .its-table-wrap table thead th {
+            position: sticky !important;
+            top: 0;
+            z-index: 8;
+            background-color: #fafafa !important;
+        }
+
+        /* ── Status badge ── */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ── Avatar ── */
+        .user-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background-color: #bae0ff;
+            color: #0958d9;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ── Pagination fix ── */
         .ant-table-pagination {
-            position: fixed;
+            position: sticky;
             bottom: 0;
-            width: 100%;
-            z-index: 999;
             background: white;
-            padding: 8px;
-            text-align: center;
-            box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.1);
-            background: transparent !important;
+            padding: 8px 16px;
+            margin: 0 !important;
+            border-top: 1px solid #f0f0f0;
+            z-index: 9;
         }
-
     </style>
-    <div style="display: flex;  align-items: center; margin-bottom: 10px; ">
-        <button @onclick="CreatedAsync" class="btn btn-primary custom-button-type">
-            <Icon Type="plus" />Created
-        </button>
-        <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;margin-left:5px">
-            <Input Placeholder="TicketCode"
-                   Value="@TicketCode"
-                   style="width:170px;font-size:12px"
-                   @onkeydown="HandleKeyDown"
-                   @oninput="TicketCodeInputChanged" />
-            <Input Placeholder="requester name"
-                   Value="@RequesterName"
-                   style="width:170px;font-size:12px"
-                   @onkeydown="HandleKeyDown"
-                   @oninput="RequesterNameInputChanged" />
-            <Input Placeholder="requester email"
-                   Value="@Requesteremail"
-                   style="width:170px;font-size:12px"
-                   @onkeydown="HandleKeyDown"
-                   @oninput="RequesteremailInputChanged" />
-            <button @onclick="Search" style="border-color:#fff">
-                <Icon Type="search" />Search
-            </button>
 
-            <button @onclick="Reset" style="border-color:#fff">
-                <Icon Type="undo" />Reset
-            </button>
+    <!-- Header -->
+    <div class="its-header">
+        <div class="its-header-left">
+            <div class="its-header-icon">
+                <Icon Type="customer-service" Theme="IconThemeType.Outline" />
+            </div>
+            <h3>IT Support requests</h3>
         </div>
+        <Button Type="ButtonType.Primary"
+                Shape="ButtonShape.Round"
+                OnClick="CreatedAsync"
+                Style="display:flex;align-items:center;gap:5px;font-weight:500;">
+            <Icon Type="plus" /> New ticket
+        </Button>
+    </div>
+
+    <!-- Stats -->
+    <div class="its-stats">
+    <div class="its-stat-card">
+        <div class="its-stat-icon-wrap" style="background:#f0f5ff;">
+            <Icon Type="unordered-list" Theme="IconThemeType.Outline" Style="font-size:16px;color:#1677ff;" />
+        </div>
+        <div class="its-stat-info">
+            <div class="its-stat-label">Total</div>
+            <div class="its-stat-value">@(_requestSuport.Count)</div>
+        </div>
+    </div>
+    <div class="its-stat-card">
+        <div class="its-stat-icon-wrap" style="background:#e6f4ff;">
+            <Icon Type="clock-circle" Theme="IconThemeType.Outline" Style="font-size:16px;color:#1677ff;" />
+        </div>
+        <div class="its-stat-info">
+            <div class="its-stat-label">Open</div>
+            <div class="its-stat-value blue">@(_requestSuport.Count(x => x.Status == RequestSuportStatusType.Open))</div>
+        </div>
+    </div>
+    <div class="its-stat-card">
+        <div class="its-stat-icon-wrap" style="background:#fff7e6;">
+            <Icon Type="sync" Theme="IconThemeType.Outline" Style="font-size:16px;color:#fa8c16;" />
+        </div>
+        <div class="its-stat-info">
+            <div class="its-stat-label">In progress</div>
+            <div class="its-stat-value orange">@(_requestSuport.Count(x => x.Status == RequestSuportStatusType.InProgress))</div>
+        </div>
+    </div>
+    <div class="its-stat-card">
+        <div class="its-stat-icon-wrap" style="background:#f6ffed;">
+            <Icon Type="check-circle" Theme="IconThemeType.Outline" Style="font-size:16px;color:#52c41a;" />
+        </div>
+        <div class="its-stat-info">
+            <div class="its-stat-label">Resolved</div>
+            <div class="its-stat-value green">@(_requestSuport.Count(x => x.Status == RequestSuportStatusType.Resolved))</div>
+        </div>
+    </div>
+</div>
+
+    <!-- Filter row 1: Name + Email -->
+    <div class="its-filter-row1">
+        <Input Placeholder="Requester name"
+               Value="@RequesterName"
+               Style="font-size:12px;"
+               @onkeydown="HandleKeyDown"
+               @oninput="RequesterNameInputChanged">
+            <Prefix><Icon Type="user" Style="color:#bfbfbf;" /></Prefix>
+        </Input>
+        <Input Placeholder="Requester email"
+               Value="@Requesteremail"
+               Style="font-size:12px;"
+               @onkeydown="HandleKeyDown"
+               @oninput="RequesteremailInputChanged">
+            <Prefix><Icon Type="mail" Style="color:#bfbfbf;" /></Prefix>
+        </Input>
+    </div>
+
+    <!-- Filter row 2: Code + buttons -->
+    <div class="its-filter-row2">
+        <Input Placeholder="Ticket code"
+               Value="@TicketCode"
+               Style="font-size:12px;"
+               @onkeydown="HandleKeyDown"
+               @oninput="TicketCodeInputChanged">
+            <Prefix><Icon Type="search" Style="color:#bfbfbf;" /></Prefix>
+        </Input>
+        <Button Class="its-btn-action" OnClick="Search" Shape="ButtonShape.Round">
+            <Icon Type="search" /> Search
+        </Button>
+        <Button Class="its-btn-action" OnClick="Reset" Shape="ButtonShape.Round">
+            <Icon Type="undo" /> Reset
+        </Button>
+    </div>
+
+    <!-- Table -->
+    <div class="its-table-wrap">
+        <Table TItem="RequestSuportDto"
+               Size="TableSize.Small"
+               @ref="@_tableRef"
+               Loading="@Loading"
+               ScrollX="1000"
+               HidePagination
+               ScrollY="55vh"
+               DataSource="_requestSuportFillter">
+            <ColumnDefinitions Context="row">
+
+                <PropertyColumn Width="110" Title="Ticket code" Property="c => c.TicketCode">
+                    <Template>
+                        <span style="font-family:monospace;font-size:12px;color:#8c8c8c;">
+                            @row.TicketCode
+                        </span>
+                    </Template>
+                </PropertyColumn>
+
+                <PropertyColumn Width="220" Title="Title" Property="c => c.RequestTitle">
+                    <Template>
+                        <a href="javascript:void(0);" @onclick="() => ViewAsync(row)"
+                           style="color:#1677ff;font-weight:500;">
+                            @row.RequestTitle
+                        </a>
+                    </Template>
+                </PropertyColumn>
+
+                <PropertyColumn Width="130" Title="Status" Property="c => c.Status" Filters="_statusFilter">
+                    <Template>
+                        @{
+                            string color = "", bgColor = "";
+                            switch (row.Status)
+                            {
+                                case RequestSuportStatusType.Open:
+                                    color = "#1677ff"; bgColor = "#e6f4ff"; break;
+                                case RequestSuportStatusType.InProgress:
+                                    color = "#fa8c16"; bgColor = "#fff7e6"; break;
+                                case RequestSuportStatusType.Resolved:
+                                    color = "#52c41a"; bgColor = "#f6ffed"; break;
+                                case RequestSuportStatusType.OnHold:
+                                    color = "#8c8c8c"; bgColor = "#f5f5f5"; break;
+                                case RequestSuportStatusType.Cancel:
+                                    color = "#ff4d4f"; bgColor = "#fff1f0"; break;
+                            }
+                        }
+                        <span class="status-badge" style="color:@color;background-color:@bgColor;">
+                            <span class="status-dot" style="background-color:@color;"></span>
+                            @row.Status
+                        </span>
+                    </Template>
+                </PropertyColumn>
+
+                <PropertyColumn Width="160" Title="Requested by" Property="c => c.RequestByName">
+                    <Template>
+                        <div class="user-cell">
+                            <span>@row.RequestByName</span>
+                        </div>
+                    </Template>
+                </PropertyColumn>
+
+                <PropertyColumn Width="160" Title="Technician" Property="c => c.TechnicianName" Filters="_technicianNameFilter">
+                    <Template>
+                        @if (string.IsNullOrWhiteSpace(row.TechnicianName))
+                        {
+                            <span style="color:#bfbfbf;font-size:12px;font-style:italic;">Unassigned</span>
+                        }
+                        else
+                        {
+                            <div class="user-cell">
+     
+                                <span>@row.TechnicianName</span>
+                            </div>
+                        }
+                    </Template>
+                </PropertyColumn>
+
+                <PropertyColumn Width="140" Title="Category" Property="c => c.RequestSuportCategoryName" />
+
+                <PropertyColumn Width="115" Title="Created date" Property="c => c.CreatedDate" />
+
+                <Column Fixed="ColumnFixPlacement.Right" TData="RequestSuportDto" Width="60px" Context="row" Title="Actions">
+                    <Template>
+                        <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">
+                            <ChildContent>
+                                <Button Icon="ellipsis" Size="ButtonSize.Small"
+                                        Style="border-radius:6px;border:1px solid #d9d9d9;" />
+                            </ChildContent>
+                            <ContentTemplate>
+                                <div style="display:flex;flex-direction:column;gap:2px;min-width:110px;">
+                                    <Button Type="ButtonType.Text" OnClick="@(async () => await ViewAsync(row))"
+                                            Style="text-align:left;font-size:13px;">
+                                        <Icon Type="eye" /> Detail
+                                    </Button>
+                                    @{
+                                        var disable3 = row.Status == RequestSuportStatusType.Resolved
+                                                    || row.Status == RequestSuportStatusType.Cancel;
+                                    }
+                                    @if (Edit)
+                                    {
+                                        <Button Disabled="disable3" Type="ButtonType.Text"
+                                                OnClick="@(async () => await UpdateAsync(row))"
+                                                Style="text-align:left;font-size:13px;">
+                                            <Icon Type="edit" /> Edit
+                                        </Button>
+                                    }
+                                    @if (Delete)
+                                    {
+                                        var disible = CurrenUser.Roles.Any(x => x.Name == "Admin") ? false : disable3;
+                                        <Button Disabled="disible" Type="ButtonType.Text"
+                                                OnClick="@(async () => await DeleteAsync(row.Id))"
+                                                Style="text-align:left;font-size:13px;color:#ff4d4f;">
+                                            <Icon Type="delete" /> Delete
+                                        </Button>
+                                    }
+                                </div>
+                            </ContentTemplate>
+                        </Popover>
+                    </Template>
+                </Column>
+
+            </ColumnDefinitions>
+        </Table>
     </div>
 
 </div>
 
-<div style="width:98%;overflow-x:scroll ;max-height:70vh; ">
-
-    <Table TItem="RequestSuportDto"
-           Size="TableSize.Small"
-           @ref="@_tableRef"
-           Loading="@Loading"
-           Class="customTable fix-table-header"
-           DataSource="_requestSuportFillter">
-        <ColumnDefinitions Context="row">
-            <PropertyColumn HeaderStyle="text-align: center;" Width="80" Title="TicketCode" Property="c => c.TicketCode"></PropertyColumn>
-            <PropertyColumn HeaderStyle="text-align: center;" Width="300" Title="RequestTitle" Property="c => c.RequestTitle">
-                <Template>
-                    <a href="javascript:void(0);" @onclick="() => ViewAsync(row)">
-                        @row.RequestTitle
-                    </a>
-                </Template>
-            </PropertyColumn>
-            <PropertyColumn Width="100" Title="Status" Property="c => c.Status" Filters="_statusFilter">
-                <Tag Color="@GetTagColor.GetTagColorCss(row.Status.ToString())">@row.Status</Tag>
-            </PropertyColumn>
-            <PropertyColumn HeaderStyle="text-align: center;" Width="220" Title="RequestBy" Property="c => c.RequestByName"></PropertyColumn>
-            <PropertyColumn HeaderStyle="text-align: center;" Width="220" Title="Requester Email" Property="c => c.RequestByEmail"></PropertyColumn>
-            <PropertyColumn HeaderStyle="text-align: center;" Width="220" Title="TechnicianName" Property="c => c.TechnicianName" Filters="_technicianNameFilter"></PropertyColumn>
-            <PropertyColumn HeaderStyle="text-align: center;" Width="100" Title="Category" Property="c => c.RequestSuportCategoryName"></PropertyColumn>
-            <PropertyColumn HeaderStyle="text-align: center;" Width="180" Title="CreatedDate" Property="c => c.CreatedDate"></PropertyColumn>
-            <Column Fixed="ColumnFixPlacement.Right" TData="RequestSuportDto" Width="50px" Context="row">
-                <Template>
-                    <Popover Title="Actions" Trigger="new Trigger[] { Trigger.Click }" Placement="Placement.Bottom">
-                        <ChildContent>
-                            <Button Icon="menu" />
-                        </ChildContent>
-                        <ContentTemplate>
-                            <div style="display: flex; flex-direction: column; gap: 4px; padding: 8px;">
-                                <Button Type="ButtonType.Text" OnClick="@(async () => await ViewAsync(row))" Style="text-align: left;">
-                                    <Icon Type="plus" /> Detail
-                                </Button>
-                                @{
-                                    var disable3 = row.Status == RequestSuportStatusType.Resolved || row.Status == RequestSuportStatusType.Cancel;
-                                }
-                                @if (Edit)
-                                {
-                                    <Button Disabled="disable3" Type="ButtonType.Text" OnClick="@(async () => await UpdateAsync(row))" Style="text-align: left;">
-                                        <Icon Type="edit" /> Edit
-                                    </Button>
-                                }
-
-                                @if (Delete)
-                                {
-                                    var disible = CurrenUser.Roles.Any(x => x.Name == "Admin") ? false : disable3;
-                                    <Button Disabled="disible" Type="ButtonType.Text" OnClick="@(async () => await DeleteAsync(row.Id))" Style="text-align: left;">
-                                        <Icon Type="delete" /> Delete
-                                    </Button>
-                                }
-                            </div>
-                        </ContentTemplate>
-                    </Popover>
-                </Template>
-            </Column>
-        </ColumnDefinitions>
-    </Table>
-</div>
-<RequestITSuport OnSave="LoadData" @ref="@_requestItSuport"></RequestITSuport>
+<RequestITSuport OnSave="LoadData" @ref="@_requestItSuport" />
 <RequestITSuportDetailModal @ref="@_requestItSuportDetailModal" />
