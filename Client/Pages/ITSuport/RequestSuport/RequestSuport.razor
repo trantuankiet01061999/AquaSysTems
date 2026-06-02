@@ -277,40 +277,37 @@
     </div>
 </div>
 
-    <!-- Filter row 1: Name + Email -->
-    <div class="its-filter-row1">
-        <Input Placeholder="Requester name"
-               Value="@RequesterName"
-               Style="font-size:12px;"
-               @onkeydown="HandleKeyDown"
-               @oninput="RequesterNameInputChanged">
-            <Prefix><Icon Type="user" Style="color:#bfbfbf;" /></Prefix>
-        </Input>
-        <Input Placeholder="Requester email"
-               Value="@Requesteremail"
-               Style="font-size:12px;"
-               @onkeydown="HandleKeyDown"
-               @oninput="RequesteremailInputChanged">
-            <Prefix><Icon Type="mail" Style="color:#bfbfbf;" /></Prefix>
-        </Input>
-    </div>
+   <!-- Filter row 1: Name + Email -->
+<div class="its-filter-row1">
+    <Input Placeholder="Requester name"
+           @bind-Value="RequesterName"
+           Style="font-size:12px;"
+           @onkeydown="HandleKeyDown">
+        <Prefix><Icon Type="user" Style="color:#bfbfbf;" /></Prefix>
+    </Input>
+    <Input Placeholder="Requester email"
+           @bind-Value="Requesteremail"
+           Style="font-size:12px;"
+           @onkeydown="HandleKeyDown">
+        <Prefix><Icon Type="mail" Style="color:#bfbfbf;" /></Prefix>
+    </Input>
+</div>
 
-    <!-- Filter row 2: Code + buttons -->
-    <div class="its-filter-row2">
-        <Input Placeholder="Ticket code"
-               Value="@TicketCode"
-               Style="font-size:12px;"
-               @onkeydown="HandleKeyDown"
-               @oninput="TicketCodeInputChanged">
-            <Prefix><Icon Type="search" Style="color:#bfbfbf;" /></Prefix>
-        </Input>
-        <Button Class="its-btn-action" OnClick="Search" Shape="ButtonShape.Round">
-            <Icon Type="search" /> Search
-        </Button>
-        <Button Class="its-btn-action" OnClick="Reset" Shape="ButtonShape.Round">
-            <Icon Type="undo" /> Reset
-        </Button>
-    </div>
+<!-- Filter row 2: Code + buttons -->
+<div class="its-filter-row2">
+    <Input Placeholder="Ticket code"
+           @bind-Value="TicketCode"
+           Style="font-size:12px;"
+           @onkeydown="HandleKeyDown">
+        <Prefix><Icon Type="search" Style="color:#bfbfbf;" /></Prefix>
+    </Input>
+    <Button Class="its-btn-action" OnClick="Search" Shape="ButtonShape.Round">
+        <Icon Type="search" /> Search
+    </Button>
+    <Button Class="its-btn-action" OnClick="Reset" Shape="ButtonShape.Round">
+        <Icon Type="undo" /> Reset
+    </Button>
+</div>
 
     <!-- Table -->
     <div class="its-table-wrap">
@@ -319,7 +316,7 @@
                @ref="@_tableRef"
                Loading="@Loading"
                ScrollX="1000"
-               HidePagination
+
                ScrollY="55vh"
                DataSource="_requestSuportFillter">
             <ColumnDefinitions Context="row">
