@@ -280,13 +280,15 @@
    <!-- Filter row 1: Name + Email -->
 <div class="its-filter-row1">
     <Input Placeholder="Requester name"
-           @bind-Value="RequesterName"
+           @oninput="RequesterNameInputChanged"
+           Value="RequesterName"
            Style="font-size:12px;"
            @onkeydown="HandleKeyDown">
         <Prefix><Icon Type="user" Style="color:#bfbfbf;" /></Prefix>
     </Input>
     <Input Placeholder="Requester email"
-           @bind-Value="Requesteremail"
+            @oninput="RequesteremailInputChanged"
+            Value="Requesteremail"
            Style="font-size:12px;"
            @onkeydown="HandleKeyDown">
         <Prefix><Icon Type="mail" Style="color:#bfbfbf;" /></Prefix>
@@ -296,7 +298,8 @@
 <!-- Filter row 2: Code + buttons -->
 <div class="its-filter-row2">
     <Input Placeholder="Ticket code"
-           @bind-Value="TicketCode"
+           @oninput="TicketCodeInputChanged"
+           Value="TicketCode"
            Style="font-size:12px;"
            @onkeydown="HandleKeyDown">
         <Prefix><Icon Type="search" Style="color:#bfbfbf;" /></Prefix>
