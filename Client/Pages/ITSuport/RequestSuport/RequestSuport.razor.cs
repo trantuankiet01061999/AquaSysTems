@@ -52,19 +52,20 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
             await LoadTechnician();
             await GetPage();
             await CheckPermission();
-            _selectedChange += Search;
         }
         private async Task SignalRReload()
         {
             _hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri(Navigation.BaseUri + "signalrhub"))
-            .Build();
+                .WithUrl(Navigation.ToAbsoluteUri(Navigation.BaseUri + "signalrhub"))
+                .Build();
+
             _hubConnection.On("LoadRequestSuport", async () =>
             {
                 await LoadData();
-                await Search();
-                StateHasChanged();
+                Search();             
+                await InvokeAsync(StateHasChanged);
             });
+
             await _hubConnection.StartAsync();
         }
         private async Task GetPage()
@@ -164,7 +165,6 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
         }
         #endregion
         #region Filter
-        private Func<Task>? _selectedChange;
         private string? RequesterName { get; set; }
         private string? Requesteremail { get; set; }
 
@@ -234,39 +234,36 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
             var query = _requestSuport.AsEnumerable();
 
             if (!string.IsNullOrWhiteSpace(name))
-            {
                 query = query.Where(x =>
                     !string.IsNullOrWhiteSpace(x.RequestByName) &&
                     StringHelper.NormalizeText(x.RequestByName).Contains(name));
-            }
+
             if (!string.IsNullOrWhiteSpace(ticketCode))
-            {
                 query = query.Where(x =>
                     !string.IsNullOrWhiteSpace(x.TicketCode) &&
                     StringHelper.NormalizeText(x.TicketCode).Contains(ticketCode));
-            }
+
             if (!string.IsNullOrWhiteSpace(email))
-            {
                 query = query.Where(x =>
                     !string.IsNullOrWhiteSpace(x.RequestByEmail) &&
                     StringHelper.NormalizeText(x.RequestByEmail).Contains(email));
-            }
 
             _requestSuportFillter = query.ToList();
+            StateHasChanged();        
             return Task.CompletedTask;
         }
 
-        private Table<RequestSuportDto>? _tableRef;
         private async Task Reset()
         {
             RequesterName = null;
             Requesteremail = null;
             TicketCode = null;
-            _requestSuportFillter = _requestSuport;
-            _tableRef?.ReloadData();
-            await InvokeAsync(StateHasChanged);
-
+            _requestSuportFillter = _requestSuport.ToList();
+            StateHasChanged();        
         }
+
+        private Table<RequestSuportDto>? _tableRef;
+      
         #endregion
     }
 }
