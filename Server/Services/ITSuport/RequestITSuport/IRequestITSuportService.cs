@@ -11,6 +11,6 @@ namespace AquaSolution.Server.Services.ITSuport.RequestSuportCategories
         Task<bool> UpdateAsync(HandleRequestSuportDto handleRequestSuportDto);
         Task<List<AttachmentDto>> LoadListAttachment(Guid requestITSuportId);
         Task<List<RequestSuportDto>> GetAllAsync();
-       
+       Task<PagedResult<RequestSuportDto>> GetPagedAsync(RequestSuportQueryDto request);
     }
 }

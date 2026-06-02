@@ -21,7 +21,12 @@ namespace AquaSolution.Server.Controllers.ITSuport.RequestSuportCategories
             _service = service;
             _hubContext = hubContext;
         }
-
+        [HttpGet("get-paged")]
+        public async Task<IActionResult> GetPaged([FromQuery] RequestSuportQueryDto request)
+        {
+            var result = await _service.GetPagedAsync(request);
+            return Ok(result);
+        }
         [HttpGet("get-all")]
         public async Task<List<RequestSuportDto>> GetAll()
         {

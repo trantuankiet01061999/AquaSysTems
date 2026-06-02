@@ -1,4 +1,5 @@
-﻿using AquaSolution.Data.Data.Entities.Admin;
+﻿using AntDesign;
+using AquaSolution.Data.Data.Entities.Admin;
 using AquaSolution.Data.Data.Entities.RequestITSuports;
 using AquaSolution.Data.Repositories;
 using AquaSolution.Shared.Enum;
@@ -198,8 +199,82 @@ namespace AquaSolution.Server.Services.ITSuport.RequestSuportCategories
 
             return await query
                 .OrderByDescending(x => x.CreatedDate)
-                .ToListAsync(); 
+                .ToListAsync();
         }
+
+        public async Task<PagedResult<RequestSuportDto>> GetPagedAsync(RequestSuportQueryDto request)
+        {
+            var users = _userRepo.Query();
+            var requestSuports = _requestSuportRepo.Query();
+            var categories = _requestSuportCategoryRepo.Query();
+            var departments = _departmentRepo.Query();
+            var factories = _factoryRepo.Query();
+            var query = from requestSuport in requestSuports
+                        join created in users on requestSuport.CreatedById equals created.Id
+                        join requestCategory in categories
+                            on requestSuport.RequestSuportCategoryId equals requestCategory.Id
+                        join requestBy in users on requestSuport.RequestBy equals requestBy.Id
+                        join technicial in users on requestSuport.TechnicianId equals technicial.Id
+                            into t
+                        from technicial in t.DefaultIfEmpty()
+                        join department in departments on requestBy.DepartmentId equals department.Id
+                            into d
+                        from department in d.DefaultIfEmpty()
+                        join factory in factories on requestBy.FactoryId equals factory.Id
+                            into f
+                        from factory in f.DefaultIfEmpty()
+                        select new RequestSuportDto
+                        {
+                            Id = requestSuport.Id,
+                            RequestTitle = requestSuport.RequestTitle,
+                            RequestSuportCategoryId = requestSuport.RequestSuportCategoryId,
+                            RequestSuportCategoryName = requestCategory.Name,
+                            Status = requestSuport.Status,
+                            RequestById = requestSuport.RequestBy,
+                            RequestByName = requestBy.FullName,
+                            RequestByEmail = requestBy.Email,
+                            CreatedDate = requestSuport.CreatedDate,
+                            RequestDescription = requestSuport.RequestDescription,
+                            RequestSolution = requestSuport.RequestSolution,
+                            TechnicianId = requestSuport.TechnicianId,
+                            TechnicianName = technicial != null ? technicial.FullName : null,
+                            TechnicianEmail = technicial != null ? technicial.Email : null,
+                            InProgessDate = requestSuport.InProgessDate,
+                            DueDate = requestSuport.DueDate,
+                            ResolveDate = requestSuport.ResolveDate,
+                            CancelDate = requestSuport.CancelDate,
+                            Department = department != null ? department.Name : null,
+                            Factory = factory != null ? $"{factory.Name} - {factory.Code}" : null,
+                            CreatedName = created.FullName,
+                            CreatedEmail = created.Email,
+                            CreatedById = requestSuport.CreatedById,
+                            TicketNumber = requestSuport.TicketNumber,
+                            RequestByWorkDay = requestBy.WorkDayId,
+                        };
+
+            if (!request.IsITOrAdmin && request.CurrentUserId.HasValue)
+                query = query.Where(x => x.RequestById == request.CurrentUserId);
+
+            if (!string.IsNullOrEmpty(request.RequesterName))
+                query = query.Where(x => x.RequestByName.Contains(request.RequesterName));
+
+            if (!string.IsNullOrEmpty(request.RequesterEmail))
+                query = query.Where(x => x.RequestByEmail.Contains(request.RequesterEmail));
+
+            if (request.TicketCode.HasValue)
+                query = query.Where(x => x.TicketNumber == request.TicketCode.Value);
+
+            var total = await query.CountAsync();
+
+            var items = await query
+                .OrderByDescending(x => x.CreatedDate)
+                .Skip((request.Page - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .ToListAsync();
+
+            return new PagedResult<RequestSuportDto> { Items = items, Total = total };
+        }
+
         public async Task<List<AttachmentDto>> LoadListAttachment(Guid requestITSuportId)
         {
             var query = from attachment in await _attachmentRepo.GetQueryableAsync()

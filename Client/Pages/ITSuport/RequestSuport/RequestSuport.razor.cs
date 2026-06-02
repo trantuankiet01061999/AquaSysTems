@@ -1,5 +1,6 @@
 ﻿
 using AntDesign;
+using AntDesign.TableModels;
 using AquaSolution.Client.Common;
 using AquaSolution.Client.Modals.ITSuport.RequestITSuport;
 using AquaSolution.Shared.Enum;
@@ -73,33 +74,61 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
             var url = "request-it-suport";
             if (Http != null) PageId = await Http.GetFromJsonAsync<Guid>($"api/Page/GetPageIdByUrl/{url}");
         }
+        //private async Task LoadData()
+        //{
+        //    Loading = true;
+        //    StateHasChanged();
+        //    _requestSuport = new();
+        //    if (Http != null)
+        //    {
+        //        var data = await Http.GetFromJsonAsync<List<RequestSuportDto>>("api/RequestITSuport/get-all");
+        //        if (data != null)
+        //        {
+        //            if (CurrenUser == null) return;
+        //            if (CurrenUser.Roles.Any(x => x.Name == "IT" || x.Name == "Admin"))
+        //            {
+        //                _requestSuport = data.ToList();
+
+        //            }
+        //            else
+        //            {
+        //                _requestSuport = data.Where(x => x.RequestById == CurrenUser.Id).ToList();
+        //            }
+
+        //        }
+        //    }
+        //    _requestSuportFillter = _requestSuport.ToList();
+        //    Loading = false;
+        //    StateHasChanged();
+        //}
+        private int _currentPage = 1;
+        private int _pageSize = 10;
+        private int _total = 0;
         private async Task LoadData()
         {
             Loading = true;
             StateHasChanged();
-            _requestSuport = new();
-            if (Http != null)
+
+            var url = $"api/RequestITSuport/get-paged?" +
+              $"page={_currentPage}&pageSize={_pageSize}" +
+              $"&currentUserId={CurrenUser.Id}" +
+              $"&isITOrAdmin={CurrenUser.Roles.Any(x => x.Name == "IT" || x.Name == "Admin")}" +
+              $"&requesterName={RequesterName}" +
+              $"&requesterEmail={Requesteremail}" +
+              $"&ticketCode={TicketCode}";
+
+            var data = await Http.GetFromJsonAsync<PagedResult<RequestSuportDto>>(url);
+            if (data != null)
             {
-                var data = await Http.GetFromJsonAsync<List<RequestSuportDto>>("api/RequestITSuport/get-all");
-                if (data != null)
-                {
-                    if (CurrenUser == null) return;
-                    if (CurrenUser.Roles.Any(x => x.Name == "IT" || x.Name == "Admin"))
-                    {
-                        _requestSuport = data.ToList();
-
-                    }
-                    else
-                    {
-                        _requestSuport = data.Where(x => x.RequestById == CurrenUser.Id).ToList();
-                    }
-
-                }
+                _requestSuportFillter = data.Items;
+                _total = data.Total;
             }
-            _requestSuportFillter = _requestSuport.ToList();
+
             Loading = false;
             StateHasChanged();
         }
+
+
         private async Task CheckPermission()
         {
 
@@ -226,42 +255,61 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
             return Task.CompletedTask;
         }
 
-        private Task Search()
+        //private Task Search()
+        //{
+        //    var name = StringHelper.NormalizeText(RequesterName?.Trim());
+        //    var email = StringHelper.NormalizeText(Requesteremail?.Trim());
+        //    var ticketCode = StringHelper.NormalizeText(TicketCode?.Trim());
+        //    var query = _requestSuport.AsEnumerable();
+
+        //    if (!string.IsNullOrWhiteSpace(name))
+        //        query = query.Where(x =>
+        //            !string.IsNullOrWhiteSpace(x.RequestByName) &&
+        //            StringHelper.NormalizeText(x.RequestByName).Contains(name));
+
+        //    if (!string.IsNullOrWhiteSpace(ticketCode))
+        //        query = query.Where(x =>
+        //            !string.IsNullOrWhiteSpace(x.TicketCode) &&
+        //            StringHelper.NormalizeText(x.TicketCode).Contains(ticketCode));
+
+        //    if (!string.IsNullOrWhiteSpace(email))
+        //        query = query.Where(x =>
+        //            !string.IsNullOrWhiteSpace(x.RequestByEmail) &&
+        //            StringHelper.NormalizeText(x.RequestByEmail).Contains(email));
+
+        //    _requestSuportFillter = query.ToList();
+        //    StateHasChanged();        
+        //    return Task.CompletedTask;
+        //}
+
+        //private async Task Reset()
+        //{
+        //    RequesterName = null;
+        //    Requesteremail = null;
+        //    TicketCode = null;
+        //    _requestSuportFillter = _requestSuport.ToList();
+        //    StateHasChanged();        
+        //}
+        private async Task OnTableChange(QueryModel<RequestSuportDto> query)
         {
-            var name = StringHelper.NormalizeText(RequesterName?.Trim());
-            var email = StringHelper.NormalizeText(Requesteremail?.Trim());
-            var ticketCode = StringHelper.NormalizeText(TicketCode?.Trim());
-            var query = _requestSuport.AsEnumerable();
-
-            if (!string.IsNullOrWhiteSpace(name))
-                query = query.Where(x =>
-                    !string.IsNullOrWhiteSpace(x.RequestByName) &&
-                    StringHelper.NormalizeText(x.RequestByName).Contains(name));
-
-            if (!string.IsNullOrWhiteSpace(ticketCode))
-                query = query.Where(x =>
-                    !string.IsNullOrWhiteSpace(x.TicketCode) &&
-                    StringHelper.NormalizeText(x.TicketCode).Contains(ticketCode));
-
-            if (!string.IsNullOrWhiteSpace(email))
-                query = query.Where(x =>
-                    !string.IsNullOrWhiteSpace(x.RequestByEmail) &&
-                    StringHelper.NormalizeText(x.RequestByEmail).Contains(email));
-
-            _requestSuportFillter = query.ToList();
-            StateHasChanged();        
-            return Task.CompletedTask;
+            _currentPage = query.PageIndex;
+            _pageSize = query.PageSize;
+            await LoadData();
+        }
+        private async Task Search()
+        {
+            _currentPage = 1; 
+            await LoadData();
         }
 
         private async Task Reset()
         {
-            RequesterName = null;
-            Requesteremail = null;
-            TicketCode = null;
-            _requestSuportFillter = _requestSuport.ToList();
-            StateHasChanged();        
+            _currentPage = 1;
+            RequesterName = "";
+            Requesteremail = "";
+            TicketCode = "";
+            await LoadData();
         }
-
         private Table<RequestSuportDto>? _tableRef;
       
         #endregion

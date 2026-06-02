@@ -150,7 +150,7 @@
             border: 1px solid #f0f0f0;
             border-radius: 12px;
             overflow: hidden;
-                       max-height: 54vh;
+            max-height: 65vh;
         }
 
         .its-table-wrap .ant-table-container {
@@ -238,7 +238,7 @@
     </div>
 
     <!-- Stats -->
-    <div class="its-stats">
+    @* <div class="its-stats">
     <div class="its-stat-card">
         <div class="its-stat-icon-wrap" style="background:#f0f5ff;">
             <Icon Type="unordered-list" Theme="IconThemeType.Outline" Style="font-size:16px;color:#1677ff;" />
@@ -275,20 +275,20 @@
             <div class="its-stat-value green">@(_requestSuport.Count(x => x.Status == RequestSuportStatusType.Resolved))</div>
         </div>
     </div>
-</div>
+</div> *@
 
    <!-- Filter row 1: Name + Email -->
 <div class="its-filter-row1">
     <Input Placeholder="Requester name"
-           @oninput="RequesterNameInputChanged"
-           Value="RequesterName"
+        Value="@RequesterName"
+           @oninput="RequesterNameInputChanged" 
            Style="font-size:12px;"
            @onkeydown="HandleKeyDown">
         <Prefix><Icon Type="user" Style="color:#bfbfbf;" /></Prefix>
     </Input>
     <Input Placeholder="Requester email"
-            @oninput="RequesteremailInputChanged"
-            Value="Requesteremail"
+          @oninput="RequesteremailInputChanged"
+          Value="@Requesteremail"
            Style="font-size:12px;"
            @onkeydown="HandleKeyDown">
         <Prefix><Icon Type="mail" Style="color:#bfbfbf;" /></Prefix>
@@ -299,7 +299,7 @@
 <div class="its-filter-row2">
     <Input Placeholder="Ticket code"
            @oninput="TicketCodeInputChanged"
-           Value="TicketCode"
+          Value="@TicketCode"
            Style="font-size:12px;"
            @onkeydown="HandleKeyDown">
         <Prefix><Icon Type="search" Style="color:#bfbfbf;" /></Prefix>
@@ -314,14 +314,24 @@
 
     <!-- Table -->
     <div class="its-table-wrap">
-        <Table TItem="RequestSuportDto"
+    @*     <Table TItem="RequestSuportDto"
                Size="TableSize.Small"
                @ref="@_tableRef"
                Loading="@Loading"
                ScrollX="1000"
 
                ScrollY="55vh"
-               DataSource="_requestSuportFillter">
+               DataSource="_requestSuportFillter"> *@
+        <Table TItem="RequestSuportDto"
+            Size="TableSize.Small"
+            Loading="@Loading"
+            DataSource="_requestSuportFillter"
+            Total="_total"
+            ScrollX="1000"
+            ScrollY="55vh"
+            PageIndex="_currentPage"
+            PageSize="_pageSize"
+            OnChange="OnTableChange">
             <ColumnDefinitions Context="row">
 
                 <PropertyColumn Width="110" Title="Ticket code" Property="c => c.TicketCode">
