@@ -22,7 +22,7 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
         Task<ViewDetailApprovalKPI> GetDetailKPIBySubmitId(Guid submitId);
         Task<bool> HandleKpiForApproval(ApprovalInfo approvalInfo);
         Task<List<ViewResultKpiDto>> ResultAllKpi();
-        Task<bool> CalculateQuarterPoint(List<CalculateQuarterPointDto> calculateQuarterPoint);
+        Task<bool> CalculateQuarterPoint(HandleKPISubmitDto calculateQuarterPoint);
         #region GET RESULT CALCULATED
         Task<List<KPITotalScoreDto>> GetKPITotalScoreByUserId(Guid userId, int year, int month);
         Task<List<HandleActualDto>> GetResultDetail(Guid userId, int year, int month);

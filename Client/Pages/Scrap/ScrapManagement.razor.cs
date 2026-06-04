@@ -128,83 +128,83 @@ namespace AquaSolution.Client.Pages.Scrap
         }
         #endregion
         #region Excel
-        private async Task HandleImportExcelFile(InputFileChangeEventArgs e)
-        {
-            try
-            {
-                var file = e.File;
-                if (file == null)
-                    return;
+        //private async Task HandleImportExcelFile(InputFileChangeEventArgs e)
+        //{
+        //    try
+        //    {
+        //        var file = e.File;
+        //        if (file == null)
+        //            return;
 
-                using var ms = await file.ToMemoryStreamAsync();
+        //        using var ms = await file.ToMemoryStreamAsync();
 
-                var parsedData = await ExcelImportHelper.ReadFromExcelAsync<ImportExcelDto>(
-                    ms,
-                    (sheet, row) =>
-                    {
-                        // Bỏ qua dòng 1 vì là dòng tiêu đề (Title)
-                        if (row == 1)
-                            return null;
+        //        var parsedData = await ExcelImportHelper.ReadFromExcelAsync<ImportExcelDto>(
+        //            ms,
+        //            (sheet, row) =>
+        //            {
+        //                // Bỏ qua dòng 1 vì là dòng tiêu đề (Title)
+        //                if (row == 1)
+        //                    return null;
 
-                        if (string.IsNullOrWhiteSpace(sheet.Cells[row, 1].Text))
-                            return null;
+        //                if (string.IsNullOrWhiteSpace(sheet.Cells[row, 1].Text))
+        //                    return null;
 
-                        var plant = ConvertStringToPlantType(sheet.Cells[row, 7].Text);
-                        decimal.TryParse(sheet.Cells[row, 8].Text?.Trim(), out var weightValue);
+        //                var plant = ConvertStringToPlantType(sheet.Cells[row, 7].Text);
+        //                decimal.TryParse(sheet.Cells[row, 8].Text?.Trim(), out var weightValue);
 
-                        DateTime? startDateValue = null;
-                        if (DateTime.TryParse(sheet.Cells[row, 9].Text?.Trim(), out var startDate))
-                        {
-                            startDateValue = startDate;
-                        }
+        //                DateTime? startDateValue = null;
+        //                if (DateTime.TryParse(sheet.Cells[row, 9].Text?.Trim(), out var startDate))
+        //                {
+        //                    startDateValue = startDate;
+        //                }
 
-                        DateTime? endDateValue = null;
-                        if (DateTime.TryParse(sheet.Cells[row, 10].Text?.Trim(), out var endDate))
-                        {
-                            endDateValue = endDate;
-                        }
+        //                DateTime? endDateValue = null;
+        //                if (DateTime.TryParse(sheet.Cells[row, 10].Text?.Trim(), out var endDate))
+        //                {
+        //                    endDateValue = endDate;
+        //                }
 
-                        bool.TryParse(sheet.Cells[row, 11].Text?.Trim(), out var isActive);
+        //                bool.TryParse(sheet.Cells[row, 11].Text?.Trim(), out var isActive);
 
-                        return new ImportExcelDto
-                        {
-                            BOMHead = sheet.Cells[row, 1].Text?.Trim(),
-                            BOMDescription = sheet.Cells[row, 2].Text?.Trim(),
-                            Code = sheet.Cells[row, 3].Text?.Trim(),
-                            Name = sheet.Cells[row, 4].Text?.Trim(),
-                            TYPE = sheet.Cells[row, 5].Text?.Trim(),
-                            Unit = sheet.Cells[row, 6].Text?.Trim(),
-                            Plant = plant,
-                            WeightValue = weightValue,
-                            StartDate = DateTime.Now,
-                            EndDate = null,
-                            IsActive = true,
-                            CreatedBy = CurrenUser?.Id ?? Guid.Empty,
+        //                return new ImportExcelDto
+        //                {
+        //                    BOMHead = sheet.Cells[row, 1].Text?.Trim(),
+        //                    BOMDescription = sheet.Cells[row, 2].Text?.Trim(),
+        //                    Code = sheet.Cells[row, 3].Text?.Trim(),
+        //                    Name = sheet.Cells[row, 4].Text?.Trim(),
+        //                    TYPE = sheet.Cells[row, 5].Text?.Trim(),
+        //                    Unit = sheet.Cells[row, 6].Text?.Trim(),
+        //                    Plant = plant,
+        //                    WeightValue = weightValue,
+        //                    StartDate = DateTime.Now,
+        //                    EndDate = null,
+        //                    IsActive = true,
+        //                    CreatedBy = CurrenUser?.Id ?? Guid.Empty,
 
-                        };
-                    });
+        //                };
+        //            });
 
-                ImportedData = parsedData.Where(x => x != null).ToList();
+        //        ImportedData = parsedData.Where(x => x != null).ToList();
 
-                var response = await Http.PostAsJsonAsync(
-                   "api/material/import-bom",
-                   ImportedData);
+        //        var response = await Http.PostAsJsonAsync(
+        //           "api/material/import-bom",
+        //           ImportedData);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    await Message.Success($"Import thành công {ImportedData.Count} dòng");
-                }
-                else
-                {
-                    var error = await response.Content.ReadAsStringAsync();
-                    await Message.Error(error);
-                }
-            }
-            catch (Exception ex)
-            {
-                await Message.Error(ex.Message);
-            }
-        }
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            await Message.Success($"Import thành công {ImportedData.Count} dòng");
+        //        }
+        //        else
+        //        {
+        //            var error = await response.Content.ReadAsStringAsync();
+        //            await Message.Error(error);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await Message.Error(ex.Message);
+        //    }
+        //}
         #endregion
     }
 }

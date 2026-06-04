@@ -11,6 +11,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider AuthStateProvider
 @inject PermissionService permissionService
+@inject IJSRuntime JSRuntime
 <PageTitle>Users</PageTitle>
 <div class="mb-3">
     <style>
@@ -64,6 +65,10 @@
     <div style="display: flex;  align-items: center; margin-bottom: 10px;">
         <InputFile OnChange="HandleImportExcelFile"
                    accept=".xlsx,.xls" />
+        <Button Icon="download" Type="default" OnClick="() => Download()" 
+            Size="ButtonSize.Small" Style="border-radius: 4px;" >
+            DownLoad-TemPlate
+         </Button>
         @*    <!-- #region Search -->
         <InputFile OnChange="HandleBonusYearFile"
                    accept=".xlsx,.xls" />
@@ -73,6 +78,11 @@
         <button @onclick="Reset" style="margin-left:5px;border-color:#fff"><Icon Type="undo" />Reset</button> *@
     </div>
 </div>
+<script>
+    window.downloadFile = function (url) {
+         window.open(url, '_blank');
+     }
+</script>
 <div style="width:100%;overflow-x:scroll ;max-height:70vh; ">
     <Table TItem="MaterialDto"
            @ref="_tableRef"

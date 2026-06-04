@@ -104,9 +104,9 @@ namespace AquaSolution.Server.Controllers.KPI.KPISubmit
             return result ? Ok(true) : BadRequest("New creation failed");
         }
         [HttpPost("calculate-point-quarter")]
-        public async Task<IActionResult> CalculatePointQuarter([FromBody] List<CalculateQuarterPointDto> calculateQuarterPoint)
+        public async Task<IActionResult> CalculatePointQuarter([FromBody] HandleKPISubmitDto handleKPISubmit)
         {
-            var result = await _kPISubmitService.CalculateQuarterPoint(calculateQuarterPoint);
+            var result = await _kPISubmitService.CalculateQuarterPoint(handleKPISubmit);
             return result ? Ok(true) : BadRequest("New creation failed");
         }
         #endregion

@@ -11,6 +11,7 @@ using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Net.Http.Json;
@@ -93,6 +94,19 @@ namespace AquaSolution.Client.Pages.Scrap
         }
         #endregion
         #region Excel
+        private async Task Download()
+        {
+            string filePath = "uploads/Template-Import/Import_material.xlsx";
+            if (string.IsNullOrWhiteSpace(filePath))
+                return;
+
+            if (!filePath.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            {
+                filePath = $"{Navigation.BaseUri}{filePath.TrimStart('/')}";
+            }
+
+            await JSRuntime.InvokeVoidAsync("downloadFile", filePath);
+        }
         private async Task HandleImportExcelFile(InputFileChangeEventArgs e)
         {
             try

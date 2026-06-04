@@ -63,8 +63,8 @@
         /* ── Stats ── */
         .its-stats {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
             margin-bottom: 1.25rem;
         }
 
@@ -239,6 +239,15 @@
             <div>
                 <div class="its-stat-label">In progress</div>
                 <div class="its-stat-value orange">@_statInProgress</div>
+            </div>
+        </div>
+        <div class="its-stat-card">
+            <div class="its-stat-icon-wrap" style="background:#f5f5f5;">
+                <Icon Type="pause-circle" Theme="IconThemeType.Outline" Style="font-size:16px;color:#595959;" />
+            </div>
+            <div>
+                <div class="its-stat-label">On Hold</div>
+                <div class="its-stat-value" style="color:#595959;">@_statOnHold</div>
             </div>
         </div>
         <div class="its-stat-card">

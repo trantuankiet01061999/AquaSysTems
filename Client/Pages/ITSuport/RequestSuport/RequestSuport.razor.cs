@@ -53,6 +53,7 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
         private int _statInProgress = 0;
         private int _statResolved = 0;
         private int _statCancel = 0;
+        private int _statOnHold = 0;
         #endregion
 
         #region Init
@@ -159,6 +160,7 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
                 _statInProgress = stats.InProgress;
                 _statResolved = stats.Resolved;
                 _statCancel = stats.Cancel;
+                _statOnHold = stats.OnHold;
             }
         }
         private List<string> _statusOptions = new();

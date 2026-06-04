@@ -13,5 +13,7 @@ namespace AquaSolution.Shared.ITSuport.RequestSuport
         public int InProgress { get; set; }
         public int Resolved { get; set; }
         public int Cancel { get; set; }
+        public int OnHold { get; set; }
+
     }
 }

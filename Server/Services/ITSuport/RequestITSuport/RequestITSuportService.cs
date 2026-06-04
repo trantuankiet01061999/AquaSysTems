@@ -391,7 +391,8 @@ namespace AquaSolution.Server.Services.ITSuport.RequestSuportCategories
                     Open = g.Count(x => x.Status == RequestSuportStatusType.Open),
                     InProgress = g.Count(x => x.Status == RequestSuportStatusType.InProgress),
                     Resolved = g.Count(x => x.Status == RequestSuportStatusType.Resolved),
-                    Cancel =g.Count(x=>x.Status == RequestSuportStatusType.Cancel)
+                    Cancel =g.Count(x=>x.Status == RequestSuportStatusType.Cancel),
+                    OnHold= g.Count(x => x.Status == RequestSuportStatusType.OnHold)
                 })
                 .FirstOrDefaultAsync();
 

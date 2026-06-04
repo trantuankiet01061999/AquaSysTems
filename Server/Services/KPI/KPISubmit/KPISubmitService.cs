@@ -1005,95 +1005,206 @@ namespace AquaSolution.Server.Services.KPI.KPISubmit
         }
         #endregion
         #region CALCULATE POINT
-        public async Task<bool> CalculateQuarterPoint(List<CalculateQuarterPointDto> calculateQuarterPoint)
+        public async Task<bool> CalculateQuarterPoint(HandleKPISubmitDto handleKPISubmit)
         {
-            var returnSave = 0;
             var totalScoresInserted = new List<KPITotalScore>();
-            var SubmitId = Guid.NewGuid();
-            using (var transaction = await _context.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    await CalculatePointQuarterAsync(SubmitId, calculateQuarterPoint);
-                    await CalculateQuarterPointHalfYearAsync(SubmitId, calculateQuarterPoint);
+            var submitId = Guid.NewGuid();
 
-                    await transaction.CommitAsync();
-                }
-                catch
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                await CalculatePointQuarterAsync(submitId, handleKPISubmit, totalScoresInserted);
+                await CalculateQuarterPointHalfYearAsync(submitId, handleKPISubmit, totalScoresInserted);
+                await InsertDetailAndActualForCalculatedAsync(handleKPISubmit, totalScoresInserted);
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw ex;
+            }
+        }
+
+        private async Task CalculatePointQuarterAsync(
+            Guid submitId,
+            HandleKPISubmitDto handleKPISubmit,
+            List<KPITotalScore> totalScoresInserted)
+        {
+            try
+            {
+                var dto = handleKPISubmit.KPITotalScore.FirstOrDefault(x => x.Quarter.HasValue && x.Quarter > 0);
+                if (dto == null) return;
+
+                var request = new KPIRequest
                 {
-                    await transaction.RollbackAsync();
-                    throw;
+                    Id = Guid.NewGuid(),
+                    SubmitId = submitId,
+                    Title = dto.Title + " - (Admin Calculate Point Quarter)",
+                    RequestStatus = StatusKPIRequestType.Approved,
+                    CreatedBy = dto.CreatedBy,
+                    CreatedDate = DateTime.Now,
+                    Note = "Admin Calculate Point Quarter",
+                    Description = "Admin Calculate Point Quarter",
+                    ApprovalBy = new Guid("B3A87D42-4CD2-4882-A1EE-EAEDE1707AC6")
+                };
+                await _kpiRequestRepo.InsertAsync(request);
+
+                var score = new KPITotalScore
+                {
+                    Id = Guid.NewGuid(),
+                    SubmitId = submitId,
+                    KPIScore = dto.KPIScore,
+                    KeyTaskScore = dto.KeyTaskScore,
+                    OMGScore = dto.OMGScore,
+                    TotaleScore = dto.TotaleScore,
+                    TotalActualScore = dto.TotalActualScore,
+                    Status = StatusKPIRequestType.Approved,
+                    Quarter = dto.Quarter.Value,
+                    Year = dto.Year,
+                    CreatedBy = dto.CreatedBy,
+                    CreatedDate = DateTime.Now,
+                    IsActive = true,
+                    Title = dto.Title + " - (Admin Calculate Point Quarter)",
+                    kPITotalScoreType = KPITotalScoreType.HR
+                };
+                await _kpiTotalScoreRepo.InsertAsync(score);
+
+                totalScoresInserted.Add(score);
+
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            
+        }
+
+        private async Task CalculateQuarterPointHalfYearAsync(
+            Guid submitId,
+            HandleKPISubmitDto handleKPISubmit,
+            List<KPITotalScore> totalScoresInserted)
+        {
+            try
+            {
+                var dto = handleKPISubmit.KPITotalScore.FirstOrDefault(x => x.HalfYear.HasValue && x.HalfYear > 0);
+                if (dto == null) return;
+
+                var score = new KPITotalScore
+                {
+                    Id = Guid.NewGuid(),
+                    SubmitId = submitId,
+                    KPIScore = dto.KPIScore,
+                    KeyTaskScore = dto.KeyTaskScore,
+                    OMGScore = dto.OMGScore,
+                    TotaleScore = dto.TotaleScore,
+                    TotalActualScore = dto.TotaleScore,
+                    Status = StatusKPIRequestType.Approved,
+                    HalfYear = dto.HalfYear.Value,
+                    Year = dto.Year,
+                    CreatedBy = dto.CreatedBy,
+                    CreatedDate = DateTime.Now,
+                    IsActive = true,
+                    Title = dto.Title + " - (Admin Calculate Point HalfYear)",
+                    kPITotalScoreType = KPITotalScoreType.HR
+                };
+                await _kpiTotalScoreRepo.InsertAsync(score);
+
+                totalScoresInserted.Add(score);
+
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+          
+        }
+
+        private async Task InsertDetailAndActualForCalculatedAsync(
+            HandleKPISubmitDto handleKPISubmit,
+            List<KPITotalScore> totalScoresInserted)
+        {
+            try
+            {
+                var allHandleActuals = handleKPISubmit.HandleActual;
+
+                if (!allHandleActuals.Any()) return;
+
+                var userId = handleKPISubmit.HandleActual.First().CreatedBy;
+
+                var allTaskIds = allHandleActuals.Select(x => x.TaskId).Distinct().ToList();
+
+                var userTasks = await _userTaskepo.Query()
+                    .Where(x => allTaskIds.Contains(x.KPITaskId) && x.UserId == userId)
+                    .ToDictionaryAsync(x => x.KPITaskId, x => x);
+
+                var targets = await _kpiTargeRepo.GetAllAsync();
+
+                foreach (var item in allHandleActuals)
+                {
+                    if (!userTasks.TryGetValue(item.TaskId, out var userTask))
+                        continue;
+
+                    var targetId = targets
+                        .Where(x => x.UserTaskId == userTask.Id && x.Year == item.Year)
+                        .Select(x => x.Id)
+                        .FirstOrDefault();
+
+                    var totalScore = totalScoresInserted.FirstOrDefault(x =>
+                        x.Year == item.Year &&
+                        (
+                            (item.Quarter != null && x.Quarter == item.Quarter) ||
+                            (item.HalfYear != null && x.HalfYear == item.HalfYear)
+                        ));
+
+                    if (totalScore == null) continue;
+
+                    var detail = new KPIDetailScore
+                    {
+                        Id = Guid.NewGuid(),
+                        TotalScoreId = totalScore.Id,
+                        TaskId = item.TaskId,
+                        Max = item.Max ?? 0,
+                        Bottom = item.Bottom ?? 0,
+                        Weight = item.Weight ?? 0,
+                        Target = item.TargetValue ?? 0,
+                        Achievement = item.Achiement ?? 0,
+                        Actual = item.ActualValue ?? 0,
+                        Score = item.Score ?? 0,
+                        Month = item.Month,
+                        Quarter = item.Quarter,
+                        HalfYear = item.HalfYear,
+                        Year = item.Year,
+                        CreatedDate = DateTime.Now,
+                        IsActive = true
+                    };
+
+                    var actual = new KPIMonthlyActual
+                    {
+                        Id = Guid.NewGuid(),
+                        KPITargetId = targetId,
+                        KPITotalScoreId = totalScore.Id,
+                        Month = item.Month,
+                        Quarter = item.Quarter,
+                        HalfYear = item.HalfYear,
+                        Year = item.Year,
+                        ActualValue = item.ActualValue,
+                        CreatedDate = DateTime.Now,
+                        CreatedBy = userId,
+                        UpdatedDate = DateTime.Now
+                    };
+
+                    await _kpiDetailScoreRepo.InsertAsync(detail);
+                    await _KPIMonthlyActualRepo.InsertAsync(actual);
                 }
             }
-
-            return true; // 
-
-        }
-        private async Task CalculatePointQuarterAsync(Guid submitId, List<CalculateQuarterPointDto> calculateQuarterPoint)
-        {
-            var dto = calculateQuarterPoint.FirstOrDefault(x => x.Quarter.HasValue && x.Quarter > 0);
-            if (dto == null) return;
-
-            var kpiScore = dto.KPIScore;
-            var keyTaskScore = dto.KeyTaskScore;
-            var omgScore = dto.OMGScore;
-            var request = new KPIRequest
+            catch(Exception ex)
             {
-                Id = Guid.NewGuid(),
-                SubmitId = submitId,
-                Title = dto.Title + "-(HR Calculate Point Quarter)" ?? "",
-                RequestStatus = StatusKPIRequestType.Approved,
-                CreatedBy = dto.CreatedBy,
-                CreatedDate = DateTime.Now,
-                ApprovalBy = dto.ApprovedBy,
-                ApprovalDate = DateTime.Now,
-                Note = "HR Calculate Point Quarter",
-                Description = "HR Calculate Point Quarter"
-            };
-            await _kpiRequestRepo.InsertAsync(request);
-            var score = new KPITotalScore
-            {
-                Id = Guid.NewGuid(),
-                SubmitId = submitId,
-                KeyTaskScore = keyTaskScore,
-                KPIScore = kpiScore,
-                OMGScore = omgScore,
-                TotaleScore = dto.TotaleScore,
-                Status = StatusKPIRequestType.Approved,
-                Quarter = dto.Quarter.Value,
-                Year = dto.Year,
-                CreatedBy = dto.CreatedBy,
-                CreatedDate = DateTime.Now,
-                IsActive = true,
-                Title = dto.Title + "-(HR Calculate Point Quarter)" ?? "",
-                kPITotalScoreType = KPITotalScoreType.HR
-            };
-            await _kpiTotalScoreRepo.InsertAsync(score);
-            await _kpiTotalScoreRepo.SaveChangesAsync();
-        }
-        private async Task CalculateQuarterPointHalfYearAsync(Guid submitId, List<CalculateQuarterPointDto> calculateQuarterPoint)
-        {
-            var dto = calculateQuarterPoint.FirstOrDefault(x => x.HalfYear.HasValue && x.HalfYear > 0);
-            if (dto == null) return;
-            var score = new KPITotalScore
-            {
-                Id = Guid.NewGuid(),
-                SubmitId = submitId,
-                KeyTaskScore = dto.KeyTaskScore,
-                KPIScore = dto.KPIScore,
-                OMGScore = dto.OMGScore,
-                TotaleScore = dto.TotaleScore,
-                Status = StatusKPIRequestType.Approved,
-                HalfYear = dto.HalfYear.Value,
-                Year = dto.Year,
-                CreatedBy = dto.CreatedBy,
-                CreatedDate = DateTime.Now,
-                IsActive = true,
-                Title = dto.Title + "-(HR Calculate Point HalfYear)" ?? "",
-                kPITotalScoreType = KPITotalScoreType.HR
-            };
-            await _kpiTotalScoreRepo.InsertAsync(score);
-            await _kpiTotalScoreRepo.SaveChangesAsync();
+                throw ex;
+            }
+            
         }
         #endregion
         #region GET MONTH RESULT
