@@ -97,6 +97,9 @@
         .FirstOrDefault(a => a.DecisionMaker == CurrenUser!.Id);
     var _canAct = _myStep?.Status == StatusScrap.InterView;
 
+    // Đã confirm xong (Done) → readonly, ẩn nút xác nhận
+    var _isConfirmed = HandleScrap?.Status == StatusScrap.Done;
+
     RenderFragment footer =
         @<div style="display:flex; gap:8px; justify-content:flex-end">
             <Button OnClick="Close">Đóng</Button>
@@ -112,7 +115,7 @@
                         Loading="@_submitting"
                         OnClick="ApproveAction">Approve</Button>
             }
-            @if (Mode == ScrapModalMode.Confirm)
+            @if (Mode == ScrapModalMode.Confirm && !_isConfirmed)
             {
                 <Button Type="ButtonType.Primary" Loading="@_submitting" OnClick="ConfirmAction">Xác nhận nhận hàng</Button>
             }
@@ -355,7 +358,7 @@
                 </Table>
             </div>
 
-            @* Confirm section - chỉ hiện khi Mode = Confirm *@
+            @* Confirm section - hiện khi Mode = Confirm (cả Approved lẫn Done) *@
             @if (Mode == ScrapModalMode.Confirm)
             {
                 <Divider Style="margin:6px 0" />
@@ -415,6 +418,7 @@
                             <AntDesign.InputNumber TValue="decimal"
                                                    @bind-Value="_confirmAmount"
                                                    Min="0"
+                                                   Disabled="@_isConfirmed"
                                                    Style="width:100%; font-size:16px;"
                                                    Placeholder="Nhập số lượng..." />
                         </div>
@@ -422,7 +426,9 @@
                         @* Radio status *@
                         <div>
                             <div class="scrap-info-label" style="margin-bottom:4px;">Tình trạng nhận</div>
-                            <RadioGroup @bind-Value="_confirmStatus" Style="display:flex; flex-direction:column; gap:6px;">
+                            <RadioGroup @bind-Value="_confirmStatus"
+                                        Disabled="@_isConfirmed"
+                                        Style="display:flex; flex-direction:column; gap:6px;">
                                 <Radio Value="@ConfirmationStatusType.Received">
                                     <span style="color:#52c41a; font-weight:500;">✓ Nhận đủ (Received)</span>
                                 </Radio>
@@ -440,7 +446,10 @@
                     @* Note *@
                     <div style="margin-top:10px;">
                         <div class="scrap-info-label" style="margin-bottom:4px;">Ghi chú</div>
-                        <TextArea @bind-Value="_confirmNote" Rows="2" Placeholder="Ghi chú thêm nếu có..." />
+                        <TextArea @bind-Value="_confirmNote"
+                                  Rows="2"
+                                  Disabled="@_isConfirmed"
+                                  Placeholder="Ghi chú thêm nếu có..." />
                     </div>
 
                 </div>
@@ -466,10 +475,10 @@
     <p style="font-size:13px; color:#555; margin-bottom:8px;">
         Phieu: <strong>@HandleScrap?.Title</strong>
     </p>
-    <textarea class="ant-input"
+    <TextArea class="ant-input"
               rows="4"
               placeholder="Nhap ly do tu choi..."
               value="@RejectComment"
               @oninput="@((e) => RejectComment = e.Value?.ToString())">
-    </textarea>
+    </TextArea>
 </Modal>

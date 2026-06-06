@@ -5,6 +5,7 @@ using AquaSolution.Shared.Enum.Scrap;
 using AquaSolution.Shared.ScrapManagement.Scrap;
 using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
 using System.Net.Http.Json;
 
 namespace AquaSolution.Client.Pages.ToDoList.ApprovalScrap
@@ -26,7 +27,7 @@ namespace AquaSolution.Client.Pages.ToDoList.ApprovalScrap
         private bool IsLoading { get; set; } = false;
         private UserDto CurrenUser { get; set; } = new();
         private RegisterScrapModal registerScrapModal { get; set; } = default!;
-
+        private HubConnection? _hubConnection;
         private string? _filterFactory;
         private string? _filterDepartment;
         private List<string> _factoryOptions = new();
@@ -41,9 +42,24 @@ namespace AquaSolution.Client.Pages.ToDoList.ApprovalScrap
         {
             var currenUserClass = new CurrenUser(Http, AuthStateProvider);
             CurrenUser = await currenUserClass.LoadCurrenUser();
+            await SignalRReload();
             await LoadScraps();
         }
 
+        private async Task SignalRReload()
+        {
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl(Navigation.ToAbsoluteUri(Navigation.BaseUri + "signalrhub"))
+                .Build();
+
+            _hubConnection.On("LoadRequestSuport", async () =>
+            {
+                await LoadScraps();
+                await InvokeAsync(StateHasChanged);
+            });
+
+            await _hubConnection.StartAsync();
+        }
         public async Task LoadScraps()
         {
             if (CurrenUser.Id == Guid.Empty) return;

@@ -172,6 +172,7 @@ namespace AquaSolution.Client.Pages.Scrap
                 if (response.IsSuccessStatusCode)
                 {
                     await Message.Success($"Import thành công {ImportedData.Count} dòng");
+                    await LoadAllMaterials();
                 }
                 else
                 {

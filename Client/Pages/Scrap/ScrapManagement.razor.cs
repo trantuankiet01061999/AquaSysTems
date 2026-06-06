@@ -12,6 +12,7 @@ using AquaSolution.Shared.ScrapManagement.Scrap;
 using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.SignalR.Client;
 using System.Net.Http.Json;
 namespace AquaSolution.Client.Pages.Scrap
 {
@@ -21,6 +22,7 @@ namespace AquaSolution.Client.Pages.Scrap
         #region Declaration
         public List<ImportExcelDto> ImportedData { get; set; } = new List<ImportExcelDto>();
         private UserDto? CurrenUser { get; set; }
+        private HubConnection? _hubConnection;
         private UpdateWeightDto? UpdateWeight { get; set; }
         [Inject]
         public HttpClient Http { get; set; }
@@ -39,7 +41,22 @@ namespace AquaSolution.Client.Pages.Scrap
 
             var currenUserClass = new CurrenUser(Http, AuthStateProvider);
             CurrenUser = await currenUserClass.LoadCurrenUser();
+            await SignalRReload();
             await LoadHistory();
+        }
+        private async Task SignalRReload()
+        {
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl(Navigation.ToAbsoluteUri(Navigation.BaseUri + "signalrhub"))
+                .Build();
+
+            _hubConnection.On("LoadRequestSuport", async () =>
+            {
+                await LoadHistory();
+                await InvokeAsync(StateHasChanged);
+            });
+
+            await _hubConnection.StartAsync();
         }
         private async Task LoadHistory()
         {
@@ -48,7 +65,15 @@ namespace AquaSolution.Client.Pages.Scrap
                 var result = await Http.GetFromJsonAsync<List<HistoryScrapDto>>("api/scrap/get-all-scraps");
                 if (result != null)
                 {
-                    ListHistory = result;
+                    if (CurrenUser.Roles.Any(x => x.Name == "Admin"))
+                    {
+
+                        ListHistory = result;
+                    }
+                    else
+                    {
+                        ListHistory = result.Where(x => x.CreatedById == CurrenUser.Id).ToList();
+                    }
                 }
             }
             catch (Exception ex)
@@ -61,9 +86,9 @@ namespace AquaSolution.Client.Pages.Scrap
         #region Action
         private async Task CreatedScrap()
         {
-            if(registerScrapModal != null)
+            if (registerScrapModal != null)
             {
-                registerScrapModal.ShowModal(CurrenUser , null, false);
+                registerScrapModal.ShowModal(CurrenUser, null, false);
             }
         }
         private async Task DetailScrap(HistoryScrapDto historyScrap)
@@ -77,40 +102,19 @@ namespace AquaSolution.Client.Pages.Scrap
                 CreatedDate = historyScrap.CreatedDate,
                 CreatedById = historyScrap.CreatedById,
                 FactoryId = historyScrap.FactoryId,
-                FactoryName = historyScrap.FactoryName,       
+                FactoryName = historyScrap.FactoryName,
                 DepartmentId = historyScrap.DepartmentId,
-                DepartmentName = historyScrap.DepartmentName, 
+                DepartmentName = historyScrap.DepartmentName,
                 HistoryDetails = historyScrap.HistoryDetails,
                 Approvals = historyScrap.Approvals
             };
 
             if (registerScrapModal != null)
             {
-                await registerScrapModal.ShowModal(CurrenUser, scrapHistory, isEdit: false, isDetail: true); 
+                await registerScrapModal.ShowModal(CurrenUser, scrapHistory, isEdit: false, isDetail: true);
             }
         }
-        //private async Task EditScrap(HistoryScrapDto historyScrap)
-        //{
-        //    var scrapHistory = new HandleScrapDto
-        //    {
-        //        Title = historyScrap.Title,
-        //        Status = historyScrap.Status,
-        //        Description = historyScrap.Description,
-        //        CreatedDate = historyScrap.CreatedDate,
-        //        CreatedById = historyScrap.CreatedById,
-        //        FactoryId = historyScrap.FactoryId,
-        //        FactoryName = historyScrap.FactoryName,       
-        //        DepartmentId = historyScrap.DepartmentId,
-        //        DepartmentName = historyScrap.DepartmentName, 
-        //        HistoryDetails = historyScrap.HistoryDetails,
-        //        Approvals = historyScrap.Approvals
-        //    };
 
-        //    if (registerScrapModal != null)
-        //    {
-        //        await registerScrapModal.ShowModal(CurrenUser, scrapHistory, true); 
-        //    }
-        //}
         #endregion
         #region Helper
         private PlantType? ConvertStringToPlantType(string input)

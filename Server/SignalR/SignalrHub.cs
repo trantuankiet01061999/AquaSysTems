@@ -71,5 +71,19 @@ namespace AquaSolution.Server.SignalR
             await Clients.All.SendAsync("LoadRollReport");
         }
         #endregion
+        #region Scrap
+        public async Task LoadScrap()
+        {
+            await Clients.All.SendAsync("LoadScrap");
+        }
+        public async Task LoadMaterial()
+        {
+            await Clients.All.SendAsync("LoadMaterial");
+        }
+        public  async Task LoadApproval()
+        {
+            await Clients.All.SendAsync("LoadApproval");
+        }
+        #endregion
     }
 }

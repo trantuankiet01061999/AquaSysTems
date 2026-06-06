@@ -1,7 +1,11 @@
 
 using AquaSolution.Server.Services.ScrapManagetment.ScapServices;
+using AquaSolution.Server.SignalR;
 using AquaSolution.Shared.ScrapManagement.Scrap;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
 
 namespace AquaSolution.Server.Controllers.ScrapManagement
@@ -11,21 +15,23 @@ namespace AquaSolution.Server.Controllers.ScrapManagement
     public class ScrapController : ControllerBase
     {
         private readonly IScrapService _scrapService;
-
-        public ScrapController(IScrapService scrapService)
+        private readonly IHubContext<SignalrHub> _hubContext;
+        public ScrapController(IScrapService scrapService,
+            IHubContext<SignalrHub> hubContext)
         {
             _scrapService = scrapService;
+            _hubContext = hubContext;
         }
 
-        
+
         [HttpGet("get-all-scraps")]
         public async Task<IActionResult> GetAllScraps()
         {
             try
             {
                 var result = await _scrapService.GetHistory();
-                return Ok(result);
-            }
+            return Ok(result);
+        }
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = $"Lỗi hệ thống: {ex.Message}" });
@@ -37,6 +43,7 @@ namespace AquaSolution.Server.Controllers.ScrapManagement
             try
             {
                 await _scrapService.CreateScrap(createScrapDto);
+                await _hubContext.Clients.All.SendAsync("LoadScrap");
                 return Ok(new { message = "Tạo scrap thành công" });
             }
             catch (Exception ex)
@@ -64,6 +71,7 @@ namespace AquaSolution.Server.Controllers.ScrapManagement
             try
             {
                 await _scrapService.ActionApproval(request);
+                await _hubContext.Clients.All.SendAsync("LoadScrap");
                 return Ok(new { message = "Thao tác thành công" });
             }
             catch (Exception ex)

@@ -5,6 +5,7 @@ using AquaSolution.Shared.Enum.Scrap;
 using AquaSolution.Shared.ScrapManagement.Scrap;
 using AquaSolution.Shared.UserManagements;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
 using System.Net.Http.Json;
 
 namespace AquaSolution.Client.Pages.Scrap
@@ -31,13 +32,28 @@ namespace AquaSolution.Client.Pages.Scrap
         private string? _filterDepartment;
         private List<string> _factoryOptions = new();
         private List<string> _departmentOptions = new();
-
+        private HubConnection? _hubConnection;
         #region Init
         protected override async Task OnInitializedAsync()
         {
             var currenUserClass = new CurrenUser(Http, AuthStateProvider);
             CurrenUser = await currenUserClass.LoadCurrenUser();
+            await SignalRReload();
             await LoadHistory();
+        }
+        private async Task SignalRReload()
+        {
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl(Navigation.ToAbsoluteUri(Navigation.BaseUri + "signalrhub"))
+                .Build();
+
+            _hubConnection.On("LoadRequestSuport", async () =>
+            {
+                await LoadHistory();
+                await InvokeAsync(StateHasChanged);
+            });
+
+            await _hubConnection.StartAsync();
         }
 
         public async Task LoadHistory()
@@ -173,10 +189,10 @@ namespace AquaSolution.Client.Pages.Scrap
 
             if (registerScrapModal != null)
             {
-                // isApproval: false  → không hiện nút Approve/Reject
-                // isConfirm:  true   → hiện form xác nhận nếu status là Approved
-                //             false  → chỉ xem (status là Done)
-                bool isConfirm = row.Status == StatusScrap.Approved;
+                // Cả Approved (chờ confirm) lẫn Done (đã confirm) đều mở Mode = Confirm
+                // Modal tự xử lý: Done → readonly + ẩn nút xác nhận
+                bool isConfirm = row.Status == StatusScrap.Approved
+                              || row.Status == StatusScrap.Done;
 
                 await registerScrapModal.ShowModal(
                     CurrenUser!, scrapHistory,
