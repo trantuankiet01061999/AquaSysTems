@@ -30,6 +30,7 @@ using AquaSolution.Server.Services.ManageMedicalRooms.Products;
 using AquaSolution.Server.Services.ManageMedicalRooms.RequestClinicservice;
 using AquaSolution.Server.Services.ManageMedicalRooms.WarehouseExportService;
 using AquaSolution.Server.Services.ManageMedicalRooms.WarehouseImportService;
+using AquaSolution.Server.Services.ScrapManagetment.ExportReportService;
 using AquaSolution.Server.Services.ScrapManagetment.FlowApprovalServices;
 using AquaSolution.Server.Services.ScrapManagetment.MaterialServices;
 using AquaSolution.Server.Services.ScrapManagetment.ReportServices;

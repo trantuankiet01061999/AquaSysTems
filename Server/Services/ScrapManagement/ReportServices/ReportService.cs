@@ -387,9 +387,7 @@ namespace AquaSolution.Server.Services.ScrapManagetment.ReportServices
                 var query = ApplyFilter(_scrapRepo.Query(), filter);
 
                 var scraps = await query
-                    .Where(x => x.Status == StatusScrap.Pending
-                             || x.Status == StatusScrap.Approved
-                             || x.Status == StatusScrap.Rejected)
+                    .Where(x => x.Status == StatusScrap.Pending)
                     .OrderByDescending(x => x.CreatedDate)
                     .Take(20)
                     .ToListAsync();

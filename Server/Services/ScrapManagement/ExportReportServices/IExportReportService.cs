@@ -1,6 +1,6 @@
 using AquaSolution.Shared.ReportDto;
 
-namespace AquaSolution.Server.Services.ScrapManagetment.ReportServices
+namespace AquaSolution.Server.Services.ScrapManagetment.ExportReportService
 {
     public interface IExportReportService
     {

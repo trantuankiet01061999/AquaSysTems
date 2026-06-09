@@ -7,7 +7,7 @@ using ClosedXML.Excel;
 using Microsoft.EntityFrameworkCore;
 using NPOI.SS.UserModel;
 
-namespace AquaSolution.Server.Services.ScrapManagetment.ReportServices
+namespace AquaSolution.Server.Services.ScrapManagetment.ExportReportService
 {
     public class ExportReportService : IExportReportService
     {
