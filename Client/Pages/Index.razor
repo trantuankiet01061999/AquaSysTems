@@ -17,11 +17,10 @@
         font-family: 'Inter', 'Segoe UI', sans-serif;
         padding: 24px;
         background: #f0f2f5;
-        height: calc(100vh - 60px);   
-        overflow-y: auto;  
+        height: calc(100vh - 60px);
+        overflow-y: auto;
     }
 
-    /* ===== WELCOME BANNER ===== */
     .welcome-banner {
         background: linear-gradient(135deg, #0052D4 0%, #4364F7 40%, #00A5A8 100%);
         border-radius: 16px;
@@ -36,10 +35,8 @@
     .welcome-banner::before {
         content: '';
         position: absolute;
-        top: -50%;
-        right: -20%;
-        width: 500px;
-        height: 500px;
+        top: -50%; right: -20%;
+        width: 500px; height: 500px;
         background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
         border-radius: 50%;
     }
@@ -47,107 +44,56 @@
     .welcome-banner::after {
         content: '';
         position: absolute;
-        bottom: -30%;
-        left: 50%;
-        width: 300px;
-        height: 300px;
+        bottom: -30%; left: 50%;
+        width: 300px; height: 300px;
         background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
         border-radius: 50%;
     }
 
     .welcome-content {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        position: relative; z-index: 1;
+        display: flex; justify-content: space-between; align-items: center;
     }
 
-    .welcome-text h1 {
-        font-size: 28px;
-        font-weight: 700;
-        margin: 0 0 8px 0;
-        letter-spacing: -0.5px;
-    }
-
-    .welcome-text p {
-        font-size: 15px;
-        opacity: 0.85;
-        margin: 0;
-        font-weight: 300;
-    }
-
-    .welcome-icon {
-        font-size: 64px;
-        opacity: 0.3;
-    }
+    .welcome-text h1 { font-size: 28px; font-weight: 700; margin: 0 0 8px 0; letter-spacing: -0.5px; }
+    .welcome-text p  { font-size: 15px; opacity: 0.85; margin: 0; font-weight: 300; }
+    .welcome-icon    { font-size: 64px; opacity: 0.3; }
 
     .welcome-date {
-        margin-top: 16px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 13px;
-        opacity: 0.75;
+        margin-top: 16px; display: flex; align-items: center;
+        gap: 8px; font-size: 13px; opacity: 0.75;
     }
 
-    /* ===== SECTION TITLE ===== */
     .section-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #1a1a2e;
-        margin-bottom: 16px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        font-size: 18px; font-weight: 600; color: #1a1a2e;
+        margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
     }
 
-    /* ===== QUICK ACTIONS ===== */
     .quick-actions-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 16px;
-        margin-bottom: 24px;
-        /* align-items: start để các card không bị kéo dài bằng nhau */
-        align-items: start;
+        gap: 16px; margin-bottom: 24px; align-items: start;
     }
 
     .action-card {
-        background: white;
-        border-radius: 12px;
-        /* padding đều 4 phía, bỏ chiều cao cố định */
-        padding: 20px;
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border: 1px solid #f0f0f0;
-        text-decoration: none;
-        color: inherit;
-        /* width vừa với grid cell, height tự co theo nội dung */
-        width: 100%;
-        box-sizing: border-box;
+        background: white; border-radius: 12px; padding: 20px;
+        display: flex; align-items: center; gap: 16px;
+        cursor: pointer; transition: all 0.3s ease;
+        border: 1px solid #f0f0f0; text-decoration: none; color: inherit;
+        width: 100%; box-sizing: border-box;
     }
 
     .action-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
         border-color: transparent;
     }
 
     .action-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
+        width: 48px; height: 48px; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-
-    .action-icon svg { width: 24px; height: 24px; }
-
+    .action-icon svg    { width: 24px; height: 24px; }
     .action-icon.blue   { background: rgba(67,100,247,0.1);  color: #4364F7; }
     .action-icon.green  { background: rgba(16,185,129,0.1);  color: #10B981; }
     .action-icon.orange { background: rgba(245,158,11,0.1);  color: #F59E0B; }
@@ -156,76 +102,27 @@
     .action-icon.pink   { background: rgba(236,72,153,0.1);  color: #EC4899; }
 
     .action-info { min-width: 0; }
+    .action-info h3 { margin: 0 0 4px 0; font-size: 15px; font-weight: 600; color: #1a1a2e; white-space: normal; line-height: 1.3; }
+    .action-info p  { margin: 0; font-size: 12px; color: #8c8c8c; white-space: normal; line-height: 1.4; }
 
-    .action-info h3 {
-        margin: 0 0 4px 0;
-        font-size: 15px;
-        font-weight: 600;
-        color: #1a1a2e;
-        /* wrap text nếu tên dài */
-        white-space: normal;
-        line-height: 1.3;
-    }
+    .info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-    .action-info p {
-        margin: 0;
-        font-size: 12px;
-        color: #8c8c8c;
-        white-space: normal;
-        line-height: 1.4;
-    }
-
-    /* ===== INFO CARDS ===== */
-    .info-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-    }
-
-    .info-card {
-        background: white;
-        border-radius: 12px;
-        padding: 24px;
-        border: 1px solid #f0f0f0;
-    }
+    .info-card { background: white; border-radius: 12px; padding: 24px; border: 1px solid #f0f0f0; }
 
     .info-card-title {
-        font-size: 16px;
-        font-weight: 600;
-        color: #1a1a2e;
-        margin-bottom: 16px;
-        padding-bottom: 12px;
-        border-bottom: 1px solid #f5f5f5;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        font-size: 16px; font-weight: 600; color: #1a1a2e;
+        margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f5f5f5;
+        display: flex; align-items: center; gap: 8px;
     }
 
-    .system-info-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
+    .system-info-list { list-style: none; padding: 0; margin: 0; }
     .system-info-list li {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 0;
-        border-bottom: 1px solid #fafafa;
-        font-size: 14px;
-        color: #555;
+        display: flex; align-items: center; gap: 12px;
+        padding: 10px 0; border-bottom: 1px solid #fafafa; font-size: 14px; color: #555;
     }
-
     .system-info-list li:last-child { border-bottom: none; }
 
-    .info-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        flex-shrink: 0;
-    }
-
+    .info-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .info-dot.active { background: #10B981; }
     .info-dot.info   { background: #4364F7; }
     .info-dot.warn   { background: #F59E0B; }
@@ -233,51 +130,23 @@
     .info-label { color: #8c8c8c; min-width: 120px; }
     .info-value { font-weight: 500; color: #1a1a2e; }
 
-    .tips-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
+    .tips-list { list-style: none; padding: 0; margin: 0; }
     .tips-list li {
-        padding: 12px 16px;
-        background: #f8f9fb;
-        border-radius: 8px;
-        margin-bottom: 8px;
-        font-size: 13px;
-        color: #555;
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
-        line-height: 1.5;
+        padding: 12px 16px; background: #f8f9fb; border-radius: 8px;
+        margin-bottom: 8px; font-size: 13px; color: #555;
+        display: flex; align-items: flex-start; gap: 10px; line-height: 1.5;
     }
-
     .tips-list li:last-child { margin-bottom: 0; }
     .tip-icon { flex-shrink: 0; font-size: 16px; }
 
-    .dashboard-footer {
-        text-align: center;
-        margin-top: 32px;
-        padding: 16px;
-        font-size: 12px;
-        color: #c0c0c0;
-    }
+    .dashboard-footer { text-align: center; margin-top: 32px; padding: 16px; font-size: 12px; color: #c0c0c0; }
 
     /* ===== ANIMATIONS ===== */
-    .fade-in {
-        opacity: 0;
-        animation: fadeIn 0.5s ease-out forwards;
-    }
-
-    /* Banner */
+    .fade-in { opacity: 0; animation: fadeIn 0.5s ease-out forwards; }
     .fade-in-banner     { animation-delay: 0s; }
-    /* Section title */
     .fade-in-section    { animation-delay: 0.15s; }
-    /* Card theo index — gán inline style animation-delay */
-    /* Info row */
     .fade-in-info-left  { animation-delay: 0.25s; }
     .fade-in-info-right { animation-delay: 0.35s; }
-    /* Footer */
     .fade-in-footer     { animation-delay: 0.45s; }
 
     @@keyframes fadeIn {
@@ -325,8 +194,7 @@
 
     @* ===== QUICK ACTIONS ===== *@
     <div class="section-title fade-in fade-in-section">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-             stroke="#1a1a2e" stroke-width="2">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a2e" stroke-width="2">
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
         </svg>
         Truy cập nhanh
@@ -334,30 +202,31 @@
 
     <div class="quick-actions-grid">
         @{
-            // Đếm index toàn bộ để gán delay lần lượt
             int cardIndex = 0;
         }
-        @foreach (var item in menu)
+        @if (menu is not null)
         {
-            foreach (var pageItem in item.Pages.OrderBy(x => x.Order))
+            @foreach (var item in menu)
             {
-                // Mỗi card delay cách nhau 0.08s, bắt đầu từ 0.2s
-                var delay = 0.2 + cardIndex * 0.08;
-                cardIndex++;
+                @foreach (var pageItem in item.Pages.OrderBy(x => x.Order))
+                {
+                    var delay = 0.2 + cardIndex * 0.08;
+                    cardIndex++;
 
-                <a class="action-card fade-in"
-                   style="animation-delay: @(delay.ToString("F2", System.Globalization.CultureInfo.InvariantCulture))s"
-                   href="@GetLink(pageItem.Url)">
-                    <div class="action-icon blue">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                        </svg>
-                    </div>
-                    <div class="action-info">
-                        <h3>@pageItem.Name</h3>
-                        <p>@pageItem.DesCription</p>
-                    </div>
-                </a>
+                    <a class="action-card fade-in"
+                       style="animation-delay: @(delay.ToString("F2", System.Globalization.CultureInfo.InvariantCulture))s"
+                       href="@GetLink(pageItem.Url)">
+                        <div class="action-icon blue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                        </div>
+                        <div class="action-info">
+                            <h3>@pageItem.Name</h3>
+                            <p>@pageItem.DesCription</p>
+                        </div>
+                    </a>
+                }
             }
         }
     </div>
@@ -366,8 +235,7 @@
     <div class="info-row">
         <div class="info-card fade-in fade-in-info-left">
             <div class="info-card-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                     stroke="#4364F7" stroke-width="2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4364F7" stroke-width="2">
                     <circle cx="12" cy="12" r="10"/>
                     <line x1="12" y1="16" x2="12" y2="12"/>
                     <line x1="12" y1="8"  x2="12.01" y2="8"/>
@@ -385,29 +253,37 @@
                     <span class="info-label">Phiên bản:</span>
                     <span class="info-value">AQUA ITSM v2.0</span>
                 </li>
-                <li>
-                    <span class="info-dot info"></span>
-                    <span class="info-label">Người dùng:</span>
-                    <span class="info-value">@userDto.FullName</span>
-                </li>
+                @if (userDto is not null)
+                {
                     <li>
-                    <span class="info-dot warn"></span>
-                    <span class="info-label">Nhà máy:</span>
-                    <span class="info-value">@userDto.FactoryName</span>
-                </li>
-                <li>
-                    <span class="info-dot warn"></span>
-                    <span class="info-label">Phòng ban:</span>
-                    <span class="info-value">@userDto.DepartmentName</span>
-                </li>
-             
+                        <span class="info-dot info"></span>
+                        <span class="info-label">Người dùng:</span>
+                        <span class="info-value">@userDto.FullName</span>
+                    </li>
+                    <li>
+                        <span class="info-dot warn"></span>
+                        <span class="info-label">Nhà máy:</span>
+                        <span class="info-value">@userDto.FactoryName</span>
+                    </li>
+                    <li>
+                        <span class="info-dot warn"></span>
+                        <span class="info-label">Phòng ban:</span>
+                        <span class="info-value">@userDto.DepartmentName</span>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <span class="info-dot info"></span>
+                        <span class="info-label" style="color:#c0c0c0;">Đang tải...</span>
+                    </li>
+                }
             </ul>
         </div>
 
         <div class="info-card fade-in fade-in-info-right">
             <div class="info-card-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                     stroke="#F59E0B" stroke-width="2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2">
                     <circle cx="12" cy="12" r="10"/>
                     <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
                     <line x1="12" y1="17" x2="12.01" y2="17"/>
@@ -415,22 +291,10 @@
                 Mẹo sử dụng
             </div>
             <ul class="tips-list">
-                <li>
-                    <span class="tip-icon">💡</span>
-                    Sử dụng menu bên trái để điều hướng giữa các module trong hệ thống.
-                </li>
-                <li>
-                    <span class="tip-icon">🔍</span>
-                    Bạn có thể tạo yêu cầu IT Support bất cứ lúc nào qua mục "IT Support".
-                </li>
-                <li>
-                    <span class="tip-icon">📊</span>
-                    Theo dõi KPI và báo cáo để nắm bắt hiệu suất công việc.
-                </li>
-                <li>
-                    <span class="tip-icon">✅</span>
-                    Sử dụng To Do List để quản lý công việc hàng ngày hiệu quả.
-                </li>
+                <li><span class="tip-icon">💡</span>Sử dụng menu bên trái để điều hướng giữa các module trong hệ thống.</li>
+                <li><span class="tip-icon">🔍</span>Bạn có thể tạo yêu cầu IT Support bất cứ lúc nào qua mục "IT Support".</li>
+                <li><span class="tip-icon">📊</span>Theo dõi KPI và báo cáo để nắm bắt hiệu suất công việc.</li>
+                <li><span class="tip-icon">✅</span>Sử dụng To Do List để quản lý công việc hàng ngày hiệu quả.</li>
             </ul>
         </div>
     </div>
@@ -443,15 +307,14 @@
 @code {
     [CascadingParameter] private Task<AuthenticationState> authStateTask { get; set; }
 
-     private string displayName = "";
-    // private string userRole    = "";
-     private string greeting    = "";
+    private string displayName = "";
+    private string greeting    = "";
     private ClaimsPrincipal user;
     private CurrentUserInfo? CurrentUser;
 
     [Inject] private HttpClient Http { get; set; } = default!;
     private UserDto? userDto { get; set; }
-    List<MenuDto>? menu = new();
+    List<MenuDto> menu = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -470,11 +333,7 @@
             var authState = await authStateTask;
             var u = authState.User;
             if (u.Identity?.IsAuthenticated == true)
-            {
                 displayName = u.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "User";
-                // var roles = u.FindAll(System.Security.Claims.ClaimTypes.Role).Select(r => r.Value);
-                // userRole = roles.Any() ? string.Join(", ", roles) : "User";
-            }
         }
 
         base.OnInitialized();
@@ -502,10 +361,11 @@
             try
             {
                 userDto = await Http.GetFromJsonAsync<UserDto>($"api/user/get-curernUser/{CurrentUser.UserId}");
+
                 if (CurrentUser.Roles.Contains("Admin"))
-                    menu = await Http.GetFromJsonAsync<List<MenuDto>>($"api/Menu/GetAllMenu");
+                    menu = await Http.GetFromJsonAsync<List<MenuDto>>($"api/Menu/GetAllMenu") ?? new();
                 else
-                    menu = await Http.GetFromJsonAsync<List<MenuDto>>($"api/Menu/GetMenu/{userId}");
+                    menu = await Http.GetFromJsonAsync<List<MenuDto>>($"api/Menu/GetMenu/{userId}") ?? new();
             }
             catch { }
         }
