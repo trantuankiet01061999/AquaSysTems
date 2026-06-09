@@ -6,45 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>ITSM</title>
     <base href="/" />
+
+    <!-- CSS -->
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
     <link rel="icon" href="assets/logoaqua.png" type="image/x-icon" />
     <link href="AquaSolution.Client.styles.css" rel="stylesheet" />
     <link href="_content/AntDesign/css/ant-design-blazor.css" rel="stylesheet" />
     <link href="_content/AntDesign.ProLayout/css/ant-design-pro-layout-blazor.css" rel="stylesheet" />
+
+    <style>
+        html, body {
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+    </style>
 </head>
-<script>
-    window.setupUserDropdown = function () {
-        const dropdown = document.getElementById("userDropdown");
 
-        if (!dropdown) return;
-
-        const toggle = dropdown.querySelector(".user-dropdown-toggle");
-
-        toggle.addEventListener("click", function (e) {
-            e.stopPropagation();
-            dropdown.classList.toggle("open");
-        });
-
-        document.addEventListener("click", function (e) {
-            if (!dropdown.contains(e.target)) {
-                dropdown.classList.remove("open");
-            }
-        });
-    };
-</script>
-<style>
-    html, body {
-        overflow-x: hidden; 
-        overflow-y: hidden; 
-    }
-
-</style>
-<script src="js/zoom-handler.js"></script>
 <body>
-    <div style="overflow-x:hidden" id="app">
+    <div id="app" style="overflow-x:hidden">
         <img src="https://hrmsaquavietnam.com:6969/images/Aqua-Smart%20Home%20-%20blue.png"
-             alt="AQUA Logo" style="width:120px;height:auto;margin-bottom:24px;" />
+             alt="AQUA Logo"
+             style="width:120px;height:auto;margin-bottom:24px;" />
         <div class="loading-progress-text"></div>
     </div>
 
@@ -53,8 +36,43 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
-    <script src="_framework/blazor.webassembly.js"></script>
-    <script src="_content/AntDesign/js/ant-design-blazor.js"></script>
-</body>
 
+    <!-- ✅ Script phải đặt CUỐI BODY -->
+    <!-- Custom JS -->
+    <script>
+        window.setupUserDropdown = function () {
+            const dropdown = document.getElementById("userDropdown");
+            if (!dropdown) return;
+
+            const toggle = dropdown.querySelector(".user-dropdown-toggle");
+
+            toggle?.addEventListener("click", function (e) {
+                e.stopPropagation();
+                dropdown.classList.toggle("open");
+            });
+
+            document.addEventListener("click", function (e) {
+                if (!dropdown.contains(e.target)) {
+                    dropdown.classList.remove("open");
+                }
+            });
+        };
+    </script>
+
+    <!-- Zoom -->
+    <script src="js/zoom-handler.js"></script>
+
+    <!-- ✅ Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+    <!-- ✅ Chart custom -->
+    <!--<script src="js/reportCharts.js"></script>-->
+
+    <!-- Ant Design -->
+    <script src="_content/AntDesign/js/ant-design-blazor.js"></script>
+
+    <!-- ✅ Blazor ALWAYS LAST -->
+    <script src="_framework/blazor.webassembly.js"></script>
+
+</body>
 </html>

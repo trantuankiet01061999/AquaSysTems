@@ -32,6 +32,7 @@ using AquaSolution.Server.Services.ManageMedicalRooms.WarehouseExportService;
 using AquaSolution.Server.Services.ManageMedicalRooms.WarehouseImportService;
 using AquaSolution.Server.Services.ScrapManagetment.FlowApprovalServices;
 using AquaSolution.Server.Services.ScrapManagetment.MaterialServices;
+using AquaSolution.Server.Services.ScrapManagetment.ReportServices;
 using AquaSolution.Server.Services.ScrapManagetment.ScapServices;
 using AquaSolution.Server.Services.SemiReport.CusPackService;
 using AquaSolution.Server.Services.SemiReport.PcbReportService;
@@ -108,6 +109,8 @@ namespace AquaSolution.Server
             services.AddScoped<IMaterialService, MaterialService>();
             services.AddScoped<IScrapService, ScrapService>();
             services.AddScoped<IFlowApprovalService, FlowApprovalService>();
+            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IExportReportService, ExportReportService>();
 
             #endregion
             return services;

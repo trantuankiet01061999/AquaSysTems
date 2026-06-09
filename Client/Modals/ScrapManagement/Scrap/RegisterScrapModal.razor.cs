@@ -66,7 +66,9 @@ namespace AquaSolution.Client.Modals.ScrapManagement.Scrap
                 // Pre-fill confirm amount nếu có
                 if (Mode == ScrapModalMode.Confirm)
                 {
-                    _confirmAmount = HandleScrap.ConfirmAmount ?? HandleScrap.TotalAmount ?? 0;
+                    _confirmAmount = (HandleScrap.ConfirmAmount ?? 0) == 0
+                                     ? HandleScrap.TotalAmount ?? 0
+                                     : HandleScrap.ConfirmAmount ?? 0;
                     _confirmStatus = HandleScrap.ConfirmationStatusType;
                     _confirmNote = HandleScrap.Notes;
                 }

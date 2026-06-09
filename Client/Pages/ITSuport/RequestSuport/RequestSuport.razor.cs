@@ -72,20 +72,27 @@ namespace AquaSolution.Client.Pages.ITSuport.RequestSuport
                 LoadTechnician(),
                 LoadStats(),
                 CheckPermission()
-   
             );
             LoadStatusOptions();
         }
         private async Task FilterByStatus(string status)
         {
-            if (_selectedStatuses.Contains(status))
-                _selectedStatuses = _selectedStatuses.Where(s => s != status).ToList();
+            if(status == "Total")
+            {
+                _selectedStatuses = new List<string>();
+            }
             else
+            {
+                if (_selectedStatuses.Contains(status))
+                    _selectedStatuses = _selectedStatuses.Where(s => s != status).ToList();
+                else
+                    _selectedStatuses = new List<string>();
                 _selectedStatuses = _selectedStatuses.Append(status).ToList();
-
+            }
+    
             _currentPage = 1;
             await LoadData();
-            _selectedStatuses = new List<string>();
+            //
         }
         private async Task SignalRReload()
         {

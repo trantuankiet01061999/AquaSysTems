@@ -412,7 +412,8 @@ namespace AquaSolution.Server.Services.ScrapManagetment.ScapServices
                 // Reject ở bất kỳ step nào → đóng phiếu luôn
                 currentStep.Status = StatusScrap.Rejected;
                 scrap.Status = StatusScrap.Rejected;
-
+                scrap.LastActionBy = request.ActionBy;
+                scrap.LastActionDate = now;
                 await _requestApprovalRepository.UpdateAsync(currentStep);
             }
             else
