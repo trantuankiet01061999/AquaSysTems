@@ -6,8 +6,7 @@ namespace AquaSolution.Shared.ReportDto
         public Guid ScrapId { get; set; }
         public string Title { get; set; } = string.Empty;
         public string DepartmentName { get; set; } = string.Empty;
-        public int CurrentStep { get; set; }
-        public int TotalSteps { get; set; }
+
         public string DecisionMakerName { get; set; } = string.Empty;
         public DateTime CreatedDate { get; set; }
         public StatusScrap Status { get; set; }

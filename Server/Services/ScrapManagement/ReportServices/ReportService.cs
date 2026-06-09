@@ -177,7 +177,13 @@ namespace AquaSolution.Server.Services.ScrapManagetment.ReportServices
                         DepartmentId = g.Key,
                         TotalOrders = g.Count(),
                         TotalWeight = g.Sum(x => x.TotalAmount ?? 0),
-                        ConfirmedWeight = g.Sum(x => x.ConfirmAmount ?? 0)
+                        ConfirmedWeight = g.Sum(x => x.ConfirmAmount ?? 0),
+
+                        TotalOrderApproval = g.Count(x => x.Status == StatusScrap.Approved),
+                        TotalOrderReject = g.Count(x => x.Status == StatusScrap.Rejected),
+                        TotalOrderPending = g.Count(x => x.Status == StatusScrap.Pending),
+                        TotalOrderDone = g.Count(x => x.Status == StatusScrap.Done)
+
                     })
                     .ToListAsync();
 
@@ -203,9 +209,16 @@ namespace AquaSolution.Server.Services.ScrapManagetment.ReportServices
                         DepartmentId = g.DepartmentId,
                         DepartmentName = deptName,
                         TotalOrders = g.TotalOrders,
-                        TotalQuantity = 0,
+                        TotalQuantity = detailQty.Sum(x=>x.TotalQty),
                         TotalWeight = g.TotalWeight,
-                        ConfirmedWeight = g.ConfirmedWeight
+                        ConfirmedWeight = g.ConfirmedWeight,
+
+                        TotalOrderApproval = g.TotalOrderApproval,
+                        TotalOrderReject = g.TotalOrderReject,
+                        TotalOrderPending = g.TotalOrderPending,
+                        TotalOrderDone = g.TotalOrderDone
+
+
                         //StatusLabel = g.ConfirmedWeight / (g.TotalWeight == 0 ? 1 : g.TotalWeight) < 0.75m
                         //    ? "Cần xem xét" : "Bình thường"
                     };
@@ -422,8 +435,6 @@ namespace AquaSolution.Server.Services.ScrapManagetment.ReportServices
                         ScrapId = s.Id,
                         Title = s.Title,
                         DepartmentName = deptName,
-                        CurrentStep = currentApproval?.Step ?? 0,
-                        TotalSteps = totalSteps == 0 ? 1 : totalSteps,
                         DecisionMakerName = userName,
                         CreatedDate = s.CreatedDate,
                         Status = s.Status

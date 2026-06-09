@@ -226,18 +226,15 @@
                    HidePagination>
                 <ColumnDefinitions Context="row">
                     <PropertyColumn Width="auto"  Title="Phòng ban"          Property="c => c.DepartmentName" />
-                    <PropertyColumn Width="90px"  Title="Số đơn"             Property="c => c.TotalOrders" />
+                    <PropertyColumn Width="90px"  Title="Tổng số đơn"             Property="c => c.TotalOrders" />
+                    <PropertyColumn Width="90px"  Title="Tổng số đã Duyệt"             Property="c => c.TotalOrderApproval" />
+                    <PropertyColumn Width="90px"  Title="Tổng số từ chối"             Property="c => c.TotalOrderReject" />
+                    <PropertyColumn Width="90px"  Title="Tổng số chờ"             Property="c => c.TotalOrderPending" />
+                    <PropertyColumn Width="90px"  Title="Tổng số hoàn thành"             Property="c => c.TotalOrderDone" />
                     <PropertyColumn Width="110px" Title="Số lượng"           Property="c => c.TotalQuantity"   Format="N0" Align="ColumnAlign.Right" />
                     <PropertyColumn Width="150px" Title="KL Đăng ký (kg)"    Property="c => c.TotalWeight"     Format="0.####" Align="ColumnAlign.Right" />
                     <PropertyColumn Width="170px" Title="Nhà rác nhận (kg)"  Property="c => c.ConfirmedWeight" Format="0.####" Align="ColumnAlign.Right" />
-                    <PropertyColumn Width="130px" Title="Tỉ lệ XN (%)"       Property="c => c.ConfirmRate"     Format="N1" Align="ColumnAlign.Right" />
-                   @*  <PropertyColumn Width="120px" Title="Trạng thái"         Property="c => c.StatusLabel">
-                        <Template>
-                            <Tag Color="@(row.StatusLabel == "Bình thường" ? "green" : "orange")">
-                                @row.StatusLabel
-                            </Tag>
-                        </Template>
-                    </PropertyColumn> *@
+                    
                 </ColumnDefinitions>
             </Table>
         </div>
@@ -255,8 +252,8 @@
                     <PropertyColumn Width="100px" Title="Loại"               Property="c => c.Type" />
                     <PropertyColumn Width="70px"  Title="ĐVT"                Property="c => c.Unit" />
                     <PropertyColumn Width="110px" Title="Số lượng"           Property="c => c.TotalQuantity"   Format="N0" Align="ColumnAlign.Right" />
-                    <PropertyColumn Width="150px" Title="KL Đăng ký (kg)"    Property="c => c.TotalWeight"     Format="N0" Align="ColumnAlign.Right" />
-                    <PropertyColumn Width="170px" Title="Nhà rác nhận (kg)"  Property="c => c.ConfirmedWeight" Format="N0" Align="ColumnAlign.Right" />
+                    <PropertyColumn Width="150px" Title="KL Đăng ký (kg)"    Property="c => c.TotalWeight"     Format="0.####" Align="ColumnAlign.Right" />
+                    <PropertyColumn Width="170px" Title="Nhà rác nhận (kg)"  Property="c => c.ConfirmedWeight" Format="0.####" Align="ColumnAlign.Right" />
                     <PropertyColumn Width="140px" Title="Chênh lệch (kg)"    Property="c => c.Difference"      Align="ColumnAlign.Right">
                         <Template>
                             <span style="color:@(row.Difference < 0 ? "#a32d2d" : "#3b6d11")">
@@ -293,9 +290,6 @@
                 <ColumnDefinitions Context="row">
                     <PropertyColumn Width="auto"  Title="Tiêu đề"      Property="c => c.Title" />
                     <PropertyColumn Width="120px" Title="Phòng ban"     Property="c => c.DepartmentName" />
-                    <PropertyColumn Width="90px"  Title="Bước"         Property="c => c.CurrentStep">
-                        <Template>Bước @row.CurrentStep / @row.TotalSteps</Template>
-                    </PropertyColumn>
                     <PropertyColumn Width="160px" Title="Người duyệt"  Property="c => c.DecisionMakerName" />
                     <PropertyColumn Width="130px" Title="Ngày tạo"     Property="c => c.CreatedDate" Format="dd/MM/yyyy HH:mm" />
                     <PropertyColumn Width="100px" Title="Trạng thái"   Property="c => c.Status">
