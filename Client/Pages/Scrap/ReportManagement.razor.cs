@@ -70,6 +70,7 @@ namespace AquaSolution.Client.Pages.Scrap
 
                 if (CurrenUser.FactoryId.HasValue && CurrenUser.FactoryId.Value != Guid.Empty)
                     _filter.FactoryId = CurrenUser.FactoryId;
+
             }
 
             BuildWeekList();

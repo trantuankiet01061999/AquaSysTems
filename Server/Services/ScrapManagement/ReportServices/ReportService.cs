@@ -43,6 +43,7 @@ namespace AquaSolution.Server.Services.ScrapManagetment.ReportServices
         // ─── ApplyFilter — tất cả lọc theo HistoryScrap.CreatedDate ─────────
         private IQueryable<HistoryScrap> ApplyFilter(IQueryable<HistoryScrap> query, ReportFilterDto filter)
         {
+            //nếu có phòng ban thì thêm vào dây
             if (filter.FactoryId.HasValue)
                 query = query.Where(x => x.FactoryId == filter.FactoryId.Value);
 
